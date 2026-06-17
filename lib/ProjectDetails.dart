@@ -1635,7 +1635,6 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                   ),
                                 ),
                               ),
-                            ),
 
                           const SizedBox(height: 12),
 
