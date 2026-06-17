@@ -1,0 +1,4637 @@
+// import 'dart:convert';
+
+// import 'package:flutter/gestures.dart';
+// import 'package:flutter/material.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:greencollar/HomeScree.dart';
+// import 'package:greencollar/labourhomepage.dart';
+// import 'package:greencollar/register.dart';
+// import 'package:provider/provider.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+// class NearbyProjectPage extends StatefulWidget {
+//   @override
+//   _NearbyProjectPageState createState() => _NearbyProjectPageState();
+// }
+
+// class _NearbyProjectPageState extends State<NearbyProjectPage> {
+//   final _secureStorage = const FlutterSecureStorage();
+//   List<dynamic> projects = [];
+//   List<dynamic> filteredProjects = []; // To store filtered results
+//   bool isLoading = true;
+//   TextEditingController _searchController = TextEditingController();
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     fetchProjects();
+//   }
+
+//   Future<void> fetchProjects() async {
+//     final String apiUrl =
+//         '${Constants.AppConstants.apiUrl}labour/nearbyProjectApi';
+
+//     // Get user ID from secure storage
+//     String? userId = await _secureStorage.read(key: 'id');
+//     if (userId == null) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('User ID not found in secure storage')),
+//       );
+//       return;
+//     }
+
+//     final Map<String, dynamic> requestBody = {
+//       'id': userId,
+//     };
+
+//     print(jsonEncode(requestBody));
+
+//     try {
+//       final response = await http.post(
+//         Uri.parse(apiUrl),
+//         headers: {'Content-Type': 'application/json'},
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         setState(() {
+//           projects = json.decode(response.body)['data'];
+//           filteredProjects =
+//               projects; // Set the filtered list to all projects initially
+//           isLoading = false;
+//         });
+//       } else {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Failed to fetch projects: ${response.body}')),
+//         );
+//       }
+//     } catch (e) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('An error occurred: $e')),
+//       );
+//     }
+//   }
+
+//   void filterProjects(String query) {
+//     setState(() {
+//       filteredProjects = projects.where((project) {
+//         String title =
+//             project['title'] ?? ''; // Default to empty string if null
+//         String budget =
+//             project['budget']?.toString() ?? ''; // Convert to string if null
+//         String city = project['city'] ?? ''; // Default to empty string if null
+//         String state =
+//             project['state'] ?? ''; // Default to empty string if null
+
+//         // Perform the filtering check
+//         return title.toLowerCase().contains(query.toLowerCase()) ||
+//             budget.toLowerCase().contains(query.toLowerCase()) ||
+//             city.toLowerCase().contains(query.toLowerCase()) ||
+//             state.toLowerCase().contains(query.toLowerCase());
+//       }).toList();
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Container(
+//         decoration: const BoxDecoration(
+//           gradient: LinearGradient(
+//             begin: Alignment.topLeft,
+//             end: Alignment.bottomRight,
+//             colors: [
+//               Color(0xFFA8D5BA), // Light green
+//               Color(0xFF68A691), // Darker green
+//             ],
+//           ),
+//         ),
+//         child: SafeArea(
+//           child: Column(
+//             children: [
+//               // Search Bar
+//               Padding(
+//                 padding: const EdgeInsets.all(16.0),
+//                 child: TextField(
+//                   controller: _searchController,
+//                   onChanged: (value) {
+//                     filterProjects(
+//                         value); // Filter projects based on search input
+//                   },
+//                   decoration: InputDecoration(
+//                     prefixIcon: const Icon(Icons.search, color: Colors.green),
+//                     hintText: 'Search by title, budget, city, or state',
+//                     fillColor: Colors.white,
+//                     filled: true,
+//                     border: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(15.0),
+//                       borderSide: const BorderSide(color: Colors.green),
+//                     ),
+//                     focusedBorder: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(15.0),
+//                       borderSide:
+//                           const BorderSide(color: Colors.green, width: 2),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               // Project List
+//               Expanded(
+//                 child: isLoading
+//                     ? const Center(child: CircularProgressIndicator())
+//                     : filteredProjects.isEmpty
+//                         ? const Center(
+//                             child: Text(
+//                               'No projects found',
+//                               style: TextStyle(
+//                                 fontSize: 18,
+//                                 fontWeight: FontWeight.w500,
+//                                 color: Colors.brown,
+//                               ),
+//                             ),
+//                           )
+//                         : ListView.builder(
+//                             itemCount: filteredProjects.length,
+//                             itemBuilder: (context, index) {
+//                               final project = filteredProjects[index];
+//                               return Card(
+//                                 elevation: 5,
+//                                 margin: const EdgeInsets.symmetric(
+//                                     vertical: 10, horizontal: 15),
+//                                 child: Padding(
+//                                   padding: const EdgeInsets.all(15.0),
+//                                   child: Column(
+//                                     crossAxisAlignment:
+//                                         CrossAxisAlignment.start,
+//                                     children: [
+//                                       Text(
+//                                         project['title'] ?? 'No Title',
+//                                         style: const TextStyle(
+//                                           fontSize: 18,
+//                                           fontWeight: FontWeight.bold,
+//                                           color: Colors.teal,
+//                                         ),
+//                                       ),
+//                                       const SizedBox(height: 5),
+//                                       Text(
+//                                         'Budget: ${project['budget'] ?? 'N/A'}',
+//                                         style: const TextStyle(fontSize: 16),
+//                                       ),
+//                                       Text(
+//                                         'Location: ${project['city']}, ${project['state']}',
+//                                         style: const TextStyle(fontSize: 16),
+//                                       ),
+//                                       const SizedBox(height: 10),
+//                                       Text(
+//                                         project['description'] ??
+//                                             'No Description',
+//                                         style: const TextStyle(fontSize: 14),
+//                                       ),
+//                                     ],
+//                                   ),
+//                                 ),
+//                               );
+//                             },
+//                           ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:greencollar/speech_helper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:greencollar/HomeScree.dart';
+import 'package:greencollar/l10n/app_localizations.dart';
+import 'package:greencollar/labourhomepage.dart';
+import 'package:greencollar/main.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:greencollar/constants.dart' as Constants;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:translator/translator.dart';
+
+class NearbyProjectPage extends StatefulWidget {
+  @override
+  _NearbyProjectPageState createState() => _NearbyProjectPageState();
+}
+
+class _NearbyProjectPageState extends State<NearbyProjectPage> {
+  final _secureStorage = const FlutterSecureStorage();
+  bool isLoading = true;
+  List<dynamic> projects = [];
+  List<dynamic> filteredProjects = [];
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadLanguage();
+    fetchProjects();
+    fetchJobTypes();
+  }
+
+  Future<void> fetchJobTypes() async {
+    final response = await http
+        .post(Uri.parse('${Constants.AppConstants.apiUrl}farmer/jobtype'));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      List<dynamic> jobData = data['data'];
+      setState(() {
+        _jobTypes = jobData.map((job) => JobType.fromJson(job)).toList();
+      });
+    } else {
+      throw Exception('Failed to load job types');
+    }
+  }
+
+  Future<void> fetchProjects() async {
+    final String apiUrl =
+        '${Constants.AppConstants.apiUrl}labour/nearbyProjectApi';
+    String? userId = await _secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID not found in secure storage')),
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final Map<String, dynamic> requestBody = {
+        'id': userId,
+      };
+      print(jsonEncode(requestBody));
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['status'] == 1) {
+          setState(() {
+            print(responseBody['data']);
+            projects = responseBody['data'];
+            filteredProjects = projects;
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            projects = [];
+            filteredProjects = [];
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    responseBody['message'] ?? 'Failed to fetch projects')),
+          );
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Failed to fetch projects: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void filterProjects(String query) {
+    setState(() {
+      filteredProjects = projects.where((project) {
+        String title =
+            project['title'] ?? ''; // Default to empty string if null
+        String budget =
+            project['budget']?.toString() ?? ''; // Convert to string if null
+        String city = project['city'] ?? ''; // Default to empty string if null
+        String state =
+            project['state'] ?? ''; // Default to empty string if null
+
+        // Perform the filtering check
+        return title.toLowerCase().contains(query.toLowerCase()) ||
+            budget.toLowerCase().contains(query.toLowerCase()) ||
+            city.toLowerCase().contains(query.toLowerCase()) ||
+            state.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+  String translate(String enText, String hiText) {
+    final language =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+    return language == 'en' ? enText : hiText;
+  }
+
+  Future<void> applyToProject(int projectId) async {
+    final String apiUrl =
+        '${Constants.AppConstants.apiUrl}labour/applyProjectApi';
+
+    // Get user ID from secure storage
+    String? userId = await _secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID not found in secure storage')),
+      );
+      return;
+    }
+
+    final Map<String, dynamic> requestBody = {
+      'labourId': userId,
+      'projectId': projectId,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['status'] == 1) {
+          Fluttertoast.showToast(
+            msg: translate(
+                'Applied successfully!', 'सफलतापूर्वक लागू किया गया!'),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green.shade700,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+
+          fetchProjects(); // Reload projects to update applyStatus
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(responseBody['message'] ?? 'Failed to apply')),
+          );
+        }
+      } else {
+        String errorMessage = 'Failed to apply';
+        try {
+          final decoded = json.decode(response.body);
+          if (decoded is Map<String, dynamic>) {
+            if (decoded.containsKey('errors') && decoded['errors'] is Map) {
+              final errorsMap = decoded['errors'] as Map<String, dynamic>;
+              List<String> allErrors = [];
+              errorsMap.forEach((key, value) {
+                if (value is List) {
+                  allErrors.addAll(value.map((e) => e.toString()));
+                } else {
+                  allErrors.add(value.toString());
+                }
+              });
+              if (allErrors.isNotEmpty) errorMessage = allErrors.join(', ');
+            } else if (decoded.containsKey('message')) {
+              errorMessage = decoded['message'].toString();
+            }
+          }
+        } catch (e) {
+          String bodyText = response.body.length > 100 ? response.body.substring(0, 100) + "..." : response.body;
+          errorMessage = 'Failed to apply: $bodyText';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
+    } catch (e) {}
+  }
+
+  List<JobType> _jobTypes = [];
+  final TextEditingController _projectSearchController =
+      TextEditingController();
+  final TextEditingController _labourSearchController = TextEditingController();
+  String selectedCategory = 'All';
+  double selectedPriceRange = 1000000;
+  double selectedRating = 3;
+  String selectedJobType = 'All';
+  bool isDailyWageSelected = false;
+  bool isContractSelected = false;
+  void _showFilterDialog() {
+    final language =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return AlertDialog(
+            title: Text(translate('Filter Projects', 'प्रस्ताव फ़िल्टर करें')),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Job Type filter (using fetched job types) with label
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(translate(
+                            'Select Job Type', 'कृपया नौकरी का प्रकार चुनें')),
+                        DropdownButton<String>(
+                          value: selectedJobType,
+                          isExpanded: true,
+                          items: [
+                            DropdownMenuItem<String>(
+                              value: 'All',
+                              child: Text(translate('All', 'सभी')),
+                            ),
+                            // Create a DropdownMenuItem for each jobType
+                            ..._jobTypes
+                                .map((job) => DropdownMenuItem<String>(
+                                      value: job.jobname,
+                                      child: Text(translate(job.jobname,
+                                          job.jobname)), // Assuming jobname is in English
+                                    ))
+                                .toList(),
+                          ],
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedJobType = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Category filter with label
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(translate(
+                            'Select Payment Type', 'भुगतान प्रकार चुनें')),
+                        DropdownButton<String>(
+                          value: selectedCategory,
+                          isExpanded: true,
+                          items: ['All', 'Project Basis', 'Milestone Basis']
+                              .map((category) => DropdownMenuItem<String>(
+                                    value: category,
+                                    child: Text(translate(category, category)),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedCategory = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Search field
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: _labourSearchController,
+                      decoration: InputDecoration(
+                        prefixIcon:
+                            const Icon(Icons.search, color: Constants.AppColors.brand),
+                        suffixIcon: MicIconButton(controller: _labourSearchController),
+                        hintText: translate('Search by pincode, city, or state',
+                            'पिनकोड, शहर या राज्य द्वारा खोजें'),
+                        hintStyle: Constants.AppTypography.body.copyWith(
+                            color: Constants.AppColors.inkSoft),
+                        fillColor: Constants.AppColors.card,
+                        filled: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                              Constants.AppRadii.md),
+                          borderSide: const BorderSide(
+                              color: Constants.AppColors.border, width: 1.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                              Constants.AppRadii.md),
+                          borderSide: const BorderSide(
+                              color: Constants.AppColors.brand, width: 1.5),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Price Range Slider
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            translate('Select Budget Range', 'बजट सीमा चुनें')),
+                        Slider(
+                          value: selectedPriceRange,
+                          min: 0,
+                          max: 1000000,
+                          divisions: 100,
+                          label: '\$${selectedPriceRange.toStringAsFixed(0)}',
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedPriceRange = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Project Type filter using checkboxes (Daily Wage and Contract)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(translate(
+                            'Select Job Type', 'नौकरी का प्रकार चुनें')),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: isDailyWageSelected,
+                              onChanged: (bool? value) {
+                                setStateDialog(() {
+                                  isDailyWageSelected = value!;
+                                });
+                              },
+                            ),
+                            Text(translate('Daily Wage', 'दैनिक वेतन')),
+                            const SizedBox(width: 10),
+                            Checkbox(
+                              value: isContractSelected,
+                              onChanged: (bool? value) {
+                                setStateDialog(() {
+                                  isContractSelected = value!;
+                                });
+                              },
+                            ),
+                            Text(translate('Contract', 'ठेका')),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Rating filter (optional)
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _applyFilters();
+                  setState(() {});
+                  Navigator.of(context).pop();
+                },
+                child: Text(translate('Apply Filters', 'फ़िल्टर लागू करें')),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Reset filters to default values
+                  setStateDialog(() {
+                    selectedJobType = 'All';
+                    selectedCategory = 'All';
+                    selectedPriceRange = 1000000;
+                    isDailyWageSelected = false;
+                    isContractSelected = false;
+                    _labourSearchController.clear(); // Clear the search field
+                  });
+                },
+                child: Text(translate('Reset Filters', 'फ़िल्टर रीसेट करें'),
+                    style: const TextStyle(color: Colors.red)),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  final GoogleTranslator _translator = GoogleTranslator();
+
+  Map<String, Map<String, String>> _cachedTranslations = {};
+
+  Map<String, Map<String, String>> translations =
+      Constants.AppConstants.translations;
+  String _selectedLanguage = 'en'; // Default language is English
+
+  Future<void> loadLanguage() async {
+    // Read the selected language from FlutterSecureStorage
+    String? language = await _secureStorage.read(key: 'selectedLanguage');
+    _selectedLanguage = language ?? 'en';
+    print(language); // Default to English if null
+  }
+
+  Future<Map<String, Map<String, String>>> fetchTranslations() async {
+    try {
+      final response = await http.post(
+          Uri.parse('${Constants.AppConstants.apiUrl}farmer/getTranslations'));
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+
+        if (jsonData['status'] == 1) {
+          List<dynamic> data = jsonData['data'];
+
+          for (var item in data) {
+            String text = item['text'];
+            String lang = item['lang'];
+            String translation = item['translation'];
+
+            // ✅ Initialize default values if text is not in the map
+            if (!translations.containsKey(text)) {
+              translations[text] = {
+                "en": text,
+                "hi": text
+              }; // Default both to the same value
+            }
+
+            // ✅ Store the translation in the correct language
+            translations[text]![lang] = translation;
+          }
+
+          // ✅ Store fetched translations in the cache
+          _cachedTranslations = translations;
+
+          // ✅ Check for missing translations and fetch dynamically
+          for (var text in translations.keys) {
+            if (!translations[text]!.containsKey("hi")) {
+              _fetchTranslation(text, "hi");
+            }
+            if (!translations[text]!.containsKey("en")) {
+              _fetchTranslation(text, "en");
+            }
+          }
+
+          return translations;
+        } else {
+          throw Exception(
+              "Failed to load translations: ${jsonData['message']}");
+        }
+      } else {
+        throw Exception("API Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching translations: $e");
+      return {};
+    }
+  }
+
+  /// ✅ Main function to translate text
+  String translateText(String text) {
+    if (text.isEmpty) return "";
+
+    // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
+    String targetLang = _selectedLanguage ?? 'en'; // Default to English if null
+
+    // ✅ Check manual translations first
+    if (translations.containsKey(text) &&
+        translations[text]!.containsKey(targetLang)) {
+      return translations[text]![targetLang]!; // Return manual translation
+    }
+
+    // ✅ Check cached translations
+    if (_cachedTranslations.containsKey(text) &&
+        _cachedTranslations[text]!.containsKey(targetLang)) {
+      return _cachedTranslations[text]![
+          targetLang]!; // Return cached translation
+    }
+
+    // ✅ Fetch translation dynamically (but without `await`)
+    _fetchTranslation(text, targetLang); // Runs in background, no need to wait
+
+    return text; // Return original text while translation is being fetched
+  }
+
+  /// ✅ Fetch translation dynamically and update cache
+  Future<void> _fetchTranslation(String text, String targetLang) async {
+    try {
+      // ✅ Check if translation already exists in constants
+      if (Constants.AppConstants.translations.containsKey(text) &&
+          Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
+        return; // No need to fetch if it exists
+      }
+
+      // ✅ Fetch translation dynamically
+      final translation = await _translator.translate(text, to: targetLang);
+
+      // ✅ Initialize default values if text is not in the map
+      if (!translations.containsKey(text)) {
+        translations[text] = {
+          "en": text,
+          "hi": text
+        }; // Default to the same value
+      }
+
+      // ✅ Store the translation in the correct language
+      translations[text]![targetLang] = translation.text;
+
+      // ✅ Store fetched translations in the cache
+      _cachedTranslations = translations;
+
+      // ✅ Also store in the constants translations map
+      if (!Constants.AppConstants.translations.containsKey(text)) {
+        Constants.AppConstants.translations[text] = {};
+      }
+      Constants.AppConstants.translations[text]![targetLang] = translation.text;
+
+      // ✅ Check for missing translations and fetch dynamically
+      for (var key in translations.keys) {
+        if (!translations[key]!.containsKey("hi")) {
+          await _fetchTranslation(key, "hi");
+        }
+        if (!translations[key]!.containsKey("en")) {
+          await _fetchTranslation(key, "en");
+        }
+      }
+
+      // ✅ Store translation in cache
+      _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
+          translation.text;
+      setState(() {});
+    } catch (e) {
+      print("Translation error: $e");
+    }
+  }
+
+  Future<void> _applyFilters() async {
+    String? userId = await _secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID not found in secure storage')),
+      );
+      return;
+    }
+    Map<String, dynamic> filters = {
+      'id': userId,
+      'job_type': selectedJobType,
+      'category': selectedCategory,
+      'search': _labourSearchController.text,
+      'budget': selectedPriceRange.toInt(),
+      'dailyWage': isDailyWageSelected,
+      'contract': isContractSelected,
+    };
+
+    // Example API request to fetch filtered projects
+
+    fetchFilteredProjects(filters);
+  }
+
+  Future<void> fetchFilteredProjects(Map<String, dynamic> filters) async {
+    final String apiUrl =
+        '${Constants.AppConstants.apiUrl}labour/searchProjectsApi';
+    String? userId = await _secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID not found in secure storage')),
+      );
+      return;
+    }
+    print(jsonEncode(filters));
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(filters),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['status'] == 1) {
+          setState(() {
+            projects = responseBody['data'];
+            filteredProjects = projects;
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            projects = [];
+            filteredProjects = [];
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    responseBody['message'] ?? 'Failed to fetch projects')),
+          );
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Failed to fetch projects: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  TextEditingController _searchController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final language =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        // Assuming loadLanguage, fetchProjects, and fetchJobTypes are async functions.
+        await loadLanguage(); // Load the language (make sure it's an async function)
+        await fetchProjects(); // Fetch projects (make sure it's an async function)
+        await fetchJobTypes(); // Fetch job types (make sure it's an async function)
+
+        setState(() {
+          // If you need to update the UI state, you can do it here after all async tasks are done.
+        });
+      },
+      child: Scaffold(
+        backgroundColor: Constants.AppColors.surface,
+        body: SafeArea(
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            // decoration: const BoxDecoration(
+            //   gradient: LinearGradient(
+            //     begin: Alignment.topLeft,
+            //     end: Alignment.bottomRight,
+            //     colors: [
+            //       Color(0xFFA8D5BA), // Light green
+            //       Color(0xFF68A691), // Darker green
+            //     ],
+            //   ),
+            // ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.filter_list, color: Constants.AppColors.brand),
+                  onPressed: () => _showFilterDialog(),
+                ),
+                Expanded(
+                  child: isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : filteredProjects.isEmpty
+                          ? Center(
+                              child: Text(
+                                AppLocalizations.of(context)!.noProjectsFound,
+                                style: Constants.AppTypography.h3.copyWith(
+                                  color: Constants.AppColors.inkSoft,
+                                ),
+                              ),
+                            )
+                          : Scrollbar(
+                              controller: _scrollController,
+                              thumbVisibility: true,
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                itemCount: filteredProjects.length,
+                                itemBuilder: (context, index) {
+                                  final project = filteredProjects[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProjectDetailsPage(
+                                            projectId: project['id'],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 16),
+                                      decoration: BoxDecoration(
+                                        color: Constants.AppColors.card,
+                                        borderRadius: BorderRadius.circular(
+                                            Constants.AppRadii.xs),
+                                        border: Border.all(
+                                            color: Constants.AppColors.border,
+                                            width: 0.5),
+                                        boxShadow: const [
+                                          Constants.AppShadows.soft,
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    translateText(
+                                                          project['title']
+                                                                  ?.toString()
+                                                                  .toUpperCase() ??
+                                                              'No Title', // Assuming you have a language selection
+                                                        ) ??
+                                                        'No Title',
+                                                    style: Constants.AppTypography.h3,
+                                                    softWrap: true,
+                                                    overflow:
+                                                        TextOverflow.visible,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Farmer Name
+                                                Wrap(
+                                                  spacing:
+                                                      8.0, // Horizontal space between elements
+                                                  runSpacing:
+                                                      4.0, // Vertical space between lines of items
+                                                  children: [
+                                                    Text(
+                                                      '${translate('Farmer Name', 'किसान का नाम') ?? 'Farmer Name'}: ',
+                                                      style: Constants.AppTypography.label.copyWith(
+                                                          color: Constants.AppColors.ink),
+                                                    ),
+                                                    Text(
+                                                      translateText(project[
+                                                                  'farmer_name'] ??
+                                                              'N/A') ??
+                                                          'N/A',
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                // City, State, and Pincode in a row
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      AppLocalizations.of(
+                                                                  context)!
+                                                              .location +
+                                                          " : ",
+                                                      style:
+                                                          Constants.AppTypography.label,
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        "${translateText(project['city'] ?? 'N/A')} ${translateText(project['state'] ?? 'N/A')} ${project['pincode'] ?? 'N/A'}",
+                                                        style:
+                                                            Constants.AppTypography.body,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                 ),
+                                                //
+                                                // Project Type
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${translate('Project Type', 'प्रोजेक्ट प्रकार') ?? ''}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      translateText(project[
+                                                                  'project_type'] ??
+                                                              'N/A') ??
+                                                          'N/A',
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                // Labour Required
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${translate('Labour Required', 'मजदूरों की आवश्यकता') ?? ''}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      translateText(
+                                                              '${project['qty_labours'] ?? 'N/A'}') ??
+                                                          'N/A',
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                // Required Skills
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '${translate('Required Skills', 'आवश्यक कौशल') ?? ''}: ',
+                                                      style: Constants.AppTypography.label.copyWith(
+                                                          color: Constants.AppColors.ink),
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        translateText(project[
+                                                                    'required_skills'] ??
+                                                                'N/A') ??
+                                                            'N/A',
+                                                        softWrap: true,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                // Budget & Duration
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${translateText('Budget') ?? ''}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      "₹ " +
+                                                              translateText(
+                                                                '${project['budget'] ?? 'N/A'}',
+                                                              ) ??
+                                                          'N/A',
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Text(
+                                                      '${translateText(
+                                                            'Duration',
+                                                          ) ?? ''}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      translateText(
+                                                            '${project['days'] ?? 'N/A'}',
+                                                          ) ??
+                                                          'N/A',
+                                                    ),
+                                                  ],
+                                                ),
+                                                // Duration
+                                              ],
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Builder(
+                                                builder: (context) {
+                                                  String? appliedStatus =
+                                                      project['applyStatus']?.toString();
+                                                  if (appliedStatus == null) {
+                                                    return ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => ProjectDetailsPage(
+                                                              projectId: project['id'],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: Constants.AppColors.brand,
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          AppLocalizations.of(context)!.apply_now,
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  } else if (appliedStatus == "0") {
+                                                    return ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => ProjectDetailsPage(
+                                                              projectId: project['id'],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: Constants.AppColors.brand,
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          AppLocalizations.of(context)!.applied,
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  } else if (appliedStatus == "1") {
+                                                    return ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => ProjectDetailsPage(
+                                                              projectId: project['id'],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: Constants.AppColors.brand,
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          AppLocalizations.of(context)!.assigned,
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  } else if (appliedStatus == "2") {
+                                                    return Row(
+                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                      children: [
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(2.0),
+                                                          child: ElevatedButton(
+                                                            onPressed: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (context) => ProjectDetailsPage(
+                                                                    projectId: project['id'],
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                            style: ElevatedButton.styleFrom(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                              minimumSize: const Size(0, 0),
+                                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                              ),
+                                                              backgroundColor: Constants.AppColors.brand,
+                                                              elevation: 0,
+                                                            ),
+                                                            child: Column(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Text(
+                                                                    AppLocalizations.of(context)!.workStarted,
+                                                                    style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                                Text(
+                                                                    '${project['startdate']} ',
+                                                                    style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        if (project['cancel_confirm'] == "1")
+                                                          Padding(
+                                                            padding: const EdgeInsets.all(2.0),
+                                                            child: ElevatedButton(
+                                                              onPressed: () {},
+                                                              style: ElevatedButton.styleFrom(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                                                minimumSize: const Size(0, 0),
+                                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                                ),
+                                                                backgroundColor: Constants.AppColors.amberNotice,
+                                                                elevation: 0,
+                                                              ),
+                                                              child: Text(
+                                                                  AppLocalizations.of(context)!.cancelledRequested,
+                                                                  style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                            ),
+                                                          ),
+                                                        if (project['complete_confirm'] == "1")
+                                                          Padding(
+                                                            padding: const EdgeInsets.all(2.0),
+                                                            child: ElevatedButton(
+                                                              onPressed: () {},
+                                                              style: ElevatedButton.styleFrom(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                                minimumSize: const Size(0, 0),
+                                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                                ),
+                                                                backgroundColor: Constants.AppColors.brand,
+                                                                elevation: 0,
+                                                              ),
+                                                              child: Column(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Text(AppLocalizations.of(context)!.completedRequested,
+                                                                      style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                                  Text('${project['completedate']}',
+                                                                      style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    );
+                                                  } else if (appliedStatus == "3") {
+                                                    return ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: Constants.AppColors.brand,
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          translateText(
+                                                              '${AppLocalizations.of(context)!.completed} ${project['completedate']}'),
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  } else {
+                                                    return ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: const Color.fromARGB(255, 91, 20, 15),
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          AppLocalizations.of(context)!.cancelled,
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MilestoneService {
+  static const String _baseUrl =
+      '${Constants.AppConstants.apiUrl}labour/milestoneComplete'; // Update with your actual API URL
+
+  // Function to send milestone completion request
+  static Future<Map<String, dynamic>> completeMilestone({
+    required int projectId,
+    required String milestoneSno,
+    required int labourId,
+  }) async {
+    final Uri url = Uri.parse(_baseUrl);
+
+    try {
+      // Prepare the request payload
+      final Map<String, dynamic> payload = {
+        "projectid": projectId,
+        "milestonesno": milestoneSno,
+        "id": labourId,
+      };
+      print(jsonEncode(payload));
+      // Send the POST request
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: jsonEncode(payload),
+      );
+
+      // Check the response status
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody = json.decode(response.body);
+        return responseBody;
+      } else {
+        // Handle non-200 status codes
+        return {
+          "status": "0",
+          "message":
+              "Failed to complete milestone. Status Code: ${response.statusCode}"
+        };
+      }
+    } catch (e) {
+      // Handle exceptions
+      return {"status": "0", "message": "An error occurred: $e"};
+    }
+  }
+}
+
+class ProjectDetailsPage extends StatefulWidget {
+  final int projectId;
+  final _secureStorage = const FlutterSecureStorage();
+
+  const ProjectDetailsPage({Key? key, required this.projectId})
+      : super(key: key);
+
+  @override
+  _ProjectDetailsPageState createState() => _ProjectDetailsPageState();
+}
+
+class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
+  late Future<Map<String, dynamic>> projectDetails;
+  late Map<String, dynamic> project;
+  bool isLoading = true;
+  late TextEditingController _commentController;
+  late TextEditingController _payController;
+  String? selectedEstimateDays;
+  final ScrollController _milestoneScrollController = ScrollController();
+
+  // Valid values for the Estimated Days dropdown
+  static const List<String> _validEstimateDays = [
+    '1 day',
+    '2 days',
+    '3-7 days',
+    '8-15 days',
+    '15-1 month',
+    '1-3 months',
+    '3-6 months',
+    '6 months-1 year',
+    '>1 year',
+  ];
+
+  String? _normalizeEstimateDays(dynamic val) {
+    if (val == null) return null;
+    String sVal = val.toString().trim();
+    if (sVal == '1' || sVal == '1 day') return '1 day';
+    if (sVal == '2' || sVal == '2 days') return '2 days';
+    if (sVal == '3-7 days') return '3-7 days';
+    if (sVal == '8-15 days') return '8-15 days';
+    if (sVal == '15-1 month') return '15-1 month';
+    if (sVal == '1-3 months') return '1-3 months';
+    if (sVal == '3-6 months') return '3-6 months';
+    if (sVal == '6 months-1 year') return '6 months-1 year';
+    if (sVal == '>1 year') return '>1 year';
+    
+    // If it's a number, map it to the range
+    int? daysInt = int.tryParse(sVal);
+    if (daysInt != null) {
+      if (daysInt == 1) return '1 day';
+      if (daysInt == 2) return '2 days';
+      if (daysInt >= 3 && daysInt <= 7) return '3-7 days';
+      if (daysInt >= 8 && daysInt <= 15) return '8-15 days';
+      if (daysInt > 15 && daysInt <= 30) return '15-1 month';
+      if (daysInt > 30 && daysInt <= 90) return '1-3 months';
+      if (daysInt > 90 && daysInt <= 180) return '3-6 months';
+      if (daysInt > 180 && daysInt <= 365) return '6 months-1 year';
+      if (daysInt > 365) return '>1 year';
+    }
+    return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadLanguage();
+    _commentController = TextEditingController();
+    _payController = TextEditingController();
+
+    projectDetails = fetchProjectDetails(context, widget.projectId);
+
+    projectDetails.then((data) {
+      setState(() {
+        project = data;
+        isLoading = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    _milestoneScrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> confirmcancel(BuildContext context, int projectId) async {
+    final String apiUrl =
+        '${Constants.AppConstants.apiUrl}labour/confirmcancel';
+
+    // Get user ID from secure storage
+    String? userId = await widget._secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(translate('User ID not found in secure storage',
+                'सुरक्षित भंडारण में उपयोगकर्ता आईडी नहीं मिली'))),
+      );
+      return;
+    }
+
+    final Map<String, dynamic> requestBody = {
+      'projectid': projectId,
+      'labourid': userId,
+    };
+
+    try {
+      print(jsonEncode(requestBody));
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['status'] == '1') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(translate('Job Cancelled successfully!',
+                    'काम सफलतापूर्वक रद्द कर दिया गया!'))),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseBody['message'] ??
+                  translate('Failed to cancel work', 'काम रद्द करने में विफल')),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  translate('Failed to cancel work', 'काम रद्द करने में विफल') +
+                      ': ${response.body}')),
+        );
+      }
+    } catch (e) {
+      // Handle exceptions here if needed
+    }
+  }
+
+  void handleMilestoneCompletion(BuildContext context, String milestone) async {
+    // Retrieve user ID from secure storage
+    String? userId = await widget._secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(translate('User ID not found in secure storage',
+              'सुरक्षित भंडारण में उपयोगकर्ता आईडी नहीं मिली')),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Prepare parameters
+    int projectId = widget.projectId;
+    String milestoneSno =
+        milestone; // Convert milestone to int, default to 1 if invalid
+    int labourId = int.parse(userId);
+
+    // Call the milestone completion API
+    final result = await MilestoneService.completeMilestone(
+      projectId: projectId,
+      milestoneSno: milestoneSno,
+      labourId: labourId,
+    );
+
+    // Show the result in a SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(result['message'] ??
+            translate('Unknown response', 'अज्ञात प्रतिक्रिया')),
+        backgroundColor: result['status'] == "1" ? Colors.green : Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  Future<void> startWork(
+      BuildContext context, int projectId, Map<String, dynamic> project) async {
+    // Determine the correct endpoint based on payment type
+    final String apiUrl = '${Constants.AppConstants.apiUrl}labour/'
+        '${project['payment_type'] == "1" ? "milestoneprojectworkstart" : "projectworkstart"}';
+    print(apiUrl);
+
+    // Get user ID from secure storage
+    String? userId = await widget._secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(translate('User ID not found in secure storage',
+                'सुरक्षित भंडारण में उपयोगकर्ता आईडी नहीं मिली'))),
+      );
+      return;
+    }
+
+    // Prepare request body with corrected parameter names
+    final Map<String, dynamic> requestBody = {
+      'projectid': projectId,
+      'labourid': userId, // Corrected from 'labourid' to 'id'
+    };
+
+    try {
+      print('Request Body: ${jsonEncode(requestBody)}');
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        Fluttertoast.showToast(
+          msg: translate('You have successfully started this job.',
+              'आपने इस नौकरी को सफलतापूर्वक शुरू किया है।'),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Constants.AppColors.brand,
+          textColor: Constants.AppColors.card,
+          fontSize: 16.0,
+        );
+
+        bool isSuccess = responseBody['status'] == '1';
+
+        // Navigate to homepage if successful
+        if (isSuccess) {
+          await Future.delayed(const Duration(seconds: 1));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Labourhomepage()),
+          );
+        }
+      } else {
+        // Handle HTTP errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  translate('Failed to start work', 'काम शुरू करने में विफल'))),
+        );
+      }
+    } catch (e) {
+      // Handle network or unexpected errors
+    }
+  }
+
+  String translate(String enText, String hiText) {
+    // Get the selected language from the provider
+    final language =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+
+    // Return the appropriate text based on the selected language
+    return language == 'en' ? enText : hiText;
+  }
+
+  List<Map<String, dynamic>> milestones = [];
+
+  Future<Map<String, dynamic>> fetchProjectDetails(
+      BuildContext context, int projectId) async {
+    final String apiUrl =
+        '${Constants.AppConstants.apiUrl}labour/projectDetailByLabour';
+
+    try {
+      // Retrieve user ID from secure storage
+      String? userId = await widget._secureStorage.read(key: 'id');
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User ID not found in secure storage')),
+        );
+        throw Exception('User ID not found.');
+      }
+
+      // Create the request body
+      final Map<String, dynamic> requestBody = {
+        'id': userId,
+        'project_id': projectId,
+      };
+
+      print(jsonEncode(requestBody)); // Debugging output
+
+      // Send the POST request
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      // Parse the response
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+
+        if (responseBody['status'] == 1 && responseBody['data'] is List) {
+          final data = responseBody['data'];
+
+          if (data.isNotEmpty) {
+            final project = data[0];
+
+            _commentController.text =
+                project['comment'] ?? ''; // Set project description as comment
+            selectedEstimateDays = _normalizeEstimateDays(project['wpay'] ?? project['days']);
+            _payController.text = project['praposal_amount'] ?? '';
+            setState(() {
+              if (project['applyStatus'] != null) {
+                print(project['pmilestones']);
+                milestones = project['pmilestones'] is String
+                    ? List<Map<String, dynamic>>.from(
+                        jsonDecode(project['pmilestones']))
+                    : [];
+              } else {
+                milestones = project['milestones'] is String
+                    ? List<Map<String, dynamic>>.from(
+                        jsonDecode(project['milestones']))
+                    : [];
+              } // Get the first project
+              _commentController.text = project['comment'] ?? '';
+
+              selectedEstimateDays = _normalizeEstimateDays(project['wpay'] ?? project['days']);
+              print(selectedEstimateDays);
+              _payController.text = project['praposal_amount'] ?? '';
+            });
+            return project;
+          } else {
+            throw Exception('No project data available.');
+          }
+        } else {
+          throw Exception(responseBody['message'] ?? 'Failed to fetch details');
+        }
+      } else {
+        throw Exception('Failed to fetch details: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('An error occurred: $e');
+    }
+  }
+
+  bool _isButtonDisabled =
+      false; // Flag to control button's enabled/disabled state
+
+  Future<void> applyToProject(BuildContext context, int projectId) async {
+    final String apiUrl = '${Constants.AppConstants.apiUrl}labour/projectApply';
+
+    // Validate if all milestones have the necessary data
+    for (var milestone in milestones) {
+      // Check if 'amount' is missing or invalid
+      if (milestone['proposalamount'] == null ||
+          milestone['proposalamount'] <= 0) {
+        Fluttertoast.showToast(
+          msg: translate('Please fill in the amount for all milestones.',
+              'कृपया सभी माइलस्टोन के लिए राशि भरें'),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red.shade700,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        return; // Exit early if validation fails
+      }
+
+      // Check if 'duration' is missing or invalid
+      if (milestone['duration'] == null || milestone['duration'] <= 0) {
+        Fluttertoast.showToast(
+          msg: translate('Please fill in the duration for all milestones.',
+              'कृपया सभी माइलस्टोन के लिए अवधि भरें'),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red.shade700,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        return; // Exit early if validation fails
+      }
+    }
+
+    // Get user ID from secure storage
+    String? userId = await widget._secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(translate('User ID not found in secure storage',
+              'यूज़र आईडी सुरक्षित भंडारण में नहीं मिली')),
+        ),
+      );
+      return;
+    }
+
+    final Map<String, dynamic> requestBody = {
+      'labourid': userId,
+      'projectid': projectId,
+      'comment': _commentController.text,
+      'pamount': _payController.text,
+      'wday': selectedEstimateDays,
+      'milestones': milestones,
+    };
+
+    // Disable the button before submitting the form
+    setState(() {
+      _isButtonDisabled = true;
+    });
+
+    try {
+      print(jsonEncode(requestBody));
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['status'] == "1") {
+          Fluttertoast.showToast(
+            msg: translate(
+                'Applied successfully!', 'सफलतापूर्वक लागू किया गया!'),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Constants.AppColors.brand,
+            textColor: Constants.AppColors.card,
+            fontSize: 16.0,
+          );
+
+          Future.delayed(Duration(seconds: 1), () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Labourhomepage(),
+              ),
+            );
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(translate(
+                  responseBody['message'] ?? 'Failed to apply',
+                  responseBody['message'] ?? 'आवेदन विफल हुआ')),
+            ),
+          );
+        }
+      } else {
+        String errorMessage = 'Failed to apply';
+        String errorMessageHi = 'आवेदन विफल हुआ';
+        try {
+          final decoded = json.decode(response.body);
+          if (decoded is Map<String, dynamic>) {
+            if (decoded.containsKey('errors') && decoded['errors'] is Map) {
+              final errorsMap = decoded['errors'] as Map<String, dynamic>;
+              List<String> allErrors = [];
+              errorsMap.forEach((key, value) {
+                if (value is List) {
+                  allErrors.addAll(value.map((e) => e.toString()));
+                } else {
+                  allErrors.add(value.toString());
+                }
+              });
+              if (allErrors.isNotEmpty) {
+                errorMessage = allErrors.join(', ');
+                errorMessageHi = errorMessage;
+              }
+            } else if (decoded.containsKey('message')) {
+              errorMessage = decoded['message'].toString();
+              errorMessageHi = errorMessage;
+            }
+          }
+        } catch (e) {
+          String bodyText = response.body.length > 100 ? response.body.substring(0, 100) + "..." : response.body;
+          errorMessage = 'Failed to apply: $bodyText';
+          errorMessageHi = 'आवेदन विफल हुआ: $bodyText';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(translate(errorMessage, errorMessageHi)),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text(translate('An error occurred: $e', 'एक त्रुटि हुई: $e')),
+        ),
+      );
+    } finally {
+      // Re-enable the button after the response is received
+      setState(() {
+        _isButtonDisabled = false;
+      });
+    }
+  }
+
+  Future<void> completework(BuildContext context, int projectId) async {
+    final String apiUrl =
+        '${Constants.AppConstants.apiUrl}labour/projectcomplete';
+
+    // Get user ID from secure storage
+    String? userId = await widget._secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(translate('User ID not found in secure storage',
+                'यूज़र आईडी सुरक्षित भंडारण में नहीं मिली'))),
+      );
+      return;
+    }
+
+    // Show a dialog to input remark
+    TextEditingController _dialogRemarkController = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(translate('Enter remark', 'टिप्पणी दर्ज करें')),
+          content: TextField(
+            controller: _dialogRemarkController,
+            decoration:
+                InputDecoration(
+                  hintText: translate('Remark', 'टिप्पणी'),
+                  suffixIcon: MicIconButton(controller: _dialogRemarkController),
+                ),
+            maxLines: 3, // Allow multiple lines
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(translate('Cancel', 'रद्द करें')),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(translate('Submit', 'सबमिट करें')),
+              onPressed: () async {
+                String remark = _dialogRemarkController.text.trim();
+                if (remark.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(translate('Remark cannot be empty',
+                          'टिप्पणी खाली नहीं हो सकती')),
+                    ),
+                  );
+                  return;
+                }
+                Navigator.of(context).pop(); // Close the dialog
+                await _sendCompleteRequest(context, projectId, userId, remark);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _sendCompleteRequest(
+      BuildContext context, int projectId, String userId, String remark) async {
+    final Map<String, dynamic> requestBody = {
+      'projectid': projectId,
+      'labourid': userId,
+      'completeremark': remark, // Include remark in the request
+    };
+
+    try {
+      print(jsonEncode(requestBody));
+      final response = await http.post(
+        Uri.parse('${Constants.AppConstants.apiUrl}labour/projectcomplete'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['status'] == '1') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Labourhomepage(),
+            ),
+          );
+          Fluttertoast.showToast(
+            msg: translate('Job Complete Request Sent Successfully!',
+                'काम पूरा करने का अनुरोध सफलतापूर्वक भेजा गया!'),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Constants.AppColors.brand,
+            textColor: Constants.AppColors.card,
+            fontSize: 16.0,
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseBody['message'] ??
+                  translate('Failed to Complete Request Sent',
+                      'काम पूरा करने का अनुरोध भेजने में विफल')),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(translate(
+                  'Failed to start work:', 'काम शुरू करने में विफल:'))),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(translate('An error occurred.', 'एक त्रुटि हुई।'))),
+      );
+    }
+  }
+
+  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  final GoogleTranslator _translator = GoogleTranslator();
+  Map<String, Map<String, String>> _cachedTranslations = {};
+
+  Map<String, Map<String, String>> translations =
+      Constants.AppConstants.translations;
+  String _selectedLanguage = 'en'; // Default language is English
+
+  Future<void> downloadTranslations() async {
+    try {
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        await Permission.storage.request();
+      }
+
+      // Specify the destination path
+      final destinationPath = '/storage/emulated/0/Download/Invoice';
+      final destinationDir = Directory(destinationPath);
+
+      // Ensure the destination directory exists
+      await destinationDir.create(recursive: true);
+
+      // ✅ Define the folder inside the directory
+      final folderPath = '${destinationDir.path}/Appointment_Details';
+      final folder = Directory(folderPath);
+
+      // ✅ Create folder if it doesn't exist
+      if (!await folder.exists()) {
+        await folder.create(recursive: true);
+      }
+
+      // ✅ Define file path
+      final filePath = '$folderPath/translations.txt';
+      final file = File(filePath);
+
+      // ✅ Convert translations Map to readable text format
+      StringBuffer buffer = StringBuffer();
+      translations.forEach((key, value) {
+        buffer.writeln("$key: ${value.toString()}");
+      });
+
+      // ✅ Write to file
+      await file.writeAsString(buffer.toString());
+
+      // ✅ Print full file path
+      print("✅ Translations saved at: ${file.absolute.path}");
+    } catch (e) {
+      print("❌ Error saving translations: $e");
+    }
+  }
+
+  Future<void> loadLanguage() async {
+    // Read the selected language from FlutterSecureStorage
+    String? language = await _secureStorage.read(key: 'selectedLanguage');
+    _selectedLanguage = language ?? 'en';
+    print(language); // Default to English if null
+  }
+
+  Future<Map<String, Map<String, String>>> fetchTranslations() async {
+    try {
+      final response = await http.post(
+          Uri.parse('${Constants.AppConstants.apiUrl}farmer/getTranslations'));
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+
+        if (jsonData['status'] == 1) {
+          List<dynamic> data = jsonData['data'];
+
+          for (var item in data) {
+            String text = item['text'];
+            String lang = item['lang'];
+            String translation = item['translation'];
+
+            // ✅ Initialize default values if text is not in the map
+            if (!translations.containsKey(text)) {
+              translations[text] = {
+                "en": text,
+                "hi": text
+              }; // Default both to the same value
+            }
+
+            // ✅ Store the translation in the correct language
+            translations[text]![lang] = translation;
+          }
+
+          // ✅ Store fetched translations in the cache
+          _cachedTranslations = translations;
+
+          // ✅ Check for missing translations and fetch dynamically
+          for (var text in translations.keys) {
+            if (!translations[text]!.containsKey("hi")) {
+              _fetchTranslation(text, "hi");
+            }
+            if (!translations[text]!.containsKey("en")) {
+              _fetchTranslation(text, "en");
+            }
+          }
+
+          return translations;
+        } else {
+          throw Exception(
+              "Failed to load translations: ${jsonData['message']}");
+        }
+      } else {
+        throw Exception("API Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching translations: $e");
+      return {};
+    }
+  }
+
+  /// ✅ Main function to translate text
+  String translateText(String text) {
+    if (text.isEmpty) return "";
+
+    // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
+    String targetLang = _selectedLanguage ?? 'en'; // Default to English if null
+
+    // ✅ Check manual translations first
+    if (translations.containsKey(text) &&
+        translations[text]!.containsKey(targetLang)) {
+      return translations[text]![targetLang]!; // Return manual translation
+    }
+
+    // ✅ Check cached translations
+    if (_cachedTranslations.containsKey(text) &&
+        _cachedTranslations[text]!.containsKey(targetLang)) {
+      return _cachedTranslations[text]![
+          targetLang]!; // Return cached translation
+    }
+
+    // ✅ Fetch translation dynamically (but without `await`)
+    _fetchTranslation(text, targetLang); // Runs in background, no need to wait
+
+    return text; // Return original text while translation is being fetched
+  }
+
+  /// ✅ Fetch translation dynamically and update cache
+  Future<void> _fetchTranslation(String text, String targetLang) async {
+    try {
+      // ✅ Check if translation already exists in constants
+      if (Constants.AppConstants.translations.containsKey(text) &&
+          Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
+        return; // No need to fetch if it exists
+      }
+
+      // ✅ Fetch translation dynamically
+      final translation = await _translator.translate(text, to: targetLang);
+
+      // ✅ Initialize default values if text is not in the map
+      if (!translations.containsKey(text)) {
+        translations[text] = {
+          "en": text,
+          "hi": text
+        }; // Default to the same value
+      }
+
+      // ✅ Store the translation in the correct language
+      translations[text]![targetLang] = translation.text;
+
+      // ✅ Store fetched translations in the cache
+      _cachedTranslations = translations;
+
+      // ✅ Also store in the constants translations map
+      if (!Constants.AppConstants.translations.containsKey(text)) {
+        Constants.AppConstants.translations[text] = {};
+      }
+      Constants.AppConstants.translations[text]![targetLang] = translation.text;
+
+      // ✅ Check for missing translations and fetch dynamically
+      for (var key in translations.keys) {
+        if (!translations[key]!.containsKey("hi")) {
+          await _fetchTranslation(key, "hi");
+        }
+        if (!translations[key]!.containsKey("en")) {
+          await _fetchTranslation(key, "en");
+        }
+      }
+
+      // ✅ Store translation in cache
+      _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
+          translation.text;
+      setState(() {});
+    } catch (e) {
+      print("Translation error: $e");
+    }
+  }
+
+  double _rating = 1.0;
+  TextEditingController _remarksController = TextEditingController();
+  Future<void> _submitReview() async {
+    const String _baseUrl =
+        '${Constants.AppConstants.apiUrl}farmer/reviewForFarmer'; // Update with your actual API URL
+    print(_baseUrl);
+    print(project);
+    // Prepare the request body
+    final Map<String, dynamic> requestBody = {
+      'projectid': project['id'].toString(),
+      'labourid': project['labourId'].toString(),
+      'rating': _rating,
+      'review': _remarksController.text,
+    };
+
+    print(
+      jsonEncode(requestBody),
+    );
+
+    try {
+      final response = await http.post(
+        Uri.parse(_baseUrl), // Replace with your API URL
+        body: jsonEncode(requestBody),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Handle the response
+        final responseData = jsonDecode(response.body);
+        if (responseData['status'] == "1") {
+          Fluttertoast.showToast(
+            msg: translate('Review submitted successfully!',
+                'समीक्षा सफलतापूर्वक प्रस्तुत की गई!'),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Constants.AppColors.brand,
+            textColor: Constants.AppColors.card,
+            fontSize: 16.0,
+          );
+        } else {
+          // Show failure message in the appropriate language
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+              translate('Failed to submit review.',
+                  'समीक्षा प्रस्तुत करने में विफल।'), // Use custom translate function
+            )),
+          );
+        }
+      } else {
+        // Error with response
+      }
+    } catch (e) {
+      // Network or other failure
+    }
+  }
+
+  void _showReviewDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, setState) {
+            return AlertDialog(
+              title:
+                  Text(translate('Review', 'समीक्षा')), // Title of the dialog
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Star rating input using Row (star buttons)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(5, (index) {
+                      return IconButton(
+                        icon: Icon(
+                          index < _rating ? Icons.star : Icons.star_border,
+                          color: const Color.fromARGB(255, 66, 60, 4),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _rating = index + 1.0; // Update the rating value
+                          });
+                        },
+                      );
+                    }),
+                  ),
+                  // Remarks input (text field)
+                  TextField(
+                    controller: _remarksController,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      hintText: translate('Write a Review For Worker',
+                          'मजदूर के लिए समीक्षा लिखें'), // Hint text for the review input
+                      border: OutlineInputBorder(),
+                      suffixIcon: MicIconButton(controller: _remarksController),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: Text(
+                      translate('Cancel', 'रद्द करें')), // Cancel button text
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _submitReview(); // Call submit review after dialog is closed
+                  },
+                  child: Text(
+                      translate('Submit', 'सबमिट करें')), // Submit button text
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  final _formKey = GlobalKey<FormState>();
+
+  Widget _buildActionButton(Map<String, dynamic> project) {
+    final applyStatus = project['applyStatus'];
+    final cancelConfirm = project['cancel_confirm'];
+    final completeConfirm = project['complete_confirm'];
+
+    if (applyStatus == "1") {
+      // Show Start Work button if project is assigned and not started
+      return ElevatedButton(
+        onPressed: () => startWork(context, project['id'], project),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(Constants.AppRadii.xs),
+            ),
+          ),
+          backgroundColor: Constants.AppColors.brand,
+          foregroundColor: Constants.AppColors.card,
+          elevation: 0,
+        ),
+        child: Text(
+          AppLocalizations.of(context)!.workStart,
+          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+        ),
+      );
+    } else if (applyStatus == "0") {
+      // Completed
+      return ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(Constants.AppRadii.xs),
+            ),
+          ),
+          backgroundColor: Constants.AppColors.brand,
+          foregroundColor: Constants.AppColors.card,
+          elevation: 0,
+        ),
+        child: Text(
+          AppLocalizations.of(context)!.applied,
+          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+        ),
+      );
+    } else if (applyStatus == "2") {
+      // In progress
+      if (cancelConfirm == "1") {
+        // Farmer sent cancel request and it is confirmed
+        return ElevatedButton(
+          onPressed: () => confirmcancel(context, project['id']),
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(Constants.AppRadii.xs),
+              ),
+            ),
+            backgroundColor: const Color.fromARGB(255, 143, 24, 16),
+            foregroundColor: Constants.AppColors.card,
+            elevation: 0,
+          ),
+          child: Text(
+            translateText('Confirm Cancelled'),
+            style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+          ),
+        );
+      } else if (completeConfirm == "1") {
+        // Complete request has been confirmed
+        return ElevatedButton(
+          onPressed: () {
+            // Project is complete, no action needed
+          },
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(Constants.AppRadii.xs),
+              ),
+            ),
+            backgroundColor: Constants.AppColors.brand,
+            foregroundColor: Constants.AppColors.card,
+            elevation: 0,
+          ),
+          child: Text(
+            translateText('Request For Complete'),
+            style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+          ),
+        );
+      } else {
+        // Project is in progress, but complete request is not confirmed
+        return ElevatedButton(
+          onPressed: () => completework(context, project['id']),
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(Constants.AppRadii.xs),
+              ),
+            ),
+            backgroundColor: Constants.AppColors.brand,
+            foregroundColor: Constants.AppColors.card,
+            elevation: 0,
+          ),
+          child: Text(
+            translateText('Complete Work'),
+            style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+          ),
+        );
+      }
+    } else if (applyStatus == "3") {
+      // Completed
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          ElevatedButton(
+            onPressed: _showReviewDialog,
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(Constants.AppRadii.xs),
+                ),
+              ),
+              backgroundColor: Constants.AppColors.brand,
+              foregroundColor: Constants.AppColors.card,
+              elevation: 0,
+            ),
+            child: Text(
+              translate('Review', "समीक्षा"),
+              style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(Constants.AppRadii.xs),
+                ),
+              ),
+              backgroundColor: Constants.AppColors.brand,
+              foregroundColor: Constants.AppColors.card,
+              elevation: 0,
+            ),
+            child: Text(
+              translateText('Completed'),
+              style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+            ),
+          ),
+        ],
+      );
+    } else if (applyStatus == "4") {
+      // Completed
+      return ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(Constants.AppRadii.xs),
+            ),
+          ),
+          backgroundColor: const Color.fromARGB(255, 85, 31, 33),
+          foregroundColor: Constants.AppColors.card,
+          elevation: 0,
+        ),
+        child: Text(
+          translateText('Cancelled'),
+          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+        ),
+      );
+    } else if (applyStatus == null) {
+      // Applied but not assigned yet
+      return ElevatedButton(
+        onPressed: _isButtonDisabled
+            ? null // Disable the button if _isButtonDisabled is true
+            : () async {
+                if (_formKey.currentState?.validate() ?? false) {
+                  // Proceed if form is valid
+                  await applyToProject(
+                      context, project['id']); // Pass the projectId
+                } else {
+                  // Show an error if validation fails
+                  print('Form is invalid');
+                }
+              },
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(Constants.AppRadii.xs),
+            ),
+          ),
+          backgroundColor: Constants.AppColors.brand,
+          foregroundColor: Constants.AppColors.card,
+          elevation: 0,
+        ),
+        child: Text(
+          translateText('Apply Now'),
+          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+        ),
+      );
+    } else {
+      // Cancelled
+      return ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(Constants.AppRadii.xs),
+            ),
+          ),
+          backgroundColor: const Color.fromARGB(255, 80, 27, 23),
+          foregroundColor: Constants.AppColors.card,
+          elevation: 0,
+        ),
+        child: Text(
+          translateText('Cancelled'),
+          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Function to show the add milestone dialog
+    void showAddMilestoneDialog() {
+      final descriptionController = TextEditingController();
+      final amountController = TextEditingController();
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Add Milestone'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(
+                    labelText: 'Milestone Description',
+                    hintText: 'Enter milestone description',
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: amountController,
+                  decoration: InputDecoration(
+                    labelText: 'Amount',
+                    hintText: 'Enter milestone amount',
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Add the new milestone if inputs are valid
+                  if (descriptionController.text.isNotEmpty &&
+                      amountController.text.isNotEmpty) {
+                    setState(() {
+                      milestones.add({
+                        'description': descriptionController.text,
+                        'amount': double.tryParse(amountController.text) ?? 0.0,
+                      });
+                    });
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text('Add'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    // Function to show the edit milestone dialog
+    void showEditMilestoneDialog(int index, BuildContext context) {
+      final descriptionController =
+          TextEditingController(text: milestones[index]['description']);
+      String sno = milestones[index]['sno'].toString();
+      final amountController =
+          TextEditingController(text: milestones[index]['amount'].toString());
+      final durationController = TextEditingController(
+        text: milestones[index]['duration'] != null
+            ? milestones[index]['duration'].toString()
+            : '',
+      );
+      final praposalController = TextEditingController(
+        text: milestones[index]['proposalamount'] != null
+            ? milestones[index]['proposalamount'].toString()
+            : '',
+      );
+
+      // Fetch the current language setting
+      final language = Provider.of<LanguageProvider>(context, listen: false)
+          .selectedLanguage;
+
+      // Translation function (assumes you have 'translate' function implemented)
+      String translate(String enText, String hiText) {
+        return language == 'en' ? enText : hiText;
+      }
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(translate('Edit Milestone', 'माइलस्टोन संपादित करें')),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(
+                    labelText:
+                        translate('Milestone Description', 'माइलस्टोन विवरण'),
+                    hintText: translate('Edit milestone description',
+                        'माइलस्टोन विवरण संपादित करें'),
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: amountController,
+                  decoration: InputDecoration(
+                    labelText: translate('Amount', 'राशि'),
+                    hintText: translate(
+                        'Edit milestone amount', 'माइलस्टोन राशि संपादित करें'),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: durationController,
+                  decoration: InputDecoration(
+                    labelText: translate('Duration', 'अवधि'),
+                    hintText: translate('Enter Duration', 'अवधि दर्ज करें'),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: praposalController,
+                  decoration: InputDecoration(
+                    labelText: translate('Proposal Amount', 'प्रस्ताव राशि'),
+                    hintText: translate(
+                        'Enter Proposal amount', 'प्रस्ताव राशि दर्ज करें'),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(translate('Cancel', 'रद्द करें')),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Update the milestone if inputs are valid
+                  if (descriptionController.text.isNotEmpty &&
+                      amountController.text.isNotEmpty) {
+                    setState(() {
+                      // Update the milestone
+                      milestones[index] = {
+                        'sno': sno,
+                        'description': descriptionController.text,
+                        'amount': double.tryParse(amountController.text) ?? 0.0,
+                        'proposalamount':
+                            double.tryParse(praposalController.text) ?? 0.0,
+                        'duration': int.tryParse(durationController.text) ?? 0,
+                        'startdate':
+                            '', // Placeholder - consider using a proper date
+                        'completedate':
+                            '', // Placeholder - consider using a proper date
+                        'status':
+                            '0', // Ensure it's stored as a string if needed
+                        'paymentstatus': '0', // Same here
+                      };
+
+                      // Update the payController with the sum of proposalamounts
+                      double totalProposalAmount =
+                          milestones.fold(0.0, (sum, milestone) {
+                        return sum + (milestone['proposalamount'] ?? 0.0);
+                      });
+                      _payController.text = totalProposalAmount.toString();
+
+                      // Update the wdayController with the sum of durations
+                      int totalDuration =
+                          milestones.fold<int>(0, (sum, milestone) {
+                        return (sum + (milestone['duration'] ?? 0))
+                            .toInt(); // Cast the result to int
+                      });
+                    });
+
+                    print(milestones);
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text(translate('Save', 'सहेजें')),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    // Function to delete a milestone
+    final language =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+
+    // Translation function (assumes you have 'translate' function implemented)
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    return Scaffold(
+      backgroundColor: Constants.AppColors.surface,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Constants.AppColors.card),
+        title: Text(
+          AppLocalizations.of(context)!.projectDetails,
+          style: Constants.AppTypography.h3.copyWith(color: Constants.AppColors.card),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: Constants.AppColors.brandGradient,
+          ),
+        ),
+        backgroundColor: Constants.AppColors.brand,
+        elevation: 0,
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey, // Associate the form key with the form
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        translateText('${project['title'] ?? 'N/A'}'),
+                        style: Constants.AppTypography.h2.copyWith(
+                          color: Constants.AppColors.brand,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translate('Posted By', 'द्वारा पोस्ट किया गया')}: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Constants.AppColors.ink),
+                                ),
+                                Text(
+                                  translateText(
+                                          project['farmer_name'].toString() ??
+                                              'N/A') ??
+                                      'N/A',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.normal),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translate('Posted On', 'पोस्ट किया गया')}: ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Constants.AppColors.ink,
+                                  ),
+                                ),
+                                Text(
+                                  translateText(
+                                          project['time_elapsed'] ?? 'N/A') ??
+                                      'N/A',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translateText('Budget')}: ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '${translateText(project['budget'].toString()) ?? 'N/A'} ₹',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: Constants.AppColors.ink,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translateText('Address')}: ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  translateText(project['address'] ?? 'N/A') ??
+                                      'N/A',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translateText('Duration')}: ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  translateText(project['days'] ?? 'N/A') ??
+                                      'N/A',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translate('Location', 'स्थान') ?? ''}: ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '${translateText(project['city'] ?? 'N/A')}' +
+                                      " ," +
+                                      '${translateText(project['state'] ?? 'N/A')}',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translate('Project Type', 'प्रोजेक्ट प्रकार') ?? ''}: ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  translateText(
+                                          project['project_type'] ?? 'N/A') ??
+                                      'N/A',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translateText('No. Of Workers Required')}: ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  (project['qty_labours'] ?? 'N/A') ?? 'N/A',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translateText('Skills')}: ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  translateText(project['required_skills'] ??
+                                          'N/A') ??
+                                      'N/A',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Description row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translateText('Description')}: ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  translateText(
+                                          project['description'] ?? 'N/A') ??
+                                      'N/A',
+                                ),
+                              ],
+                            ),
+                          ),
+                          SpeakerIconButton(
+                            text: translateText(project['description'] ?? 'N/A') ?? 'N/A',
+                          ),
+                        ],
+                      ),
+
+                      // Payment Type row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translateText('Payment Type')}: ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  project['payment_type'] == "1"
+                                      ? translateText('Milestone Basis')
+                                      : translateText('Project Basis'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (project['payment_type'] == "1")
+                        Scrollbar(
+                          controller: _milestoneScrollController,
+                          // Add the Scrollbar widget
+                          thumbVisibility:
+                              true, // Always show the scrollbar when scrolling
+                          radius:
+                              const Radius.circular(8), // Optional: Curved scrollbar
+                          child: SingleChildScrollView(
+                            controller: _milestoneScrollController,
+                            scrollDirection: Axis.horizontal,
+                            child: Container(
+                              constraints: BoxConstraints(
+                                  maxWidth: double
+                                      .infinity), // Constrain the width to avoid infinite width issue
+
+                              // This ensures that the table takes the full width of the parent
+                              child: DataTable(
+                                columns: [
+                                  DataColumn(
+                                    label: Text(
+                                      translateText('Description'),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight
+                                              .bold), // Bold text for the column label
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      translateText('Amount'),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight
+                                              .bold), // Bold text for the column label
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      translateText('Proposal Amount'),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight
+                                              .bold), // Bold text for the column label
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      translateText('Duration'),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight
+                                              .bold), // Bold text for the column label
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      translateText('Actions'),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight
+                                              .bold), // Bold text for the column label
+                                    ),
+                                  ),
+                                ],
+                                rows: List<DataRow>.generate(
+                                  milestones.length,
+                                  (index) {
+                                    return DataRow(
+                                      cells: [
+                                        DataCell(Text(translateText(
+                                            milestones[index]['description']))),
+                                        DataCell(Text(milestones[index]
+                                                ['amount']
+                                            .toString())),
+                                        DataCell(Text(
+                                          milestones[index]['proposalamount'] !=
+                                                  null
+                                              ? milestones[index]
+                                                      ['proposalamount']
+                                                  .toString()
+                                              : 'N/A',
+                                        )),
+                                        DataCell(Text(
+                                          milestones[index]['duration'] != null
+                                              ? milestones[index]['duration']
+                                                  .toString()
+                                              : 'N/A',
+                                        )),
+                                        DataCell(
+                                          Row(
+                                            children: [
+                                              if (milestones[index]['status']
+                                                      ?.toString() ==
+                                                  '2')
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                        Radius.circular(
+                                                            Constants.AppRadii.xs),
+                                                      ),
+                                                    ),
+                                                    backgroundColor:
+                                                        Constants.AppColors.brand,
+                                                    foregroundColor:
+                                                        Constants.AppColors.card,
+                                                    elevation: 0,
+                                                  ),
+                                                  onPressed: () {
+                                                    // Call the milestone completion function
+                                                    handleMilestoneCompletion(
+                                                      context,
+                                                      milestones[index]['sno']
+                                                          .toString(),
+                                                    );
+                                                  },
+                                                  child: Text(
+                                                    translateText("Complete"),
+                                                    style: Constants.AppTypography.label.copyWith(
+                                                        color: Constants.AppColors.card),
+                                                  ),
+                                                ),
+                                              if (milestones[index]['status']
+                                                      ?.toString() ==
+                                                  '3')
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                        Radius.circular(
+                                                            Constants.AppRadii.xs),
+                                                      ),
+                                                    ),
+                                                    backgroundColor:
+                                                        Constants.AppColors.brand,
+                                                    foregroundColor:
+                                                        Constants.AppColors.card,
+                                                    elevation: 0,
+                                                  ),
+                                                  onPressed: () {
+                                                    // Add functionality for "Submitted" state if needed
+                                                  },
+                                                  child: Text(
+                                                    translateText("Submitted"),
+                                                    style: Constants.AppTypography.label.copyWith(
+                                                        color: Constants.AppColors.card),
+                                                  ),
+                                                ),
+                                              if (milestones[index]['status']
+                                                      ?.toString() ==
+                                                  '4')
+                                                Row(
+                                                  children: [
+                                                    ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                            Radius.circular(
+                                                                Constants.AppRadii.xs),
+                                                          ),
+                                                        ),
+                                                        backgroundColor:
+                                                            Constants.AppColors.brand,
+                                                        foregroundColor:
+                                                            Constants.AppColors.card,
+                                                        elevation: 0,
+                                                      ),
+                                                      onPressed: () {
+                                                        // Add your button action here
+                                                        print(
+                                                            'Button pressed for status 4');
+                                                      },
+                                                      child: Text(
+                                                        translateText(
+                                                            "Completed"),
+                                                        style: Constants.AppTypography.label.copyWith(
+                                                            color:
+                                                                Constants.AppColors.card),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              // If no status matches, show edit and delete buttons
+                                              if (!(milestones[index]['status']
+                                                          ?.toString() ==
+                                                      '2' ||
+                                                  milestones[index]['status']
+                                                          ?.toString() ==
+                                                      '3' ||
+                                                  milestones[index]['status']
+                                                          ?.toString() ==
+                                                      '4'))
+                                                Row(
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                          Icons.edit,
+                                                          color: Colors.blue),
+                                                      onPressed: () =>
+                                                          showEditMilestoneDialog(
+                                                              index, context),
+                                                    ),
+                                                  ],
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (project['applyStatus'] != null)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translateText('Proposal Amount') ?? ''}: ',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '${translateText(project['praposal_amount'] ?? 'N/A') ?? 'N/A'} ₹',
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      if (project['applyStatus'] != null)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Wrap(
+                              spacing: 8.0, // Horizontal space between elements
+                              runSpacing:
+                                  4.0, // Vertical space between lines of items
+                              children: [
+                                Text(
+                                  '${translateText('Estimate Duration') ?? ''}: ',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  translateText(project['wpay'] ?? 'N/A') ??
+                                      'N/A',
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      if (project['applyStatus'] != null)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Wrap(
+                                spacing:
+                                    8.0, // Horizontal space between elements
+                                runSpacing:
+                                    4.0, // Vertical space between lines of items
+                                children: [
+                                  Text(
+                                    '${translateText('Comment') ?? ''}: ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    translateText(
+                                            project['comment'] ?? 'N/A') ??
+                                        'N/A',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                      const SizedBox(height: 20),
+                      if (project['applyStatus'] == null)
+                        TextFormField(
+                          controller: _payController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText:
+                                translate("Proposal Amount", "प्रस्ताव राशि"),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.green, // Default border color
+                                width: 2.0, // Border width
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color:
+                                    Colors.red, // Red border in case of error
+                                width: 2.0,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors
+                                    .red, // Red border when focused and error exists
+                                width: 2.0,
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 5),
+                          ),
+                          // Validator to ensure the field is not empty
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a proposal amount'; // Error message when the field is empty
+                            }
+                            // Optionally, you can add additional validation here to check if the input is a valid number.
+                            if (double.tryParse(value) == null) {
+                              return 'Please enter a valid number'; // Error message if input is not a valid number
+                            }
+                            return null; // Return null if no errors
+                          },
+                        ),
+                      if (project['applyStatus'] == null)
+                        const SizedBox(height: 20),
+                      if (project['applyStatus'] == null)
+                        DropdownButtonFormField<String>(
+                          value: selectedEstimateDays,
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedEstimateDays = newValue;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText:
+                                translate('Estimated Days', 'अनुमानित दिन'),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.green,
+                                width: 2.0,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.red,
+                                width: 2.0,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.red,
+                                width: 2.0,
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 5),
+                          ),
+                          items: [
+                            // Dropdown item for "1 Day"
+                            DropdownMenuItem<String>(
+                              value: '1 day',
+                              child: Text(translate('1 day', '1 दिन')),
+                            ),
+
+                            // Dropdown item for "2 Days"
+                            DropdownMenuItem<String>(
+                              value: '2 days',
+                              child: Text(translate('2 days', '2 दिन')),
+                            ),
+
+                            // Dropdown item for "3-7 Days"
+                            DropdownMenuItem<String>(
+                              value: '3-7 days',
+                              child: Text(translate('3-7 days', '3-7 दिन')),
+                            ),
+
+                            // Dropdown item for "8-15 Days"
+                            DropdownMenuItem<String>(
+                              value: '8-15 days',
+                              child: Text(translate('8-15 days', '8-15 दिन')),
+                            ),
+
+                            // Dropdown item for "15-1 Month"
+                            DropdownMenuItem<String>(
+                              value: '15-1 month',
+                              child:
+                                  Text(translate('15-1 month', '15-1 महीना')),
+                            ),
+
+                            // Dropdown item for "1 Month - 3 Months"
+                            DropdownMenuItem<String>(
+                              value: '1-3 months',
+                              child: Text(translate('1-3 months', '1-3 महीने')),
+                            ),
+
+                            // Dropdown item for "3 Months - 6 Months"
+                            DropdownMenuItem<String>(
+                              value: '3-6 months',
+                              child: Text(translate('3-6 months', '3-6 महीने')),
+                            ),
+
+                            // Dropdown item for "6 Months - 1 Year"
+                            DropdownMenuItem<String>(
+                              value: '6 months-1 year',
+                              child: Text(translate(
+                                  '6 months-1 year', '6 महीने-1 साल')),
+                            ),
+
+                            // Dropdown item for "> 1 Year"
+                            DropdownMenuItem<String>(
+                              value: '>1 year',
+                              child: Text(translate('>1 year', '> 1 साल')),
+                            ),
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return translate(
+                                  'Please enter the estimated days.',
+                                  'कृपया अनुमानित दिन दर्ज करें।');
+                            }
+                            return null;
+                          },
+                        ),
+                      if (project['applyStatus'] == null)
+                        const SizedBox(height: 20),
+                      if (project['applyStatus'] == null)
+                        TextField(
+                          controller: _commentController,
+                          decoration: InputDecoration(
+                            labelText: translate(
+                                "Enter your Comment", "अपनी टिप्पणी दर्ज करें"),
+                            suffixIcon: MicIconButton(controller: _commentController),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.green, // Default border color
+                                width: 2.0, // Border width
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color:
+                                    Colors.red, // Red border in case of error
+                                width: 2.0,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors
+                                    .red, // Red border when focused and error exists
+                                width: 2.0,
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 5),
+                          ),
+                          maxLines: 3, // Allow multiline comments
+                        ),
+                      const SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: _buildActionButton(project),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+    );
+  }
+}
+
+class AppliedProjects extends StatefulWidget {
+  @override
+  _AppliedProjectsState createState() => _AppliedProjectsState();
+}
+
+class _AppliedProjectsState extends State<AppliedProjects> {
+  final _secureStorage = const FlutterSecureStorage();
+  bool isLoading = true;
+  List<dynamic> projects = [];
+  List<dynamic> filteredProjects = [];
+  List<JobType> _jobTypes = [];
+  final ScrollController _appliedProjectsScrollController = ScrollController();
+
+  final TextEditingController _labourSearchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _projectSearchController.dispose();
+    _labourSearchController.dispose();
+    _appliedProjectsScrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> fetchJobTypes() async {
+    final response = await http
+        .post(Uri.parse('${Constants.AppConstants.apiUrl}farmer/jobtype'));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      List<dynamic> jobData = data['data'];
+      setState(() {
+        _jobTypes = jobData.map((job) => JobType.fromJson(job)).toList();
+      });
+    } else {
+      throw Exception('Failed to load job types');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadLanguage();
+    fetchProjects();
+    fetchJobTypes();
+  }
+
+  final TextEditingController _projectSearchController =
+      TextEditingController();
+  String selectedCategory = 'All';
+  double selectedPriceRange = 1000000;
+  double selectedRating = 3;
+  String selectedJobType = 'All';
+  bool isDailyWageSelected = false;
+  bool isContractSelected = false;
+  String _selectedLanguage = 'en'; // Default language is English
+
+  Future<void> loadLanguage() async {
+    // Read the selected language from FlutterSecureStorage
+    String? language = await _secureStorage.read(key: 'selectedLanguage');
+    _selectedLanguage = language ?? 'en';
+    print(language); // Default to English if null
+  }
+
+  Map<String, Map<String, String>> _cachedTranslations = {};
+
+  Map<String, Map<String, String>> translations =
+      Constants.AppConstants.translations;
+  final GoogleTranslator _translator = GoogleTranslator();
+  String translateText(String text) {
+    if (text.isEmpty) return "";
+
+    // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
+    String targetLang = _selectedLanguage ?? 'en'; // Default to English if null
+
+    // ✅ Check manual translations first
+    if (translations.containsKey(text) &&
+        translations[text]!.containsKey(targetLang)) {
+      return translations[text]![targetLang]!; // Return manual translation
+    }
+
+    // ✅ Check cached translations
+    if (_cachedTranslations.containsKey(text) &&
+        _cachedTranslations[text]!.containsKey(targetLang)) {
+      return _cachedTranslations[text]![
+          targetLang]!; // Return cached translation
+    }
+
+    // ✅ Fetch translation dynamically (but without `await`)
+    _fetchTranslation(text, targetLang); // Runs in background, no need to wait
+
+    return text; // Return original text while translation is being fetched
+  }
+
+  /// ✅ Fetch translation dynamically and update cache
+  Future<void> _fetchTranslation(String text, String targetLang) async {
+    try {
+      // ✅ Check if translation already exists in constants
+      if (Constants.AppConstants.translations.containsKey(text) &&
+          Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
+        return; // No need to fetch if it exists
+      }
+
+      // ✅ Fetch translation dynamically
+      final translation = await _translator.translate(text, to: targetLang);
+
+      // ✅ Initialize default values if text is not in the map
+      if (!translations.containsKey(text)) {
+        translations[text] = {
+          "en": text,
+          "hi": text
+        }; // Default to the same value
+      }
+
+      // ✅ Store the translation in the correct language
+      translations[text]![targetLang] = translation.text;
+
+      // ✅ Store fetched translations in the cache
+      _cachedTranslations = translations;
+
+      // ✅ Also store in the constants translations map
+      if (!Constants.AppConstants.translations.containsKey(text)) {
+        Constants.AppConstants.translations[text] = {};
+      }
+      Constants.AppConstants.translations[text]![targetLang] = translation.text;
+
+      // ✅ Check for missing translations and fetch dynamically
+      for (var key in translations.keys) {
+        if (!translations[key]!.containsKey("hi")) {
+          await _fetchTranslation(key, "hi");
+        }
+        if (!translations[key]!.containsKey("en")) {
+          await _fetchTranslation(key, "en");
+        }
+      }
+
+      // ✅ Store translation in cache
+      _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
+          translation.text;
+      setState(() {});
+    } catch (e) {
+      print("Translation error: $e");
+    }
+  }
+
+  void _showFilterDialog() {
+    final language =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return AlertDialog(
+            title: Text(translate('Filter Projects', 'प्रस्ताव फ़िल्टर करें')),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Job Type filter (using fetched job types) with label
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(translate(
+                            'Select Job Type', 'कृपया नौकरी का प्रकार चुनें')),
+                        DropdownButton<String>(
+                          value: selectedJobType,
+                          isExpanded: true,
+                          items: [
+                            DropdownMenuItem<String>(
+                              value: 'All',
+                              child: Text(translate('All', 'सभी')),
+                            ),
+                            // Create a DropdownMenuItem for each jobType
+                            ..._jobTypes
+                                .map((job) => DropdownMenuItem<String>(
+                                      value: job.jobname,
+                                      child: Text(translate(job.jobname,
+                                          job.jobname)), // Assuming jobname is in English
+                                    ))
+                                .toList(),
+                          ],
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedJobType = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Category filter with label
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(translate(
+                            'Select Payment Type', 'भुगतान प्रकार चुनें')),
+                        DropdownButton<String>(
+                          value: selectedCategory,
+                          isExpanded: true,
+                          items: ['All', 'Project Basis', 'Milestone Basis']
+                              .map((category) => DropdownMenuItem<String>(
+                                    value: category,
+                                    child: Text(translate(category, category)),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedCategory = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Search field
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: _labourSearchController,
+                      decoration: InputDecoration(
+                        prefixIcon:
+                            const Icon(Icons.search, color: Colors.green),
+                        hintText: translate('Search by pincode, city, or state',
+                            'पिनकोड, शहर या राज्य द्वारा खोजें'),
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: const BorderSide(color: Colors.green),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide:
+                              const BorderSide(color: Colors.green, width: 2),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Price Range Slider
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            translate('Select Budget Range', 'बजट सीमा चुनें')),
+                        Slider(
+                          value: selectedPriceRange,
+                          min: 0,
+                          max: 1000000,
+                          divisions: 100,
+                          label: '\$${selectedPriceRange.toStringAsFixed(0)}',
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedPriceRange = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Project Type filter using checkboxes (Daily Wage and Contract)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(translate(
+                            'Select Job Type', 'नौकरी का प्रकार चुनें')),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: isDailyWageSelected,
+                              onChanged: (bool? value) {
+                                setStateDialog(() {
+                                  isDailyWageSelected = value!;
+                                });
+                              },
+                            ),
+                            Text(translate('Daily Wage', 'दैनिक वेतन')),
+                            const SizedBox(width: 10),
+                            Checkbox(
+                              value: isContractSelected,
+                              onChanged: (bool? value) {
+                                setStateDialog(() {
+                                  isContractSelected = value!;
+                                });
+                              },
+                            ),
+                            Text(translate('Contract', 'ठेका')),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Rating filter (optional)
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _applyFilters();
+                  setState(() {});
+                  Navigator.of(context).pop();
+                },
+                child: Text(translate('Apply Filters', 'फ़िल्टर लागू करें')),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Reset filters to default values
+                  setStateDialog(() {
+                    selectedJobType = 'All';
+                    selectedCategory = 'All';
+                    selectedPriceRange = 1000000;
+                    isDailyWageSelected = false;
+                    isContractSelected = false;
+                    _labourSearchController.clear(); // Clear the search field
+                  });
+                },
+                child: Text(translate('Reset Filters', 'फ़िल्टर रीसेट करें'),
+                    style: const TextStyle(color: Colors.red)),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _applyFilters() async {
+    String? userId = await _secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID not found in secure storage')),
+      );
+      return;
+    }
+    Map<String, dynamic> filters = {
+      'id': userId,
+      'job_type': selectedJobType,
+      'category': selectedCategory,
+      'search': _labourSearchController.text,
+      'budget': selectedPriceRange.toInt(),
+      'dailyWage': isDailyWageSelected,
+      'contract': isContractSelected,
+    };
+
+    // Example API request to fetch filtered projects
+
+    fetchFilteredProjects(filters);
+  }
+
+  Future<void> fetchFilteredProjects(Map<String, dynamic> filters) async {
+    final String apiUrl =
+        '${Constants.AppConstants.apiUrl}labour/searchapplyProjectsApi';
+    String? userId = await _secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID not found in secure storage')),
+      );
+      return;
+    }
+    print(jsonEncode(filters));
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(filters),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['status'] == 1) {
+          setState(() {
+            projects = responseBody['data'];
+            filteredProjects = projects;
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            projects = [];
+            filteredProjects = [];
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    responseBody['message'] ?? 'Failed to fetch projects')),
+          );
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Failed to fetch projects: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchProjects() async {
+    final String apiUrl =
+        '${Constants.AppConstants.apiUrl}labour/appliedProjects';
+    String? userId = await _secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID not found in secure storage')),
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final Map<String, dynamic> requestBody = {
+        'id': userId,
+      };
+      print(jsonEncode(requestBody));
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['status'] == 1) {
+          setState(() {
+            print(responseBody['data']);
+            projects = responseBody['data'];
+            filteredProjects = projects;
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            projects = [];
+            filteredProjects = [];
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    responseBody['message'] ?? 'Failed to fetch projects')),
+          );
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Failed to fetch projects: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  String translate(String enText, String hiText) {
+    final language =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+    return language == 'en' ? enText : hiText;
+  }
+
+  void filterProjects(String query) {
+    setState(() {
+      filteredProjects = projects.where((project) {
+        String title =
+            project['title'] ?? ''; // Default to empty string if null
+        String budget =
+            project['budget']?.toString() ?? ''; // Convert to string if null
+        String city = project['city'] ?? ''; // Default to empty string if null
+        String state =
+            project['state'] ?? ''; // Default to empty string if null
+
+        // Perform the filtering check
+        return title.toLowerCase().contains(query.toLowerCase()) ||
+            budget.toLowerCase().contains(query.toLowerCase()) ||
+            city.toLowerCase().contains(query.toLowerCase()) ||
+            state.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+  Future<void> applyToProject(int projectId) async {
+    final String apiUrl =
+        '${Constants.AppConstants.apiUrl}labour/applyProjectApi';
+
+    // Get user ID from secure storage
+    String? userId = await _secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID not found in secure storage')),
+      );
+      return;
+    }
+
+    final Map<String, dynamic> requestBody = {
+      'labourId': userId,
+      'projectId': projectId,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        if (responseBody['status'] == 1) {
+          // Success - Refresh the list
+          Fluttertoast.showToast(
+            msg: translate(
+                'Applied successfully!', 'सफलतापूर्वक लागू किया गया!'),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green.shade700,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+          fetchProjects(); // Reload projects to update applyStatus
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(responseBody['message'] ?? 'Failed to apply')),
+          );
+        }
+      } else {
+        String errorMessage = 'Failed to apply';
+        try {
+          final decoded = json.decode(response.body);
+          if (decoded is Map<String, dynamic>) {
+            if (decoded.containsKey('errors') && decoded['errors'] is Map) {
+              final errorsMap = decoded['errors'] as Map<String, dynamic>;
+              List<String> allErrors = [];
+              errorsMap.forEach((key, value) {
+                if (value is List) {
+                  allErrors.addAll(value.map((e) => e.toString()));
+                } else {
+                  allErrors.add(value.toString());
+                }
+              });
+              if (allErrors.isNotEmpty) errorMessage = allErrors.join(', ');
+            } else if (decoded.containsKey('message')) {
+              errorMessage = decoded['message'].toString();
+            }
+          }
+        } catch (e) {
+          String bodyText = response.body.length > 100 ? response.body.substring(0, 100) + "..." : response.body;
+          errorMessage = 'Failed to apply: $bodyText';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
+    } catch (e) {}
+  }
+
+  TextEditingController _searchController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final language =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        // Assuming loadLanguage, fetchProjects, and fetchJobTypes are async functions.
+        await loadLanguage(); // Load the language (make sure it's an async function)
+        await fetchProjects(); // Fetch projects (make sure it's an async function)
+        await fetchJobTypes(); // Fetch job types (make sure it's an async function)
+
+        setState(() {
+          // If you need to update the UI state, you can do it here after all async tasks are done.
+        });
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            translateText("My Projects"),
+            style: TextStyle(color: Colors.white),
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.green, Colors.teal],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        body: SafeArea(
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.white,
+            // decoration: const BoxDecoration(
+            //   gradient: LinearGradient(
+            //     begin: Alignment.topLeft,
+            //     end: Alignment.bottomRight,
+            //     colors: [
+            //       Color(0xFFA8D5BA), // Light green
+            //       Color(0xFF68A691), // Darker green
+            //     ],
+            //   ),
+            // ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.filter_list),
+                  onPressed: () => _showFilterDialog(),
+                ),
+                Expanded(
+                  child: isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : filteredProjects.isEmpty
+                          ? Center(
+                              child: Text(
+                                translateText('No projects found'),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.brown,
+                                ),
+                              ),
+                            )
+                          : Scrollbar(
+                              controller: _appliedProjectsScrollController,
+                              thumbVisibility: true,
+                              child: ListView.builder(
+                                controller: _appliedProjectsScrollController,
+                                itemCount: filteredProjects.length,
+                                itemBuilder: (context, index) {
+                                  final project = filteredProjects[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProjectDetailsPage(
+                                            projectId: project['id'],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 15),
+                                      decoration: BoxDecoration(
+                                        color: Colors
+                                            .white, // Background color of the container
+                                        borderRadius: BorderRadius.circular(
+                                            8), // Rounds the corners
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                                0.1), // Shadow color with transparency
+                                            blurRadius:
+                                                8, // How soft the shadow is
+                                            spreadRadius:
+                                                3, // How much the shadow expands
+                                            offset: Offset(0,
+                                                4), // Vertical and horizontal offset for the shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    translateText(
+                                                          project['title']
+                                                                  ?.toString()
+                                                                  .toUpperCase() ??
+                                                              'No Title', // Assuming you have a language selection
+                                                        ) ??
+                                                        'No Title',
+                                                    style: const TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                    softWrap: true,
+                                                    overflow:
+                                                        TextOverflow.visible,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Farmer Name
+                                                Wrap(
+                                                  spacing:
+                                                      8.0, // Horizontal space between elements
+                                                  runSpacing:
+                                                      4.0, // Vertical space between lines of items
+                                                  children: [
+                                                    Text(
+                                                      '${translate('Farmer Name', 'किसान का नाम') ?? 'Farmer Name'}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      translateText(project[
+                                                                  'farmer_name'] ??
+                                                              'N/A') ??
+                                                          'N/A',
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                // City, State, and Pincode in a row
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      AppLocalizations.of(
+                                                                  context)!
+                                                              .location +
+                                                          " : ",
+                                                      style:
+                                                          const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight
+                                                            .w600, // Semi-bold for title
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        "${translateText(project['city'] ?? 'N/A')} ${translateText(project['state'] ?? 'N/A')} ${project['pincode'] ?? 'N/A'}",
+                                                        style:
+                                                            const TextStyle(
+                                                                fontSize: 16),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                //
+                                                // Project Type
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${translate('Project Type', 'प्रोजेक्ट प्रकार') ?? ''}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      translateText(project[
+                                                                  'project_type'] ??
+                                                              'N/A') ??
+                                                          'N/A',
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                // Labour Required
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${translate('Labour Required', 'मजदूरों की आवश्यकता') ?? ''}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      translateText(
+                                                              '${project['qty_labours'] ?? 'N/A'}') ??
+                                                          'N/A',
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                // Required Skills
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '${translate('Required Skills', 'आवश्यक कौशल') ?? ''}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        translateText(project[
+                                                                    'required_skills'] ??
+                                                                'N/A') ??
+                                                            'N/A',
+                                                        softWrap: true,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                // Budget & Duration
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${translateText('Budget') ?? ''}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      "₹ " +
+                                                              translateText(
+                                                                '${project['budget'] ?? 'N/A'}',
+                                                              ) ??
+                                                          'N/A',
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Text(
+                                                      '${translateText(
+                                                            'Duration',
+                                                          ) ?? ''}: ',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      translateText(
+                                                            '${project['days'] ?? 'N/A'}',
+                                                          ) ??
+                                                          'N/A',
+                                                    ),
+                                                  ],
+                                                ),
+                                                // Duration
+                                              ],
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Builder(
+                                                builder: (context) {
+                                                  String? appliedStatus =
+                                                      project['applyStatus']?.toString();
+                                                  if (appliedStatus == null) {
+                                                    return ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => ProjectDetailsPage(
+                                                              projectId: project['id'],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: Constants.AppColors.brand,
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          AppLocalizations.of(context)!.apply_now,
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  } else if (appliedStatus == "0") {
+                                                    return ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => ProjectDetailsPage(
+                                                              projectId: project['id'],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: Constants.AppColors.brand,
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          AppLocalizations.of(context)!.applied,
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  } else if (appliedStatus == "1") {
+                                                    return ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => ProjectDetailsPage(
+                                                              projectId: project['id'],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: Constants.AppColors.brand,
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          AppLocalizations.of(context)!.assigned,
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  } else if (appliedStatus == "2") {
+                                                    return Row(
+                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                      children: [
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(2.0),
+                                                          child: ElevatedButton(
+                                                            onPressed: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (context) => ProjectDetailsPage(
+                                                                    projectId: project['id'],
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                            style: ElevatedButton.styleFrom(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                              minimumSize: const Size(0, 0),
+                                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                              ),
+                                                              backgroundColor: Constants.AppColors.brand,
+                                                              elevation: 0,
+                                                            ),
+                                                            child: Column(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Text(
+                                                                    AppLocalizations.of(context)!.workStarted,
+                                                                    style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                                Text(
+                                                                    '${project['startdate']} ',
+                                                                    style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        if (project['cancel_confirm'] == "1")
+                                                          Padding(
+                                                            padding: const EdgeInsets.all(2.0),
+                                                            child: ElevatedButton(
+                                                              onPressed: () {},
+                                                              style: ElevatedButton.styleFrom(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                                                minimumSize: const Size(0, 0),
+                                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(Constants.AppRadii.xs)),
+                                                                backgroundColor: Constants.AppColors.amberNotice,
+                                                                elevation: 0,
+                                                              ),
+                                                              child: Text(
+                                                                  AppLocalizations.of(context)!.cancelledRequested,
+                                                                  style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                            ),
+                                                          ),
+                                                        if (project['complete_confirm'] == "1")
+                                                          Padding(
+                                                            padding: const EdgeInsets.all(2.0),
+                                                            child: ElevatedButton(
+                                                              onPressed: () {},
+                                                              style: ElevatedButton.styleFrom(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                                minimumSize: const Size(0, 0),
+                                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(Constants.AppRadii.xs)),
+                                                                backgroundColor: Constants.AppColors.brand,
+                                                                elevation: 0,
+                                                              ),
+                                                              child: Column(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Text(AppLocalizations.of(context)!.completedRequested,
+                                                                      style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                                  Text('${project['completedate']}',
+                                                                      style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    );
+                                                  } else if (appliedStatus == "3") {
+                                                    return ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: Constants.AppColors.brand,
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          translateText(
+                                                              '${AppLocalizations.of(context)!.completed} ${project['completedate']}'),
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  } else {
+                                                    return ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
+                                                        ),
+                                                        backgroundColor: const Color.fromARGB(255, 91, 20, 15),
+                                                        elevation: 0,
+                                                      ),
+                                                      child: Text(
+                                                          AppLocalizations.of(context)!.cancelled,
+                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

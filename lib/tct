@@ -1,0 +1,720 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:greencollar/l10n/app_localizations.dart';
+import 'package:greencollar/main.dart';
+import 'package:greencollar/workerdetails.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
+import 'package:translator/translator.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:greencollar/constants.dart' as Constants;
+
+class LabourPage extends StatefulWidget {
+  @override
+  _LabourPageState createState() => _LabourPageState();
+}
+
+class _LabourPageState extends State<LabourPage> {
+  final _secureStorage = const FlutterSecureStorage();
+  final TextEditingController _searchController = TextEditingController();
+  List<dynamic> labours = [];
+  bool isLoading = false;
+  String _selectedLanguage = 'en'; // Default language is English
+
+  Future<void> loadLanguage() async {
+    // Read the selected language from FlutterSecureStorage
+    String? language = await _secureStorage.read(key: 'selectedLanguage');
+    _selectedLanguage = language ?? 'en';
+    print(language); // Default to English if null
+  }
+
+  Map<String, Map<String, String>> _cachedTranslations = {};
+
+  Map<String, Map<String, String>> translations =
+      Constants.AppConstants.translations;
+  final GoogleTranslator _translator = GoogleTranslator();
+  @override
+  void initState() {
+    super.initState();
+    loadLanguage();
+    fetchLabours();
+  }
+
+  String translateText(String text) {
+    if (text.isEmpty) return "";
+
+    // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
+    String targetLang = _selectedLanguage ?? 'en'; // Default to English if null
+
+    // ✅ Check manual translations first
+    if (translations.containsKey(text) &&
+        translations[text]!.containsKey(targetLang)) {
+      return translations[text]![targetLang]!; // Return manual translation
+    }
+
+    // ✅ Check cached translations
+    if (_cachedTranslations.containsKey(text) &&
+        _cachedTranslations[text]!.containsKey(targetLang)) {
+      return _cachedTranslations[text]![
+          targetLang]!; // Return cached translation
+    }
+
+    // ✅ Fetch translation dynamically (but without `await`)
+    _fetchTranslation(text, targetLang); // Runs in background, no need to wait
+
+    return text; // Return original text while translation is being fetched
+  }
+
+  /// ✅ Fetch translation dynamically and update cache
+  Future<void> _fetchTranslation(String text, String targetLang) async {
+    try {
+      // ✅ Check if translation already exists in constants
+      if (Constants.AppConstants.translations.containsKey(text) &&
+          Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
+        return; // No need to fetch if it exists
+      }
+
+      // ✅ Fetch translation dynamically
+      final translation = await _translator.translate(text, to: targetLang);
+
+      // ✅ Initialize default values if text is not in the map
+      if (!translations.containsKey(text)) {
+        translations[text] = {
+          "en": text,
+          "hi": text
+        }; // Default to the same value
+      }
+
+      // ✅ Store the translation in the correct language
+      translations[text]![targetLang] = translation.text;
+
+      // ✅ Store fetched translations in the cache
+      _cachedTranslations = translations;
+
+      // ✅ Also store in the constants translations map
+      if (!Constants.AppConstants.translations.containsKey(text)) {
+        Constants.AppConstants.translations[text] = {};
+      }
+      Constants.AppConstants.translations[text]![targetLang] = translation.text;
+
+      // ✅ Check for missing translations and fetch dynamically
+      for (var key in translations.keys) {
+        if (!translations[key]!.containsKey("hi")) {
+          await _fetchTranslation(key, "hi");
+        }
+        if (!translations[key]!.containsKey("en")) {
+          await _fetchTranslation(key, "en");
+        }
+      }
+
+      // ✅ Store translation in cache
+      _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
+          translation.text;
+      setState(() {});
+    } catch (e) {
+      print("Translation error: $e");
+    }
+  }
+
+  List<bool> isExpandedList = [];
+  Future<void> fetchLabours({String? searchQuery}) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    String? userId = await _secureStorage.read(key: 'id');
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID not found in secure storage')),
+      );
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    // Define the API URL
+    final apiUrl = (searchQuery != null && searchQuery.isNotEmpty)
+        ? '${Constants.AppConstants.apiUrl}farmer/searchnearbylabours'
+        : '${Constants.AppConstants.apiUrl}farmer/nearbylabours';
+
+    // Define the request body based on the condition
+    final Map<String, dynamic> requestBody =
+        (searchQuery != null && searchQuery.isNotEmpty)
+            ? {'search': searchQuery}
+            : {'id': userId};
+    print(jsonEncode(requestBody));
+    print(jsonEncode(apiUrl));
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (responseData['success'] == true) {
+          setState(() {
+            labours = responseData['data'];
+            isExpandedList = List.generate(labours.length, (index) => false);
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(responseData['message'] ?? 'No Workers found')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to fetch labours')),
+        );
+      }
+    } catch (e) {
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(color: Colors.white
+            // gradient: LinearGradient(
+            //   begin: Alignment.topLeft,
+            //   end: Alignment.bottomRight,
+            //   colors: [
+            //     Color(0xFFA8D5BA), // Light green
+            //     Color(0xFF68A691), // Darker green
+            //   ],
+            // ),
+            ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Search Bar
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    fetchLabours(
+                        searchQuery:
+                            value); // Filter projects based on search input
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search, color: Colors.green),
+                    hintText: AppLocalizations.of(context)!.searchlabour,
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: const BorderSide(color: Colors.green),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide:
+                          const BorderSide(color: Colors.green, width: 2),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : labours.isEmpty
+                        ? Center(
+                            child: Text(
+                              translateText('Looking for nearby workers'),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.brown,
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            shrinkWrap:
+                                true, // Prevent infinite expansion inside a Column
+
+                            itemCount: labours.length,
+                            itemBuilder: (context, index) {
+                              final labour = labours[index];
+
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LabourDetailsPage(
+                                        labour: labour,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.easeInOut,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF9F9F9),
+                                    borderRadius: BorderRadius.circular(15),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.green.withOpacity(0.2),
+                                        spreadRadius: 2,
+                                        blurRadius: 5,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // Profile Image and About Me section
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          // Aligns children at the top
+                                          children: [
+                                            Container(
+                                              width: 100,
+                                              height: 100,
+                                              decoration: BoxDecoration(
+                                                color: Colors.green,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: labour['profile'] !=
+                                                          null &&
+                                                      labour['profile']
+                                                          .isNotEmpty
+                                                  ? ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      child: Image.network(
+                                                        '${Constants.AppConstants.folderUrl}storage/upload/labourprofile/${labour['profile']}',
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          // If there's an error loading the image, show the default icon
+                                                          return Icon(
+                                                            Icons.person,
+                                                            color: Colors.white,
+                                                            size: 30,
+                                                          );
+                                                        },
+                                                      ),
+                                                    )
+                                                  : Icon(
+                                                      Icons.person,
+                                                      color: Colors.white,
+                                                      size: 30,
+                                                    ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 16.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    translateText(
+                                                        labour['name'] ??
+                                                            'Unknown'),
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Row(
+                                                        children: List.generate(
+                                                            5, (index) {
+                                                          return Icon(
+                                                            index <
+                                                                    labour[
+                                                                        'review_count']
+                                                                ? Icons.star
+                                                                : Icons
+                                                                    .star_border,
+                                                            color:
+                                                                Colors.yellow,
+                                                            size: 15,
+                                                          );
+                                                        }),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 8.0,
+                                                                right: 8.0),
+                                                        child: Text(
+                                                          '${labour['average_rating']}/5',
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                Colors.black87,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Icon(Icons.message),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 8.0,
+                                                                right: 8.0),
+                                                        child: Text(
+                                                          '${labour['review_count']}',
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                Colors.black87,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Icon(Icons.pie_chart),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                          left: 8.0,
+                                                        ),
+                                                        child: Text(
+                                                          '${labour['project_complete_count']}',
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                Colors.black87,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      if (labour[
+                                                              'daily_wage'] !=
+                                                          null) ...[
+                                                        Text(
+                                                          translateText(
+                                                              'Rs ${(labour['daily_wage'] ?? 'N/A')}/Day'),
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w900,
+                                                            color:
+                                                                Colors.black87,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 10),
+                                                      ],
+                                                      Text(
+                                                        '${translateText(labour['city'] ?? 'Unknown City')}',
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  // Replacing Flexible with Container for wrapping text
+                                                  Container(
+                                                    constraints: BoxConstraints(
+                                                      maxWidth:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width -
+                                                              165,
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            if (labour[
+                                                                    'aboutme'] !=
+                                                                null) ...[
+                                                              Text(
+                                                                translateText(
+                                                                    labour['aboutme'] ??
+                                                                        'N/A'),
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                                maxLines:
+                                                                    isExpandedList[
+                                                                            index]
+                                                                        ? null
+                                                                        : 2,
+                                                                overflow: isExpandedList[
+                                                                        index]
+                                                                    ? TextOverflow
+                                                                        .visible
+                                                                    : TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            ],
+                                                          ],
+                                                        ),
+                                                        if ((labour['aboutme'] ??
+                                                                    "")
+                                                                .split(' ')
+                                                                .length >
+                                                            50)
+                                                          InkWell(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                isExpandedList[
+                                                                        index] =
+                                                                    !isExpandedList[
+                                                                        index];
+                                                              });
+                                                            },
+                                                            child: Text(
+                                                              isExpandedList[
+                                                                      index]
+                                                                  ? translateText(
+                                                                      'Read Less')
+                                                                  : translateText(
+                                                                      'Read More'),
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .green,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AnimatedCard extends StatefulWidget {
+  final dynamic labour;
+  final int index;
+  const AnimatedCard({required this.labour, required this.index});
+
+  @override
+  State<AnimatedCard> createState() => _AnimatedCardState();
+}
+
+class _AnimatedCardState extends State<AnimatedCard> {
+  Map<String, Map<String, String>> _cachedTranslations = {};
+
+  Map<String, Map<String, String>> translations =
+      Constants.AppConstants.translations;
+
+  final GoogleTranslator _translator = GoogleTranslator();
+  final _secureStorage = const FlutterSecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    loadLanguage();
+  }
+
+  String _selectedLanguage = 'en'; // Default language is English
+
+  Future<void> loadLanguage() async {
+    // Read the selected language from FlutterSecureStorage
+    String? language = await _secureStorage.read(key: 'selectedLanguage');
+    _selectedLanguage = language ?? 'en';
+    print(language); // Default to English if null
+  }
+
+  String translateText(String text) {
+    if (text.isEmpty) return "";
+
+    // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
+    String targetLang = _selectedLanguage ?? 'en'; // Default to English if null
+
+    // ✅ Check manual translations first
+    if (translations.containsKey(text) &&
+        translations[text]!.containsKey(targetLang)) {
+      return translations[text]![targetLang]!; // Return manual translation
+    }
+
+    // ✅ Check cached translations
+    if (_cachedTranslations.containsKey(text) &&
+        _cachedTranslations[text]!.containsKey(targetLang)) {
+      return _cachedTranslations[text]![
+          targetLang]!; // Return cached translation
+    }
+
+    // ✅ Fetch translation dynamically (but without `await`)
+    _fetchTranslation(text, targetLang); // Runs in background, no need to wait
+
+    return text; // Return original text while translation is being fetched
+  }
+
+  /// ✅ Fetch translation dynamically and update cache
+  Future<void> _fetchTranslation(String text, String targetLang) async {
+    try {
+      // ✅ Check if translation already exists in constants
+      if (Constants.AppConstants.translations.containsKey(text) &&
+          Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
+        return; // No need to fetch if it exists
+      }
+
+      // ✅ Fetch translation dynamically
+      final translation = await _translator.translate(text, to: targetLang);
+
+      // ✅ Initialize default values if text is not in the map
+      if (!translations.containsKey(text)) {
+        translations[text] = {
+          "en": text,
+          "hi": text
+        }; // Default to the same value
+      }
+
+      // ✅ Store the translation in the correct language
+      translations[text]![targetLang] = translation.text;
+
+      // ✅ Store fetched translations in the cache
+      _cachedTranslations = translations;
+
+      // ✅ Also store in the constants translations map
+      if (!Constants.AppConstants.translations.containsKey(text)) {
+        Constants.AppConstants.translations[text] = {};
+      }
+      Constants.AppConstants.translations[text]![targetLang] = translation.text;
+
+      // ✅ Check for missing translations and fetch dynamically
+      for (var key in translations.keys) {
+        if (!translations[key]!.containsKey("hi")) {
+          await _fetchTranslation(key, "hi");
+        }
+        if (!translations[key]!.containsKey("en")) {
+          await _fetchTranslation(key, "en");
+        }
+      }
+
+      // ✅ Store translation in cache
+      _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
+          translation.text;
+    } catch (e) {
+      print("Translation error: $e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEBF5F0),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+          ),
+        ],
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.green,
+          child: Text(
+            translateText(widget.labour['name'][0].toUpperCase()),
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+        title: Text(
+          translateText(widget.labour['name'] ?? 'Unknown'),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          '${translateText(widget.labour['city'] ?? 'Unknown City')}, ${translateText(widget.labour['state'] ?? 'Unknown State')}',
+        ),
+        trailing: Column(
+          children: [
+            Text(
+              widget.labour['type'] == '0'
+                  ? translateText('Individual')
+                  : translateText('Agency'),
+            ),
+            if (widget.labour['type'] == '1')
+              Text(
+                '${translateText(widget.labour['agency_name'])}',
+              ),
+            // GestureDetector(
+            //   onTap: () {
+            //     // Trigger dialer when phone number is tapped
+            //     if (labour['phone'] != null) {
+            //       _launchPhoneDialer(labour['phone']);
+            //     }
+            //   },
+            //   child: Text(
+            //     labour['phone'] ?? 'N/A',
+            //     style: const TextStyle(color: Colors.green),
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+}

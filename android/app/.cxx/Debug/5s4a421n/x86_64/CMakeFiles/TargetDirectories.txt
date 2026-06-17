@@ -1,0 +1,2 @@
+C:/Users/Apstia/Desktop/Updated Green Collar/greencollar/android/app/.cxx/Debug/5s4a421n/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Apstia/Desktop/Updated Green Collar/greencollar/android/app/.cxx/Debug/5s4a421n/x86_64/CMakeFiles/rebuild_cache.dir

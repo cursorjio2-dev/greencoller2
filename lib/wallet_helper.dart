@@ -1,0 +1,982 @@
+import 'dart:convert';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:greencollar/constants.dart' as Constants;
+import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
+import 'package:http/http.dart' as http;
+
+/// Shared wallet helper for coin management, contact unlocking,
+/// PhonePe SDK payment, and purchase history.
+class WalletHelper {
+  static const FlutterSecureStorage _storage = FlutterSecureStorage();
+  static const String _coinsKey = 'wallet_coins';
+  static const String _unlockedKey = 'unlocked_contacts';
+  static const String _historyKey = 'purchase_history';
+  static const int _defaultCoins = 100;
+  static const int _unlockCost = 5;
+
+  // ── PhonePe Sandbox Credentials ────────────────────────────────────────
+  static const String _environment = 'SANDBOX';
+  static const String _merchantId = 'PGTESTPAYUAT86';
+  static const String _saltKey = '96434309-7796-489d-8924-ab56988a6076';
+  static const int _saltIndex = 1;
+  static const String _packageName = 'com.apstia.greencollar';
+  static bool _sdkInitialized = false;
+
+  // ── SDK Init ───────────────────────────────────────────────────────────
+
+  /// Initialize PhonePe SDK (call once at app start or before first payment).
+  static Future<void> initPhonePeSdk() async {
+    if (_sdkInitialized) return;
+    try {
+      bool result = await PhonePePaymentSdk.init(
+        _environment,
+        null, // appId (null for sandbox — per SDK docs)
+        _merchantId, // merchantId
+        true, // enableLogging
+      );
+      _sdkInitialized = result;
+      debugPrint('PhonePe SDK Init Success: $result');
+      if (!result) {
+        debugPrint('PhonePe SDK Init returned false — SDK may not be available on this device');
+      }
+    } catch (e) {
+      debugPrint('PhonePe SDK Init Error: $e');
+      _sdkInitialized = false;
+    }
+  }
+
+  // ── Coin Balance ──────────────────────────────────────────────────────
+
+  /// Read current coin balance (defaults to 100 on first launch).
+  static Future<int> getCoins() async {
+    String? val = await _storage.read(key: _coinsKey);
+    if (val == null) {
+      await _storage.write(key: _coinsKey, value: _defaultCoins.toString());
+      return _defaultCoins;
+    }
+    return int.tryParse(val) ?? _defaultCoins;
+  }
+
+  /// Set the coin balance to a specific value.
+  static Future<void> setCoins(int coins) async {
+    await _storage.write(key: _coinsKey, value: coins.toString());
+  }
+
+  /// Deduct coins. Returns true if successful, false if insufficient funds.
+  static Future<bool> deductCoins(int amount) async {
+    int current = await getCoins();
+    if (current < amount) return false;
+    await setCoins(current - amount);
+    return true;
+  }
+
+  /// Add coins to the balance.
+  static Future<void> addCoins(int amount) async {
+    int current = await getCoins();
+    await setCoins(current + amount);
+  }
+
+  // ── Unlocked Contacts ─────────────────────────────────────────────────
+
+  static Future<List<String>> _getUnlockedList() async {
+    String? val = await _storage.read(key: _unlockedKey);
+    if (val == null || val.isEmpty) return [];
+    try {
+      return List<String>.from(jsonDecode(val));
+    } catch (_) {
+      return [];
+    }
+  }
+
+  static Future<bool> isContactUnlocked(String contactId) async {
+    List<String> unlocked = await _getUnlockedList();
+    return unlocked.contains(contactId);
+  }
+
+  static Future<void> markContactUnlocked(String contactId) async {
+    List<String> unlocked = await _getUnlockedList();
+    if (!unlocked.contains(contactId)) {
+      unlocked.add(contactId);
+      await _storage.write(key: _unlockedKey, value: jsonEncode(unlocked));
+    }
+  }
+
+  // ── Purchase History ──────────────────────────────────────────────────
+
+  /// Get purchase history as a list of maps.
+  static Future<List<Map<String, dynamic>>> getPurchaseHistory() async {
+    String? val = await _storage.read(key: _historyKey);
+    if (val == null || val.isEmpty) return [];
+    try {
+      return List<Map<String, dynamic>>.from(
+        (jsonDecode(val) as List).map((e) => Map<String, dynamic>.from(e)),
+      );
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Add a purchase record to history.
+  static Future<void> _addPurchaseRecord({
+    required int coins,
+    required int priceInr,
+    required String transactionId,
+    required String status,
+  }) async {
+    List<Map<String, dynamic>> history = await getPurchaseHistory();
+    history.insert(0, {
+      'coins': coins,
+      'price': priceInr,
+      'transactionId': transactionId,
+      'status': status,
+      'date': DateTime.now().toIso8601String(),
+    });
+    // Keep only last 50 records
+    if (history.length > 50) history = history.sublist(0, 50);
+    await _storage.write(key: _historyKey, value: jsonEncode(history));
+  }
+
+  // ── Mask Phone ────────────────────────────────────────────────────────
+
+  static String maskPhone(String phone) {
+    if (phone.length <= 2) return phone;
+    return phone.substring(0, 2) + 'X' * (phone.length - 2);
+  }
+
+  // ── PhonePe Payment ───────────────────────────────────────────────────
+
+  /// Generate a unique transaction ID.
+  static String _generateTransactionId() {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final random = Random().nextInt(999999).toString().padLeft(6, '0');
+    return 'GC$timestamp$random';
+  }
+
+  /// Create the PhonePe request body (Base64 encoded).
+  static Map<String, String> _buildPaymentRequest(int amountInPaise, String transactionId) {
+    final requestBody = {
+      "merchantId": _merchantId,
+      "merchantTransactionId": transactionId,
+      "merchantUserId": "MUID_${DateTime.now().millisecondsSinceEpoch}",
+      "amount": amountInPaise,
+      "callbackUrl": "https://webhook.site/callback-url",
+      "mobileNumber": "9999999999",
+      "paymentInstrument": {
+        "type": "PAY_PAGE",
+      },
+    };
+
+    final jsonString = jsonEncode(requestBody);
+    final base64Body = base64Encode(utf8.encode(jsonString));
+    final checksum = _generateChecksum(base64Body);
+
+    return {
+      'body': base64Body,
+      'checksum': checksum,
+    };
+  }
+
+  /// Generate SHA256 checksum for PhonePe.
+  static String _generateChecksum(String base64Body) {
+    final dataToHash = '$base64Body/pg/v1/pay$_saltKey';
+    final hash = sha256.convert(utf8.encode(dataToHash)).toString();
+    return '$hash###$_saltIndex';
+  }
+
+  /// Start a PhonePe payment transaction.
+  /// Returns true if payment succeeded, false otherwise.
+  static Future<bool> startPhonePePayment({
+    required int amountInPaise,
+    required int coins,
+  }) async {
+    try {
+      await initPhonePeSdk();
+
+      // Guard: abort if SDK failed to initialize
+      if (!_sdkInitialized) {
+        debugPrint('PhonePe Payment aborted — SDK not initialized');
+        return false;
+      }
+
+      final transactionId = _generateTransactionId();
+      final paymentData = _buildPaymentRequest(amountInPaise, transactionId);
+
+      debugPrint('PhonePe: Starting transaction $transactionId for ₹${amountInPaise ~/ 100}');
+
+      final response = await PhonePePaymentSdk.startTransaction(
+        paymentData['body']!,
+        '', // appSchema (not needed for Android)
+        paymentData['checksum']!,
+        _packageName,
+      );
+
+      debugPrint('PhonePe Response: $response');
+
+      if (response != null) {
+        // Parse response — SDK returns Map with 'status' key
+        final status = response['status']?.toString() ?? '';
+        if (status == 'SUCCESS') {
+          // Verify actual transaction status via PhonePe Status API
+          final isActualSuccess = await checkTransactionStatus(transactionId);
+          if (isActualSuccess) {
+            await addCoins(coins);
+            await _addPurchaseRecord(
+              coins: coins,
+              priceInr: amountInPaise ~/ 100,
+              transactionId: transactionId,
+              status: 'SUCCESS',
+            );
+            return true;
+          } else {
+            debugPrint('PhonePe: Transaction $transactionId completed flow, but Status API returned FAILED');
+            await _addPurchaseRecord(
+              coins: coins,
+              priceInr: amountInPaise ~/ 100,
+              transactionId: transactionId,
+              status: 'FAILED',
+            );
+          }
+        } else {
+          debugPrint('PhonePe: Transaction $transactionId ended with status: $status');
+          await _addPurchaseRecord(
+            coins: coins,
+            priceInr: amountInPaise ~/ 100,
+            transactionId: transactionId,
+            status: status,
+          );
+        }
+      } else {
+        debugPrint('PhonePe: Transaction $transactionId returned null response');
+      }
+      return false;
+    } catch (e) {
+      debugPrint('PhonePe Payment Error: $e');
+      return false;
+    }
+  }
+
+  /// Check transaction status from PhonePe server using API.
+  static Future<bool> checkTransactionStatus(String transactionId) async {
+    try {
+      final apiPath = '/pg/v1/status/$_merchantId/$transactionId';
+      final saltStr = '$apiPath$_saltKey';
+      final hash = sha256.convert(utf8.encode(saltStr)).toString();
+      final xVerify = '$hash###$_saltIndex';
+
+      final url = Uri.parse('https://api-preprod.phonepe.com/apis/pg-sandbox$apiPath');
+      
+      final httpResponse = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-VERIFY': xVerify,
+          'X-MERCHANT-ID': _merchantId,
+        },
+      ).timeout(const Duration(seconds: 15));
+
+      debugPrint('PhonePe Status API Code: ${httpResponse.statusCode}');
+      debugPrint('PhonePe Status API Response: ${httpResponse.body}');
+
+      if (httpResponse.statusCode == 200) {
+        final Map<String, dynamic> json = jsonDecode(httpResponse.body);
+        final bool success = json['success'] ?? false;
+        final String code = json['code'] ?? '';
+        final data = json['data'];
+        final String responseCode = data != null ? (data['responseCode'] ?? '') : '';
+
+        if (success && code == 'PAYMENT_SUCCESS' && responseCode == 'SUCCESS') {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error checking PhonePe status: $e');
+      return false;
+    }
+  }
+
+  // ── UI Helpers ────────────────────────────────────────────────────────
+
+  /// Build the wallet icon button for the AppBar.
+  static Widget buildWalletButton({
+    required int coinBalance,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFFD700).withValues(alpha: 0.4),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.monetization_on, color: Colors.white, size: 16),
+            const SizedBox(width: 3),
+            Text(
+              coinBalance.toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Show the Coin Shop bottom sheet.
+  static void showCoinShop(BuildContext context, {required Function(int) onCoinsAdded}) {
+    final packages = [
+      {'coins': 50, 'price': 25},
+      {'coins': 100, 'price': 50},
+      {'coins': 250, 'price': 100},
+      {'coins': 500, 'price': 200},
+      {'coins': 1000, 'price': 350},
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return _CoinShopSheet(
+          packages: packages,
+          onCoinsAdded: onCoinsAdded,
+        );
+      },
+    );
+  }
+
+  /// Show the unlock-contact confirmation dialog.
+  static Future<bool> showUnlockDialog(
+    BuildContext context, {
+    required String contactId,
+    required VoidCallback onInsufficientFunds,
+  }) async {
+    bool unlocked = false;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF3E0),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.lock_open, color: Color(0xFFFFA500), size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Unlock Contact',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+          content: RichText(
+            text: TextSpan(
+              style: const TextStyle(fontSize: 15, color: Colors.black87, height: 1.5),
+              children: [
+                const TextSpan(text: 'To see the full mobile number, '),
+                TextSpan(
+                  text: '$_unlockCost coins',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFFFFA500),
+                  ),
+                ),
+                const TextSpan(text: ' will be debited.\n\nDo you want to proceed?'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                'No',
+                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Constants.AppColors.brand,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () async {
+                bool success = await deductCoins(_unlockCost);
+                if (success) {
+                  await markContactUnlocked(contactId);
+                  unlocked = true;
+                  if (ctx.mounted) Navigator.pop(ctx);
+                } else {
+                  if (ctx.mounted) Navigator.pop(ctx);
+                  onInsufficientFunds();
+                }
+              },
+              child: const Text('Yes, Unlock'),
+            ),
+          ],
+        );
+      },
+    );
+    return unlocked;
+  }
+
+  /// Show an "Insufficient Coins" alert with option to buy coins.
+  static void showInsufficientFundsDialog(BuildContext context, {required VoidCallback onBuyCoins}) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 28),
+              SizedBox(width: 10),
+              Text(
+                'Insufficient Coins',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          content: const Text(
+            'You do not have enough coins to unlock this contact. Please buy more coins.',
+            style: TextStyle(fontSize: 14, height: 1.5),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+            ),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.shopping_cart, size: 18),
+              label: const Text('Buy Coins'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFA500),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () {
+                Navigator.pop(ctx);
+                onBuyCoins();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Private Coin Shop Bottom Sheet Widget (with PhonePe + Purchase History)
+// ═══════════════════════════════════════════════════════════════════════
+
+class _CoinShopSheet extends StatefulWidget {
+  final List<Map<String, int>> packages;
+  final Function(int) onCoinsAdded;
+
+  const _CoinShopSheet({required this.packages, required this.onCoinsAdded});
+
+  @override
+  State<_CoinShopSheet> createState() => _CoinShopSheetState();
+}
+
+class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProviderStateMixin {
+  int _currentBalance = 0;
+  int? _processingIndex;
+  bool _showSuccess = false;
+  int _addedCoins = 0;
+  List<Map<String, dynamic>> _purchaseHistory = [];
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _loadData();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    int bal = await WalletHelper.getCoins();
+    List<Map<String, dynamic>> history = await WalletHelper.getPurchaseHistory();
+    if (mounted) {
+      setState(() {
+        _currentBalance = bal;
+        _purchaseHistory = history;
+      });
+    }
+  }
+
+  Future<void> _purchasePackage(int index) async {
+    final pkg = widget.packages[index];
+    final coins = pkg['coins']!;
+    final price = pkg['price']!;
+
+    setState(() => _processingIndex = index);
+
+    // Start PhonePe payment
+    bool success = await WalletHelper.startPhonePePayment(
+      amountInPaise: price * 100,
+      coins: coins,
+    );
+
+    if (success) {
+      int newBalance = await WalletHelper.getCoins();
+      List<Map<String, dynamic>> history = await WalletHelper.getPurchaseHistory();
+
+      setState(() {
+        _processingIndex = null;
+        _currentBalance = newBalance;
+        _showSuccess = true;
+        _addedCoins = coins;
+        _purchaseHistory = history;
+      });
+
+      widget.onCoinsAdded(newBalance);
+
+      // Auto-dismiss success after 2 seconds
+      await Future.delayed(const Duration(seconds: 2));
+      if (mounted) {
+        setState(() => _showSuccess = false);
+      }
+    } else {
+      setState(() => _processingIndex = null);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Payment failed or cancelled. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+      ),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle
+          const SizedBox(height: 12),
+          Container(
+            width: 40, height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Title + Balance
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.account_balance_wallet, color: Colors.white, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Coin Wallet',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                    ),
+                    Text(
+                      'Balance: $_currentBalance coins',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Success banner
+          if (_showSuccess)
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F5E9),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF4CAF50)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 24),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '$_addedCoins coins added successfully!',
+                      style: const TextStyle(
+                        color: Color(0xFF2E7D32),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          const SizedBox(height: 4),
+
+          // Tab Bar (Buy Coins / Purchase History)
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              indicator: BoxDecoration(
+                color: Constants.AppColors.brand,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.grey[600],
+              labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+              dividerColor: Colors.transparent,
+              tabs: const [
+                Tab(text: 'Buy Coins'),
+                Tab(text: 'Purchase History'),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Tab views
+          Flexible(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildBuyCoinsTab(),
+                _buildHistoryTab(),
+              ],
+            ),
+          ),
+
+          // PhonePe branding
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.security, size: 14, color: Colors.grey[400]),
+                const SizedBox(width: 4),
+                Text(
+                  'Powered by PhonePe (Sandbox)',
+                  style: TextStyle(fontSize: 11, color: Colors.grey[400]),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBuyCoinsTab() {
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemCount: widget.packages.length,
+      itemBuilder: (context, index) {
+        final pkg = widget.packages[index];
+        final coins = pkg['coins']!;
+        final price = pkg['price']!;
+        final isProcessing = _processingIndex == index;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: isProcessing || _processingIndex != null
+                  ? null
+                  : () => _purchasePackage(index),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    // Coin icon
+                    Container(
+                      width: 48, height: 48,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$coins',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '$coins Coins',
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Unlock ${coins ~/ 5} contacts',
+                            style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Price / loading
+                    isProcessing
+                        ? const SizedBox(
+                            width: 24, height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFA500)),
+                            ),
+                          )
+                        : Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF4CAF50), Color(0xFF388E3C)],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '₹$price',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHistoryTab() {
+    if (_purchaseHistory.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.receipt_long, size: 56, color: Colors.grey[300]),
+              const SizedBox(height: 12),
+              Text(
+                'No purchases yet',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[400],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Your coin purchase history will appear here',
+                style: TextStyle(fontSize: 13, color: Colors.grey[400]),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemCount: _purchaseHistory.length,
+      itemBuilder: (context, index) {
+        final record = _purchaseHistory[index];
+        final coins = record['coins'] ?? 0;
+        final price = record['price'] ?? 0;
+        final txnId = record['transactionId'] ?? '';
+        final status = record['status'] ?? 'Unknown';
+        final dateStr = record['date'] ?? '';
+
+        // Parse date
+        String formattedDate = '';
+        try {
+          final dt = DateTime.parse(dateStr);
+          formattedDate = '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+        } catch (_) {
+          formattedDate = dateStr;
+        }
+
+        final isSuccess = status.toString().toUpperCase().contains('SUCCESS');
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              // Status icon
+              Container(
+                width: 40, height: 40,
+                decoration: BoxDecoration(
+                  color: isSuccess
+                      ? const Color(0xFFE8F5E9)
+                      : const Color(0xFFFFEBEE),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  isSuccess ? Icons.check_circle : Icons.cancel,
+                  color: isSuccess ? const Color(0xFF4CAF50) : Colors.red,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '+$coins Coins',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '₹$price • $formattedDate',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    ),
+                    Text(
+                      'ID: ${txnId.length > 20 ? '${txnId.substring(0, 20)}...' : txnId}',
+                      style: TextStyle(fontSize: 10, color: Colors.grey[400]),
+                    ),
+                  ],
+                ),
+              ),
+              // Status badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isSuccess
+                      ? const Color(0xFFE8F5E9)
+                      : const Color(0xFFFFEBEE),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  isSuccess ? 'Success' : 'Failed',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: isSuccess ? const Color(0xFF4CAF50) : Colors.red,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
