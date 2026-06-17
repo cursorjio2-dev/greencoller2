@@ -593,13 +593,17 @@ class _RegistrationFormState extends State<RegistrationForm> {
     return Scaffold(
       backgroundColor: Constants.AppColors.surface,
       appBar: AppBar(
-        backgroundColor: Constants.AppColors.brand,
-        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           AppLocalizations.of(context)!.registerform,
           style: Constants.AppTypography.h3.copyWith(color: Colors.white),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: Constants.AppColors.brandGradient,
+          ),
+        ),
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Padding(

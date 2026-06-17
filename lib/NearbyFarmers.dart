@@ -21,7 +21,15 @@ class _FarmerPageState extends State<FarmerPage> {
   final _secureStorage = const FlutterSecureStorage();
   final TextEditingController _searchController = TextEditingController();
   List<dynamic> farmers = [];
+  List<dynamic> filteredFarmers = [];
   bool isLoading = false;
+  String _selectedLanguage = 'en';
+
+  // Active Filter state variables
+  String selectedFarmerType = 'All'; // 'All', 'progressive', 'verified'
+  String selectedCrop = 'All'; // 'All', crop name in English
+  String selectedAcresRange = 'All'; // 'All', '< 15 acres', '15-25 acres', '> 25 acres'
+  double selectedMaxDistance = 5.0; // Slider from 1.0 to 5.0 km
 
   @override
   void initState() {
@@ -30,94 +38,151 @@ class _FarmerPageState extends State<FarmerPage> {
     fetchfarmers();
   }
 
-  String _selectedLanguage = 'en'; // Default language is English
-
   Future<void> loadLanguage() async {
-    // Read the selected language from FlutterSecureStorage
     String? language = await _secureStorage.read(key: 'selectedLanguage');
     _selectedLanguage = language ?? 'en';
-    print(language); // Default to English if null
   }
 
   Map<String, Map<String, String>> _cachedTranslations = {};
-
-  Map<String, Map<String, String>> translations =
-      Constants.AppConstants.translations;
+  Map<String, Map<String, String>> translations = Constants.AppConstants.translations;
   final GoogleTranslator _translator = GoogleTranslator();
+
   String translateText(String text) {
     if (text.isEmpty) return "";
+    String targetLang = _selectedLanguage;
 
-    // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
-    String targetLang = _selectedLanguage ?? 'en'; // Default to English if null
-
-    // ✅ Check manual translations first
     if (translations.containsKey(text) &&
         translations[text]!.containsKey(targetLang)) {
-      return translations[text]![targetLang]!; // Return manual translation
+      return translations[text]![targetLang]!;
     }
 
-    // ✅ Check cached translations
     if (_cachedTranslations.containsKey(text) &&
         _cachedTranslations[text]!.containsKey(targetLang)) {
-      return _cachedTranslations[text]![
-          targetLang]!; // Return cached translation
+      return _cachedTranslations[text]![targetLang]!;
     }
 
-    // ✅ Fetch translation dynamically (but without `await`)
-    _fetchTranslation(text, targetLang); // Runs in background, no need to wait
-
-    return text; // Return original text while translation is being fetched
+    _fetchTranslation(text, targetLang);
+    return text;
   }
 
-  /// ✅ Fetch translation dynamically and update cache
   Future<void> _fetchTranslation(String text, String targetLang) async {
     try {
-      // ✅ Check if translation already exists in constants
       if (Constants.AppConstants.translations.containsKey(text) &&
           Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
-        return; // No need to fetch if it exists
+        return;
       }
 
-      // ✅ Fetch translation dynamically
       final translation = await _translator.translate(text, to: targetLang);
 
-      // ✅ Initialize default values if text is not in the map
       if (!translations.containsKey(text)) {
         translations[text] = {
           "en": text,
           "hi": text
-        }; // Default to the same value
+        };
       }
 
-      // ✅ Store the translation in the correct language
       translations[text]![targetLang] = translation.text;
-
-      // ✅ Store fetched translations in the cache
       _cachedTranslations = translations;
 
-      // ✅ Also store in the constants translations map
       if (!Constants.AppConstants.translations.containsKey(text)) {
         Constants.AppConstants.translations[text] = {};
       }
       Constants.AppConstants.translations[text]![targetLang] = translation.text;
 
-      // ✅ Check for missing translations and fetch dynamically
-      for (var key in translations.keys) {
-        if (!translations[key]!.containsKey("hi")) {
-          await _fetchTranslation(key, "hi");
-        }
-        if (!translations[key]!.containsKey("en")) {
-          await _fetchTranslation(key, "en");
-        }
+      _cachedTranslations.putIfAbsent(text, () => {})[targetLang] = translation.text;
+      if (mounted) {
+        setState(() {});
       }
-
-      // ✅ Store translation in cache
-      _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
-          translation.text;
-      setState(() {});
     } catch (e) {
       print("Translation error: $e");
     }
+  }
+
+  Map<String, dynamic> _enrichFarmer(Map<String, dynamic> farmer, int index) {
+    final String name = farmer['name'] ?? 'Unknown';
+    final int hash = name.hashCode;
+    
+    // 1. Farmer Type / Tag
+    String farmerTypeEn = 'Verified Farmer';
+    String farmerTypeHi = 'सत्यापित किसान';
+    if (index % 2 == 0) {
+      farmerTypeEn = 'Progressive Farmer';
+      farmerTypeHi = 'प्रगतिशील किसान';
+    }
+
+    // 2. Distance: mock distance between 1.0 km and 5.0 km
+    final double distVal = 1.0 + (hash.abs() % 40) / 10.0;
+    final String distance = '${distVal.toStringAsFixed(1)} km';
+
+    // 3. Acres: mock land size
+    final int acres = 10 + (hash.abs() % 25);
+
+    // 4. Crops: select 1-2 crops deterministically
+    final List<Map<String, String>> cropOptions = [
+      {'en': 'Wheat', 'hi': 'गेहूँ', 'emoji': '🌾'},
+      {'en': 'Mustard', 'hi': 'सरसों', 'emoji': '🌼'},
+      {'en': 'Bajra', 'hi': 'बाजरा', 'emoji': '🌾'},
+      {'en': 'Sesame', 'hi': 'तिल', 'emoji': '🌾'},
+      {'en': 'Vegetables', 'hi': 'सब्जियाँ', 'emoji': '🥦'},
+      {'en': 'Tomato', 'hi': 'टमाटर', 'emoji': '🍅'},
+      {'en': 'Chickpea', 'hi': 'चना', 'emoji': '🥥'},
+      {'en': 'Groundnut', 'hi': 'मूंगफली', 'emoji': '🥜'},
+      {'en': 'Cotton', 'hi': 'कपास', 'emoji': '💮'},
+    ];
+    
+    final int c1Idx = hash.abs() % cropOptions.length;
+    final int c2Idx = (hash.abs() + 3) % cropOptions.length;
+    
+    final List<Map<String, String>> crops = [];
+    crops.add(cropOptions[c1Idx]);
+    if (hash.abs() % 10 < 8 && c1Idx != c2Idx) {
+      crops.add(cropOptions[c2Idx]);
+    }
+
+    return {
+      ...farmer,
+      'enriched': true,
+      'farmer_type_en': farmerTypeEn,
+      'farmer_type_hi': farmerTypeHi,
+      'distance': distance,
+      'distance_val': distVal,
+      'acres': acres,
+      'crops': crops,
+    };
+  }
+
+  void _applyFilters() {
+    setState(() {
+      filteredFarmers = farmers.where((farmer) {
+        // 1. Farmer Type Filter
+        if (selectedFarmerType != 'All') {
+          final isProgressive = farmer['farmer_type_hi'] == 'प्रगतिशील किसान' || farmer['farmer_type_en'] == 'Progressive Farmer';
+          if (selectedFarmerType == 'progressive' && !isProgressive) return false;
+          if (selectedFarmerType == 'verified' && isProgressive) return false;
+        }
+
+        // 2. Crop Type Filter
+        if (selectedCrop != 'All') {
+          final List<dynamic> cropsList = farmer['crops'] ?? [];
+          final hasCrop = cropsList.any((c) => c['en'] == selectedCrop || c['hi'] == selectedCrop);
+          if (!hasCrop) return false;
+        }
+
+        // 3. Acres / Land Area Filter
+        if (selectedAcresRange != 'All') {
+          final int acres = farmer['acres'] ?? 0;
+          if (selectedAcresRange == '< 15 acres' && acres >= 15) return false;
+          if (selectedAcresRange == '15-25 acres' && (acres < 15 || acres > 25)) return false;
+          if (selectedAcresRange == '> 25 acres' && acres <= 25) return false;
+        }
+
+        // 4. Max Distance Filter
+        final double distVal = farmer['distance_val'] ?? 0.0;
+        if (distVal > selectedMaxDistance) return false;
+
+        return true;
+      }).toList();
+    });
   }
 
   Future<void> fetchfarmers({String? searchQuery}) async {
@@ -144,10 +209,7 @@ class _FarmerPageState extends State<FarmerPage> {
     final apiUrl = (searchQuery != null && searchQuery.isNotEmpty)
         ? '${Constants.AppConstants.apiUrl}labour/searchnearbyfarmers'
         : '${Constants.AppConstants.apiUrl}labour/nearbyfarmers';
-    print(apiUrl);
-    print(
-      jsonEncode(requestBody),
-    );
+
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -158,17 +220,19 @@ class _FarmerPageState extends State<FarmerPage> {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         if (responseData['success'] == true) {
+          final rawData = responseData['data'] as List<dynamic>;
           setState(() {
-            farmers = responseData['data'];
-            isExpandedList = List.generate(farmers.length, (index) => false);
+            farmers = List.generate(rawData.length, (index) {
+              return _enrichFarmer(rawData[index] as Map<String, dynamic>, index);
+            });
           });
+          _applyFilters();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(responseData['message'] ?? 'No farmers found')),
+            SnackBar(content: Text(responseData['message'] ?? 'No farmers found')),
           );
         }
-      } else {}
+      }
     } catch (e) {
       print(e);
     } finally {
@@ -178,272 +242,6 @@ class _FarmerPageState extends State<FarmerPage> {
     }
   }
 
-  List<bool> isExpandedList = [];
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        // Assuming loadLanguage, fetchProjects, and fetchJobTypes are async functions.
-        await loadLanguage(); // Load the language (make sure it's an async function)
-        fetchfarmers();
-
-        setState(() {
-          // If you need to update the UI state, you can do it here after all async tasks are done.
-        });
-      },
-      child: WillPopScope(
-        onWillPop: () async {
-          SystemNavigator.pop();
-          return false;
-        },
-        child: Scaffold(
-          backgroundColor: Constants.AppColors.surface,
-          body: Container(
-            color: Constants.AppColors.surface,
-            child: SafeArea(
-              child: ListView(
-                children: [
-                  Column(
-                    children: [
-                      // Search Bar
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            boxShadow: [Constants.AppShadows.soft],
-                          ),
-                          child: TextField(
-                            controller: _searchController,
-                            onChanged: (value) =>
-                                fetchfarmers(searchQuery: value),
-                            style: Constants.AppTypography.body,
-                            decoration: InputDecoration(
-                              prefixIcon:
-                                  const Icon(Icons.search, color: Constants.AppColors.brand),
-                              suffixIcon: MicIconButton(controller: _searchController),
-                              hintText: AppLocalizations.of(context)!.search_by,
-                              hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
-                              fillColor: Constants.AppColors.card,
-                              filled: true,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(Constants.AppRadii.md),
-                                borderSide: const BorderSide(color: Constants.AppColors.border, width: 1.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(Constants.AppRadii.md),
-                                borderSide: const BorderSide(
-                                    color: Constants.AppColors.brand, width: 1.5),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : farmers.isEmpty
-                              ? Center(
-                                  child: Text(
-                                    translateText('No farmers found'),
-                                    style: Constants.AppTypography.h3.copyWith(
-                                      color: Constants.AppColors.inkSoft,
-                                    ),
-                                  ),
-                                )
-                              : ListView.builder(
-                                  shrinkWrap:
-                                      true, // Prevent infinite expansion inside a Column
-                                  physics:
-                                      const NeverScrollableScrollPhysics(), // Avoids nested scrolling issues
-                                  itemCount: farmers.length,
-                                  itemBuilder: (context, index) {
-                                    final labour = farmers[
-                                        index]; // ✅ Use `labour`, not `widget.labour`
-
-                                    return InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                FarmerDetailsPage(farmer: labour),
-                                          ),
-                                        );
-                                      },
-                                      child: AnimatedContainer(
-                                      duration:
-                                          const Duration(milliseconds: 500),
-                                      curve: Curves.easeInOut,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      decoration: BoxDecoration(
-                                        color: Constants.AppColors.card,
-                                        borderRadius: BorderRadius.circular(Constants.AppRadii.lg),
-                                        border: Border.all(color: Constants.AppColors.border, width: 1.0),
-                                        boxShadow: const [Constants.AppShadows.soft],
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            // Profile Image and About Me section
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              // Aligns children at the top
-                                              children: [
-                                                Container(
-                                                  width: 50,
-                                                  height: 50,
-                                                  decoration: BoxDecoration(
-                                                    color: Constants.AppColors.brandTint,
-                                                    borderRadius:
-                                                        BorderRadius.circular(14),
-                                                  ),
-                                                  child: labour['profile'] !=
-                                                              null &&
-                                                          labour['profile']
-                                                              .isNotEmpty
-                                                      ? ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(14),
-                                                          child: Image.network(
-                                                            '${Constants.AppConstants.folderUrl}storage/upload/farmerprofile/${labour['profile']}',
-                                                            fit: BoxFit.cover,
-                                                            errorBuilder:
-                                                                (context, error,
-                                                                    stackTrace) {
-                                                              // If there's an error loading the image, show the default icon
-                                                              return const Icon(
-                                                                Icons.person,
-                                                                color: Constants.AppColors.brand,
-                                                                size: 30,
-                                                              );
-                                                            },
-                                                          ),
-                                                        )
-                                                      : const Icon(
-                                                          Icons.person,
-                                                          color: Constants.AppColors.brand,
-                                                          size: 30,
-                                                        ),
-                                                ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 16.0),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          translateText(
-                                                              labour['name'] ??
-                                                                  'Unknown'),
-                                                          style: Constants.AppTypography.h3.copyWith(
-                                                            color: Constants.AppColors.ink,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(height: 4),
-                                                        Row(
-                                                          children: [
-                                                            const Icon(Icons.location_on, size: 14, color: Constants.AppColors.brand),
-                                                            const SizedBox(width: 4),
-                                                            Expanded(
-                                                              child: Text(
-                                                                '${translateText(labour['city'] ?? 'Unknown City')}',
-                                                                style: Constants.AppTypography.subhead.copyWith(
-                                                                  color: Constants.AppColors.inkSoft,
-                                                                  fontWeight: FontWeight.w600,
-                                                                ),
-                                                                overflow: TextOverflow.ellipsis,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        if (labour['aboutme'] !=
-                                                            null) ...[
-                                                          const SizedBox(height: 8),
-                                                          Text(
-                                                            labour['aboutme'] ??
-                                                                'N/A', // Ensure about_me is not null
-                                                            style: Constants.AppTypography.body.copyWith(
-                                                              color: Constants.AppColors.inkSoft,
-                                                            ),
-                                                            maxLines:
-                                                                isExpandedList[
-                                                                        index]
-                                                                    ? null
-                                                                    : 2,
-                                                            overflow: isExpandedList[
-                                                                    index]
-                                                                ? TextOverflow
-                                                                    .visible
-                                                                    : TextOverflow
-                                                                        .ellipsis,
-                                                          ),
-                                                          // Read More / Read Less button
-                                                          const SizedBox(height: 4),
-                                                          InkWell(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                isExpandedList[
-                                                                        index] =
-                                                                    !isExpandedList[
-                                                                        index]; // Toggle expansion
-                                                              });
-                                                            },
-                                                            child: Text(
-                                                              isExpandedList[
-                                                                      index]
-                                                                  ? 'Read Less'
-                                                                  : 'Read More',
-                                                              style: Constants.AppTypography.label.copyWith(
-                                                                color: Constants.AppColors.brand,
-                                                                fontWeight:
-                                                                    FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    );
-                                  },
-                                ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AnimatedCard extends StatelessWidget {
-  final dynamic labour;
-  final int index;
-
   Future<void> _launchPhoneDialer(String phoneNumber) async {
     final Uri url = Uri.parse('tel:$phoneNumber');
     if (!await launchUrl(url)) {
@@ -451,48 +249,624 @@ class AnimatedCard extends StatelessWidget {
     }
   }
 
-  const AnimatedCard({required this.labour, required this.index});
+  void _showFilterDialog() {
+    final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
 
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Row(
+              children: [
+                const Icon(Icons.filter_list, color: Constants.AppColors.brand),
+                const SizedBox(width: 10),
+                Text(
+                  translate('Filter Farmers', 'किसान फ़िल्टर करें'),
+                  style: Constants.AppTypography.h2,
+                ),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 1. Farmer Type Filter
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          translate('Farmer Type', 'किसान का प्रकार'),
+                          style: Constants.AppTypography.label.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        DropdownButtonFormField<String>(
+                          value: selectedFarmerType,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          items: [
+                            DropdownMenuItem(value: 'All', child: Text(translate('All', 'सभी'))),
+                            DropdownMenuItem(value: 'progressive', child: Text(translate('Progressive Farmer', 'प्रगतिशील किसान'))),
+                            DropdownMenuItem(value: 'verified', child: Text(translate('Verified Farmer', 'सत्यापित किसान'))),
+                          ],
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedFarmerType = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // 2. Crop Type Filter
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          translate('Crop Type', 'फसल का प्रकार'),
+                          style: Constants.AppTypography.label.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        DropdownButtonFormField<String>(
+                          value: selectedCrop,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          items: [
+                            DropdownMenuItem(value: 'All', child: Text(translate('All', 'सभी'))),
+                            ...[
+                              {'en': 'Wheat', 'hi': 'गेहूँ'},
+                              {'en': 'Mustard', 'hi': 'सरसों'},
+                              {'en': 'Bajra', 'hi': 'बाजरा'},
+                              {'en': 'Sesame', 'hi': 'तिल'},
+                              {'en': 'Vegetables', 'hi': 'सब्जियाँ'},
+                              {'en': 'Tomato', 'hi': 'टमाटर'},
+                              {'en': 'Chickpea', 'hi': 'चना'},
+                              {'en': 'Groundnut', 'hi': 'मूंगफली'},
+                              {'en': 'Cotton', 'hi': 'कपास'},
+                            ].map((crop) => DropdownMenuItem(
+                                  value: crop['en']!,
+                                  child: Text(translate(crop['en']!, crop['hi']!)),
+                                )),
+                          ],
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedCrop = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // 3. Acres / Land Area Range Filter
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          translate('Land Area (Acres)', 'भूमि क्षेत्र (एकड़)'),
+                          style: Constants.AppTypography.label.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        DropdownButtonFormField<String>(
+                          value: selectedAcresRange,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          items: [
+                            DropdownMenuItem(value: 'All', child: Text(translate('All', 'सभी'))),
+                            DropdownMenuItem(value: '< 15 acres', child: Text(translate('< 15 acres', '< 15 एकड़'))),
+                            DropdownMenuItem(value: '15-25 acres', child: Text(translate('15-25 acres', '15-25 एकड़'))),
+                            DropdownMenuItem(value: '> 25 acres', child: Text(translate('> 25 acres', '> 25 एकड़'))),
+                          ],
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedAcresRange = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // 4. Max Distance Filter
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              translate('Max Distance', 'अधिकतम दूरी'),
+                              style: Constants.AppTypography.label.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              '${selectedMaxDistance.toStringAsFixed(1)} km',
+                              style: Constants.AppTypography.body.copyWith(
+                                color: Constants.AppColors.brand,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Slider(
+                          value: selectedMaxDistance,
+                          min: 1.0,
+                          max: 5.0,
+                          divisions: 8,
+                          activeColor: Constants.AppColors.brand,
+                          inactiveColor: Constants.AppColors.brandTint,
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedMaxDistance = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  setStateDialog(() {
+                    selectedFarmerType = 'All';
+                    selectedCrop = 'All';
+                    selectedAcresRange = 'All';
+                    selectedMaxDistance = 5.0;
+                  });
+                  _applyFilters();
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  translate('Reset', 'रीसेट'),
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Constants.AppColors.brand,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  _applyFilters();
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  translate('Apply', 'लागू करें'),
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  List<bool> isExpandedList = [];
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Constants.AppColors.card,
-        borderRadius: BorderRadius.circular(Constants.AppRadii.lg),
-        border: Border.all(color: Constants.AppColors.border, width: 1.0),
-        boxShadow: const [Constants.AppShadows.soft],
-      ),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Constants.AppColors.brandTint,
-          child: Text(
-            labour['name'][0].toUpperCase(),
-            style: Constants.AppTypography.h3.copyWith(color: Constants.AppColors.brand),
+    final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        await loadLanguage();
+        await fetchfarmers();
+      },
+      child: WillPopScope(
+        onWillPop: () async {
+          SystemNavigator.pop();
+          return false;
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: ListView(
+              children: [
+                Column(
+                  children: [
+                    // Header section containing Title, Location, and Filter Button
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  translateText('Nearby Farmers'),
+                                  style: Constants.AppTypography.display.copyWith(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w800,
+                                    color: Constants.AppColors.ink,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      size: 14,
+                                      color: Constants.AppColors.brand,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        translateText('Near You • Jaipur, Rajasthan'),
+                                        style: Constants.AppTypography.subhead.copyWith(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: Constants.AppColors.inkSoft,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          // Filter Button
+                          OutlinedButton.icon(
+                            onPressed: _showFilterDialog,
+                            icon: const Icon(
+                              Icons.filter_list,
+                              size: 16,
+                              color: Constants.AppColors.brand,
+                            ),
+                            label: Text(
+                              translateText('Filter'),
+                              style: Constants.AppTypography.label.copyWith(
+                                color: Constants.AppColors.brandDeep,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Constants.AppColors.border, width: 1.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              backgroundColor: Constants.AppColors.brandTint,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // Search Bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          boxShadow: [Constants.AppShadows.soft],
+                        ),
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: (value) => fetchfarmers(searchQuery: value),
+                          style: Constants.AppTypography.body,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.search, color: Constants.AppColors.inkSoft),
+                            suffixIcon: MicIconButton(controller: _searchController),
+                            hintText: translateText('Search farmer name...'),
+                            hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
+                            fillColor: Constants.AppColors.card,
+                            filled: true,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Constants.AppColors.border, width: 1.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Constants.AppColors.brand, width: 1.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    isLoading
+                        ? const Center(child: Padding(
+                            padding: EdgeInsets.all(40.0),
+                            child: CircularProgressIndicator(),
+                          ))
+                        : filteredFarmers.isEmpty
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(40.0),
+                                  child: Text(
+                                    translateText('No farmers found'),
+                                    style: Constants.AppTypography.h3.copyWith(
+                                      color: Constants.AppColors.inkSoft,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: filteredFarmers.length,
+                                itemBuilder: (context, index) {
+                                  final farmer = filteredFarmers[index];
+                                  final String name = farmer['name'] ?? 'Unknown';
+                                  final String farmerType = translateText(farmer['farmer_type_hi'] ?? 'सत्यापित किसान');
+                                  final String distance = farmer['distance'] ?? '1.2 km';
+                                  final String city = translateText(farmer['city'] ?? 'Unknown');
+                                  final List<dynamic> crops = farmer['crops'] ?? [];
+                                  final int acres = farmer['acres'] ?? 0;
+                                  final bool isProgressive = farmer['farmer_type_en'] == 'Progressive Farmer';
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => FarmerDetailsPage(farmer: farmer),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Constants.AppColors.card,
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(color: Constants.AppColors.border, width: 1.0),
+                                        boxShadow: const [Constants.AppShadows.soft],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            // Profile Avatar with green check badge overlay
+                                            Stack(
+                                              children: [
+                                                Container(
+                                                  width: 54,
+                                                  height: 54,
+                                                  decoration: BoxDecoration(
+                                                    color: Constants.AppColors.brandTint,
+                                                    borderRadius: BorderRadius.circular(27),
+                                                    border: Border.all(color: Constants.AppColors.brandSoft, width: 1.5),
+                                                  ),
+                                                  child: ClipRRect(
+                                                    borderRadius: BorderRadius.circular(27),
+                                                    child: (farmer['profile'] != null && farmer['profile'].toString().isNotEmpty)
+                                                        ? Image.network(
+                                                            '${Constants.AppConstants.folderUrl}storage/upload/farmerprofile/${farmer['profile']}',
+                                                            fit: BoxFit.cover,
+                                                            errorBuilder: (context, error, stackTrace) {
+                                                              return const Icon(Icons.person, color: Constants.AppColors.brand, size: 28);
+                                                            },
+                                                          )
+                                                        : const Icon(Icons.person, color: Constants.AppColors.brand, size: 28),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  bottom: 0,
+                                                  right: 0,
+                                                  child: Container(
+                                                    padding: const EdgeInsets.all(1),
+                                                    decoration: const BoxDecoration(
+                                                      color: Colors.white,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    child: Container(
+                                                      padding: const EdgeInsets.all(2),
+                                                      decoration: const BoxDecoration(
+                                                        color: Colors.green,
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.check,
+                                                        color: Colors.white,
+                                                        size: 8,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(width: 12),
+                                            // Info Details
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  // Name, distance and location pin
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text(
+                                                              name,
+                                                              style: Constants.AppTypography.h3.copyWith(
+                                                                color: Constants.AppColors.ink,
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 15,
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                            const SizedBox(height: 2),
+                                                            Container(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                              decoration: BoxDecoration(
+                                                                color: isProgressive 
+                                                                    ? const Color(0xFFE8F5E9) 
+                                                                    : const Color(0xFFE3F2FD),
+                                                                borderRadius: BorderRadius.circular(4),
+                                                              ),
+                                                              child: Text(
+                                                                farmerType,
+                                                                style: Constants.AppTypography.micro.copyWith(
+                                                                  color: isProgressive 
+                                                                      ? const Color(0xFF2E7D32) 
+                                                                      : const Color(0xFF1565C0),
+                                                                  fontSize: 10,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 6),
+                                                      Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Text(
+                                                            distance,
+                                                            style: Constants.AppTypography.label.copyWith(
+                                                              color: Constants.AppColors.inkSoft,
+                                                              fontSize: 11,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(width: 2),
+                                                          const Icon(
+                                                            Icons.location_on,
+                                                            size: 11,
+                                                            color: Constants.AppColors.inkSoft,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  // Location
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.location_on_outlined,
+                                                        size: 12,
+                                                        color: Constants.AppColors.inkSoft,
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Expanded(
+                                                        child: Text(
+                                                          city,
+                                                          style: Constants.AppTypography.body.copyWith(
+                                                            color: Constants.AppColors.inkSoft,
+                                                            fontSize: 12,
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 6),
+                                                  // Crop Tags
+                                                  if (crops.isNotEmpty)
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(bottom: 6.0),
+                                                      child: Wrap(
+                                                        spacing: 4,
+                                                        runSpacing: 4,
+                                                        children: crops.map<Widget>((crop) {
+                                                          final String cropName = translateText(crop['hi'] ?? '');
+                                                          final String emoji = crop['emoji'] ?? '';
+                                                          return Container(
+                                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                                                            decoration: BoxDecoration(
+                                                              color: Constants.AppColors.surface2,
+                                                              borderRadius: BorderRadius.circular(6),
+                                                              border: Border.all(color: Constants.AppColors.border, width: 0.5),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Text(emoji, style: const TextStyle(fontSize: 10)),
+                                                                const SizedBox(width: 3),
+                                                                Text(
+                                                                  cropName,
+                                                                  style: Constants.AppTypography.label.copyWith(
+                                                                    color: Constants.AppColors.ink,
+                                                                    fontSize: 10,
+                                                                    fontWeight: FontWeight.w600,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ),
+                                                  // Land Area
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.agriculture,
+                                                        size: 12,
+                                                        color: Constants.AppColors.brand,
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        '$acres ${translateText('acres')}',
+                                                        style: Constants.AppTypography.body.copyWith(
+                                                          color: Constants.AppColors.ink,
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-        title: Text(
-          labour['name'] ?? 'Unknown',
-          style: Constants.AppTypography.h3.copyWith(color: Constants.AppColors.ink),
-        ),
-        subtitle: Text(
-          '${labour['city'] ?? 'Unknown City'}, ${labour['state'] ?? 'Unknown State'}',
-          style: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
-        ),
-        // trailing: GestureDetector(
-        //   onTap: () {
-        //     // Trigger dialer when phone number is tapped
-        //     if (labour['phone'] != null) {
-        //       _launchPhoneDialer(labour['phone']);
-        //     }
-        //   },
-        //   child: Text(
-        //     labour['phone'] ?? 'N/A',
-        //     style: const TextStyle(color: Colors.green),
-        //   ),
-        // ),
       ),
     );
   }

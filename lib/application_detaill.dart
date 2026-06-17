@@ -816,7 +816,6 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
     return Scaffold(
       backgroundColor: Constants.AppColors.surface,
       appBar: AppBar(
-        backgroundColor: Constants.AppColors.brand,
         foregroundColor: Constants.AppColors.card,
         elevation: 0,
         title: Text(
@@ -824,6 +823,11 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
           style: Constants.AppTypography.h3.copyWith(color: Constants.AppColors.card),
         ),
         iconTheme: const IconThemeData(color: Constants.AppColors.card),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: Constants.AppColors.brandGradient,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

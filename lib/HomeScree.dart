@@ -227,6 +227,46 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
   }
+  
+  Widget _buildDrawerTile({
+    required IconData icon,
+    required Widget title,
+    required VoidCallback onTap,
+    Widget? trailing,
+    bool isLogout = false,
+  }) {
+    final Color tintColor = isLogout ? const Color(0xFFFEF2F2) : Constants.AppColors.brandTint;
+    final Color iconColor = isLogout ? const Color(0xFFEF4444) : Constants.AppColors.brand;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: ListTile(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+        ),
+        leading: Container(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            color: tintColor,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: iconColor,
+            size: 20,
+          ),
+        ),
+        title: title,
+        trailing: trailing ?? Icon(
+          Icons.chevron_right_rounded,
+          color: isLogout ? const Color(0xFFEF4444) : const Color(0xFF9CA3AF),
+          size: 20,
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -316,222 +356,280 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         drawer: Drawer(
-          child: Container(
-            color: const Color.fromARGB(255, 255, 255, 255),
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                 DrawerHeader(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.green, Colors.teal],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+          backgroundColor: Colors.white,
+          child: Column(
+            children: [
+              // Premium Brand Header Container
+              Container(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top + 20,
+                  bottom: 24,
+                  left: 20,
+                  right: 20,
+                ),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Constants.AppColors.brandDeep,
+                      Constants.AppColors.brand,
+                    ],
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.white24,
+                        shape: BoxShape.circle,
+                      ),
+                      child: CircleAvatar(
+                        radius: 28,
                         backgroundColor: Colors.white,
                         child: Text(
                           _userName.isNotEmpty ? _userName[0].toUpperCase() : 'U',
-                          style: TextStyle(
-                            color: Colors.green[700],
-                            fontSize: 28,
+                          style: const TextStyle(
+                            color: Constants.AppColors.brandDeep,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              _userName.isNotEmpty ? _userName : 'User',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.white24,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                _userType == 'labour'
-                                    ? (context.watch<LanguageProvider>().selectedLanguage == 'en' ? 'Worker' : 'श्रमिक')
-                                    : (context.watch<LanguageProvider>().selectedLanguage == 'en' ? 'Farmer' : 'किसान'),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.home, color: Colors.green[700]),
-                  title: FutureBuilder<String>(
-                    future: translateText('Home'),
-                    builder: (context, snapshot) {
-                      return Text(
-                        snapshot.data ?? 'Home',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    setState(() {
-                      _currentIndex = 0;
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.search, color: Colors.green[700]),
-                  title: FutureBuilder<String>(
-                    future: translateText('Search'),
-                    builder: (context, snapshot) {
-                      return Text(
-                        snapshot.data ?? 'Search',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    setState(() {
-                      _currentIndex = 1;
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.notifications, color: Colors.green[700]),
-                  title: FutureBuilder<String>(
-                    // Translated text for Notifications
-                    future: translateText('Notifications'),
-                    builder: (context, snapshot) {
-                      return Row(
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            snapshot.data ?? 'Notifications',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            _userName.isNotEmpty ? _userName : 'User',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          if (unreadNotificationsCount > 0)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.red,
-                                child: Text(
-                                  unreadNotificationsCount.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              _userType == 'labour'
+                                  ? (context.watch<LanguageProvider>().selectedLanguage == 'en' ? 'Worker' : 'श्रमिक')
+                                  : (context.watch<LanguageProvider>().selectedLanguage == 'en' ? 'Farmer' : 'किसान'),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
+                          ),
                         ],
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => NotificationsPage()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.language, color: Colors.green[700]),
-                  title: FutureBuilder<String>(
-                    future: translateText(' Select Language'),
-                    builder: (context, snapshot) {
-                      return Text(
-                        snapshot.data ?? 'Language',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LanguageSelectionScreen(),
                       ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.notes, color: Colors.green[700]),
-                  title: FutureBuilder<String>(
-                    future: translateText('Projects'),
-                    builder: (context, snapshot) {
-                      return Text(
-                        snapshot.data ?? 'Projects',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    setState(() {
-                      _currentIndex = 2;
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.person, color: Colors.green[700]),
-                  title: FutureBuilder<String>(
-                    future: translateText('Profile'),
-                    builder: (context, snapshot) {
-                      return Text(
-                        snapshot.data ?? 'Profile',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UpdateLabourProfile(),
+                    ),
+                    // Elegant Close Button
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        height: 36,
+                        width: 36,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
-                ListTile(
-                  leading: Icon(Icons.logout, color: Colors.red[700]),
-                  title: FutureBuilder<String>(
-                    future: translateText('Logout'),
-                    builder: (context, snapshot) {
-                      return Text(
-                        snapshot.data ?? 'Logout',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    },
-                  ),
-                  onTap: () => _logout(context),
+              ),
+
+              // Scrollable Menu List
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  children: [
+                    // Home
+                    _buildDrawerTile(
+                      icon: Icons.home,
+                      title: FutureBuilder<String>(
+                        future: translateText('Home'),
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data ?? 'Home',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _currentIndex = 0;
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+
+                    // Search
+                    _buildDrawerTile(
+                      icon: Icons.search,
+                      title: FutureBuilder<String>(
+                        future: translateText('Search'),
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data ?? 'Search',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _currentIndex = 1;
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+
+                    // Notifications
+                    _buildDrawerTile(
+                      icon: Icons.notifications,
+                      title: FutureBuilder<String>(
+                        future: translateText('Notifications'),
+                        builder: (context, snapshot) {
+                          return Row(
+                            children: [
+                              Text(
+                                snapshot.data ?? 'Notifications',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              if (unreadNotificationsCount > 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Colors.red,
+                                    child: Text(
+                                      unreadNotificationsCount.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NotificationsPage()),
+                        );
+                      },
+                    ),
+
+                    // Select Language
+                    _buildDrawerTile(
+                      icon: Icons.language,
+                      title: FutureBuilder<String>(
+                        future: translateText(' Select Language'),
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data ?? 'Language',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LanguageSelectionScreen(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    // Projects
+                    _buildDrawerTile(
+                      icon: Icons.notes,
+                      title: FutureBuilder<String>(
+                        future: translateText('Projects'),
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data ?? 'Projects',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _currentIndex = 2;
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+
+                    // Profile
+                    _buildDrawerTile(
+                      icon: Icons.person,
+                      title: FutureBuilder<String>(
+                        future: translateText('Profile'),
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data ?? 'Profile',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UpdateLabourProfile(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const Divider(color: Constants.AppColors.border, height: 24, thickness: 1),
+
+                    // Logout
+                    _buildDrawerTile(
+                      icon: Icons.logout,
+                      isLogout: true,
+                      title: FutureBuilder<String>(
+                        future: translateText('Logout'),
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data ?? 'Logout',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                      onTap: () => _logout(context),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         body: _pages[_currentIndex],
@@ -619,7 +717,7 @@ class Dashboard extends StatelessWidget {
     return Center(
       child: Text(
         "Welcome to the Home Page",
-        style: TextStyle(fontSize: 24, color: Colors.green),
+        style: TextStyle(fontSize: 24, color: Constants.AppColors.brand),
       ),
     );
   }
@@ -631,7 +729,7 @@ class SearchPage extends StatelessWidget {
     return Center(
       child: Text(
         "Search for something here!",
-        style: TextStyle(fontSize: 24, color: Colors.teal),
+        style: TextStyle(fontSize: 24, color: Constants.AppColors.brand),
       ),
     );
   }
@@ -1450,118 +1548,134 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
                                       ),
                                     );
                                   },
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 500),
-                                    curve: Curves.easeInOut,
+                                  child: Container(
                                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     decoration: BoxDecoration(
                                       color: Constants.AppColors.card,
                                       borderRadius: BorderRadius.circular(Constants.AppRadii.lg),
                                       border: Border.all(color: Constants.AppColors.border, width: 1.0),
-                                      boxShadow: const [Constants.AppShadows.soft],
+                                      boxShadow: const [Constants.AppShadows.card],
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                width: 50,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: Constants.AppColors.brandTint,
-                                                  borderRadius: BorderRadius.circular(14),
-                                                ),
-                                                child: labour['profile'] != null && labour['profile'].isNotEmpty
-                                                    ? ClipRRect(
-                                                        borderRadius: BorderRadius.circular(14),
-                                                        child: Image.network(
-                                                          '${Constants.AppConstants.folderUrl}storage/upload/labourprofile/${labour['profile']}',
-                                                          fit: BoxFit.cover,
-                                                          errorBuilder: (context, error, stackTrace) {
-                                                            return const Icon(
-                                                              Icons.person,
-                                                              color: Constants.AppColors.brand,
-                                                              size: 30,
-                                                            );
-                                                          },
-                                                        ),
-                                                      )
-                                                    : const Icon(
-                                                        Icons.person,
-                                                        color: Constants.AppColors.brand,
-                                                        size: 30,
-                                                      ),
-                                              ),
-                                              Expanded(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(left: 16.0),
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        translateText(labour['name'] ?? 'Unknown'),
-                                                        style: Constants.AppTypography.h3.copyWith(
-                                                          color: Constants.AppColors.ink,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 4),
-                                                      Row(
-                                                        children: [
-                                                          const Icon(Icons.location_on, size: 14, color: Constants.AppColors.brand),
-                                                          const SizedBox(width: 4),
-                                                          Expanded(
-                                                            child: Text(
-                                                              '${translateText(labour['city'] ?? 'Unknown City')}',
-                                                              style: Constants.AppTypography.subhead.copyWith(
-                                                                color: Constants.AppColors.inkSoft,
-                                                                fontWeight: FontWeight.w600,
-                                                              ),
-                                                              overflow: TextOverflow.ellipsis,
-                                                            ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(Constants.AppRadii.lg),
+                                      child: IntrinsicHeight(
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            // Vertical brand indicator bar
+                                            Container(
+                                              width: 5,
+                                              color: Constants.AppColors.brand,
+                                            ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(12.0),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Container(
+                                                          width: 50,
+                                                          height: 50,
+                                                          decoration: BoxDecoration(
+                                                            color: Constants.AppColors.brandTint,
+                                                            borderRadius: BorderRadius.circular(14),
                                                           ),
-                                                        ],
-                                                      ),
-                                                      if (labour['aboutme'] != null && labour['aboutme'].toString().isNotEmpty) ...[
-                                                        const SizedBox(height: 8),
-                                                        Text(
-                                                          labour['aboutme'] ?? 'N/A',
-                                                          style: Constants.AppTypography.body.copyWith(
-                                                            color: Constants.AppColors.inkSoft,
-                                                          ),
-                                                          maxLines: isExpandedList[index] ? null : 2,
-                                                          overflow: isExpandedList[index] ? TextOverflow.visible : TextOverflow.ellipsis,
+                                                          child: labour['profile'] != null && labour['profile'].isNotEmpty
+                                                              ? ClipRRect(
+                                                                  borderRadius: BorderRadius.circular(14),
+                                                                  child: Image.network(
+                                                                    '${Constants.AppConstants.folderUrl}storage/upload/labourprofile/${labour['profile']}',
+                                                                    fit: BoxFit.cover,
+                                                                    errorBuilder: (context, error, stackTrace) {
+                                                                      return const Icon(
+                                                                        Icons.person,
+                                                                        color: Constants.AppColors.brand,
+                                                                        size: 30,
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                )
+                                                              : const Icon(
+                                                                  Icons.person,
+                                                                  color: Constants.AppColors.brand,
+                                                                  size: 30,
+                                                                ),
                                                         ),
-                                                        const SizedBox(height: 4),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              isExpandedList[index] = !isExpandedList[index];
-                                                            });
-                                                          },
-                                                          child: Text(
-                                                            isExpandedList[index]
-                                                                ? translateText('Read Less')
-                                                                : translateText('Read More'),
-                                                            style: Constants.AppTypography.label.copyWith(
-                                                              color: Constants.AppColors.brand,
-                                                              fontWeight: FontWeight.bold,
+                                                        Expanded(
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.only(left: 16.0),
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Text(
+                                                                  translateText(labour['name'] ?? 'Unknown'),
+                                                                  style: Constants.AppTypography.h3.copyWith(
+                                                                    color: Constants.AppColors.ink,
+                                                                    fontWeight: FontWeight.w800,
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(height: 4),
+                                                                Row(
+                                                                  children: [
+                                                                    const Icon(Icons.location_on, size: 14, color: Constants.AppColors.brand),
+                                                                    const SizedBox(width: 4),
+                                                                    Expanded(
+                                                                      child: Text(
+                                                                        '${translateText(labour['city'] ?? 'Unknown City')}',
+                                                                        style: Constants.AppTypography.subhead.copyWith(
+                                                                          color: Constants.AppColors.inkSoft,
+                                                                          fontWeight: FontWeight.w600,
+                                                                        ),
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                if (labour['aboutme'] != null && labour['aboutme'].toString().isNotEmpty) ...[
+                                                                  const SizedBox(height: 8),
+                                                                  Text(
+                                                                    labour['aboutme'] ?? 'N/A',
+                                                                    style: Constants.AppTypography.body.copyWith(
+                                                                      color: Constants.AppColors.inkSoft,
+                                                                    ),
+                                                                    maxLines: isExpandedList[index] ? null : 2,
+                                                                    overflow: isExpandedList[index] ? TextOverflow.visible : TextOverflow.ellipsis,
+                                                                  ),
+                                                                  const SizedBox(height: 4),
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      setState(() {
+                                                                        isExpandedList[index] = !isExpandedList[index];
+                                                                      });
+                                                                    },
+                                                                    child: Text(
+                                                                      isExpandedList[index]
+                                                                          ? translateText('Read Less')
+                                                                          : translateText('Read More'),
+                                                                      style: Constants.AppTypography.label.copyWith(
+                                                                        color: Constants.AppColors.brand,
+                                                                        fontWeight: FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
                                                       ],
-                                                    ],
-                                                  ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -2935,16 +3049,12 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
         title: Text(
           AppLocalizations.of(context)!
               .projectApplications, // Corrected to use localization key
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.green, Colors.teal],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+          decoration: const BoxDecoration(
+            gradient: Constants.AppColors.brandGradient,
           ),
         ),
         leading: IconButton(

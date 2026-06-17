@@ -113,7 +113,7 @@ class TranslationService {
     if (_cachedTranslations.containsKey(text) &&
         _cachedTranslations[text]!.containsKey(targetLang)) {
       return _cachedTranslations[text]![
-          targetLang]!; // Return cached translation
+      targetLang]!; // Return cached translation
     }
 
     // ✅ Fetch translation dynamically if missing
@@ -232,7 +232,7 @@ class _LabourhomepageState extends State<Labourhomepage> {
         if (responseData['status'] == 'success') {
           setState(() {
             unreadNotificationsCount =
-                responseData['unread_notifications_count'];
+            responseData['unread_notifications_count'];
             print('Unread notifications count: $unreadNotificationsCount');
           });
         } else {
@@ -263,34 +263,34 @@ class _LabourhomepageState extends State<Labourhomepage> {
         appBar: AppBar(
           title: _currentIndex == 0
               ? Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.20),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white30, width: 0.5),
-                      ),
-                      child: Text(
-                        _selectedLanguage == 'en' ? 'Worker' : 'श्रमिक',
-                        style: Constants.AppTypography.micro.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Text(
-                  _currentIndex == 1
-                      ? AppLocalizations.of(context)!.nearbyFarmers
-                      : _currentIndex == 2
-                          ? AppLocalizations.of(context)!.find_Work
-                          : 'Default Title',
-                  style: Constants.AppTypography.h2.copyWith(color: Colors.white),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.20),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white30, width: 0.5),
                 ),
+                child: Text(
+                  _selectedLanguage == 'en' ? 'Worker' : 'श्रमिक',
+                  style: Constants.AppTypography.micro.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          )
+              : Text(
+            _currentIndex == 1
+                ? AppLocalizations.of(context)!.nearbyFarmers
+                : _currentIndex == 2
+                ? AppLocalizations.of(context)!.find_Work
+                : 'Default Title',
+            style: Constants.AppTypography.h2.copyWith(color: Colors.white),
+          ),
           iconTheme: const IconThemeData(color: Colors.white),
           flexibleSpace: Container(
             decoration: const BoxDecoration(
@@ -422,150 +422,150 @@ class _LabourhomepageState extends State<Labourhomepage> {
                   ),
                   trailing: unreadNotificationsCount > 0
                       ? Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: CircleAvatar(
-                            radius: 10,
-                            backgroundColor: Colors.red,
-                            child: Text(
-                              unreadNotificationsCount.toString(),
-                              style: const TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          )
-                        : null,
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LabourNotification()),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.language, color: Constants.AppColors.brand),
-                    title: Text(
-                      context.watch<LanguageProvider>().selectedLanguage == 'en'
-                          ? 'Language'
-                          : 'भाषा चुने',
-                      style: Constants.AppTypography.body.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LanguageSelectionScreen(),
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.red,
+                      child: Text(
+                        unreadNotificationsCount.toString(),
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.white,
                         ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.notes, color: Constants.AppColors.brand),
-                    title: Text(
-                      context.watch<LanguageProvider>().selectedLanguage == 'en'
-                          ? 'My Projects'
-                          : 'मेरी परियोजनाएं',
-                      style: Constants.AppTypography.body.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AppliedProjects(),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.person, color: Constants.AppColors.brand),
-                    title: Text(
-                      context.watch<LanguageProvider>().selectedLanguage == 'en'
-                          ? 'Profile'
-                          : 'प्रोफ़ाइल',
-                      style: Constants.AppTypography.body.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const UpdateLabourProfile(),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.logout, color: Colors.red[700]),
-                    title: Text(
-                      context.watch<LanguageProvider>().selectedLanguage == 'en'
-                          ? 'Logout'
-                          : 'लॉग आउट',
-                      style: Constants.AppTypography.body.copyWith(
-                        color: Colors.red[700],
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onTap: () => _logout(context),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          body: _pages[_currentIndex],
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 12.0),
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: Constants.AppColors.brandGradient,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(28),
-                  topRight: Radius.circular(28),
-                  bottomLeft: Radius.circular(28),
-                  bottomRight: Radius.circular(28),
-                ),
-                boxShadow: [Constants.AppShadows.fab],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(28),
-                child: BottomNavigationBar(
-                  backgroundColor: Colors.transparent,
-                  currentIndex: _currentIndex,
-                  selectedItemColor: Colors.white,
-                  unselectedItemColor: Colors.white70,
-                  selectedLabelStyle: Constants.AppTypography.label.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  unselectedLabelStyle: Constants.AppTypography.label.copyWith(
-                    color: Colors.white70,
-                  ),
-                  showUnselectedLabels: false,
-                  elevation: 0,
-                  type: BottomNavigationBarType.fixed,
-                  items: [
-                    BottomNavigationBarItem(
-                        icon: const Icon(Icons.home),
-                        label: AppLocalizations.of(context)!.homepage),
-                    BottomNavigationBarItem(
-                        icon: const Icon(Icons.search),
-                        label: AppLocalizations.of(context)!.nearbyFarmers),
-                    BottomNavigationBarItem(
-                        icon: const Icon(Icons.work_outline),
-                        label: AppLocalizations.of(context)!.find_Work),
-                  ],
-                  onTap: (index) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
+                  )
+                      : null,
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => LabourNotification()),
+                    );
                   },
                 ),
+                ListTile(
+                  leading: const Icon(Icons.language, color: Constants.AppColors.brand),
+                  title: Text(
+                    context.watch<LanguageProvider>().selectedLanguage == 'en'
+                        ? 'Language'
+                        : 'भाषा चुने',
+                    style: Constants.AppTypography.body.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LanguageSelectionScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.notes, color: Constants.AppColors.brand),
+                  title: Text(
+                    context.watch<LanguageProvider>().selectedLanguage == 'en'
+                        ? 'My Projects'
+                        : 'मेरी परियोजनाएं',
+                    style: Constants.AppTypography.body.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AppliedProjects(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.person, color: Constants.AppColors.brand),
+                  title: Text(
+                    context.watch<LanguageProvider>().selectedLanguage == 'en'
+                        ? 'Profile'
+                        : 'प्रोफ़ाइल',
+                    style: Constants.AppTypography.body.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const UpdateLabourProfile(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.logout, color: Colors.red[700]),
+                  title: Text(
+                    context.watch<LanguageProvider>().selectedLanguage == 'en'
+                        ? 'Logout'
+                        : 'लॉग आउट',
+                    style: Constants.AppTypography.body.copyWith(
+                      color: Colors.red[700],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onTap: () => _logout(context),
+                ),
+              ],
+            ),
+          ),
+        ),
+        body: _pages[_currentIndex],
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 12.0),
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: Constants.AppColors.brandGradient,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(28),
+                topRight: Radius.circular(28),
+                bottomLeft: Radius.circular(28),
+                bottomRight: Radius.circular(28),
+              ),
+              boxShadow: [Constants.AppShadows.fab],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: BottomNavigationBar(
+                backgroundColor: Colors.transparent,
+                currentIndex: _currentIndex,
+                selectedItemColor: Colors.white,
+                unselectedItemColor: Colors.white70,
+                selectedLabelStyle: Constants.AppTypography.label.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                unselectedLabelStyle: Constants.AppTypography.label.copyWith(
+                  color: Colors.white70,
+                ),
+                showUnselectedLabels: false,
+                elevation: 0,
+                type: BottomNavigationBarType.fixed,
+                items: [
+                  BottomNavigationBarItem(
+                      icon: const Icon(Icons.home),
+                      label: AppLocalizations.of(context)!.homepage),
+                  BottomNavigationBarItem(
+                      icon: const Icon(Icons.search),
+                      label: AppLocalizations.of(context)!.nearbyFarmers),
+                  BottomNavigationBarItem(
+                      icon: const Icon(Icons.work_outline),
+                      label: AppLocalizations.of(context)!.find_Work),
+                ],
+                onTap: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
               ),
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
+  }
 }
 
 class LabourHomepage extends StatefulWidget {
@@ -586,7 +586,7 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
 
   FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   final TextEditingController _projectSearchController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _labourSearchController = TextEditingController();
   final GoogleTranslator _translator = GoogleTranslator();
 
@@ -601,15 +601,15 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
   bool _matchesJobTitle(String jobTitle, String filter) {
     final cleanTitle = jobTitle.trim().toLowerCase();
     final cleanFilter = filter.trim().toLowerCase();
-    
+
     if (cleanFilter == 'farming' || cleanFilter == 'crop farming') {
       return cleanTitle == 'farming' || cleanTitle == 'crop farming';
     }
-    
+
     if (cleanTitle == cleanFilter) {
       return true;
     }
-    
+
     return cleanTitle.contains(cleanFilter) || cleanFilter.contains(cleanTitle);
   }
 
@@ -779,23 +779,6 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
     }
   }
 
-  // void _startAutoScrolling(int itemCount) {
-  //   _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
-  //     if (_pageController.hasClients) {
-  //       setState(() {
-  //         _currentIndex = (_currentIndex + 1) % itemCount; // Loop through items
-  //       });
-
-  //       // Animate to the next page (next job type)
-  //       _pageController.animateToPage(
-  //         _currentIndex,
-  //         duration: Duration(seconds: 1),
-  //         curve: Curves.easeInOut,
-  //       );
-  //     }
-  //   });
-  // }
-
   Future<void> loadLanguage() async {
     // Read the selected language from FlutterSecureStorage
     String? language = await _secureStorage.read(key: 'selectedLanguage');
@@ -875,7 +858,7 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
     if (_cachedTranslations.containsKey(text) &&
         _cachedTranslations[text]!.containsKey(targetLang)) {
       return _cachedTranslations[text]![
-          targetLang]!; // Return cached translation
+      targetLang]!; // Return cached translation
     }
 
     // ✅ Fetch translation dynamically (but without `await`)
@@ -935,20 +918,6 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
     }
   }
 
-  // Future<String> translateText(
-  //     String text) async {
-  //   if (text.isEmpty) {
-  //     return 'Please enter some text!';
-  //   }
-
-  //   // Translate text using the GoogleTranslator
-  //   final translation =
-  //       await _translator.translate(text, to: 'hi');
-
-  //   // Return the translated text
-  //   return translation.text;
-  // }
-
   Future<void> fetchJobTypes() async {
     final response = await http
         .post(Uri.parse('${Constants.AppConstants.apiUrl}farmer/jobtype'));
@@ -958,7 +927,6 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
       List<dynamic> jobData = data['data'];
       setState(() {
         _jobTypes = jobData.map((job) => JobType.fromJson(job)).toList();
-        // _startAutoScrolling(_jobTypes.length); // Start the auto-scrolling logic
       });
     } else {
       throw Exception('Failed to load job types');
@@ -1021,7 +989,7 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content:
-                  Text('Failed to fetch projects: ${response.statusCode}')),
+              Text('Failed to fetch projects: ${response.statusCode}')),
         );
       }
     } catch (e) {
@@ -1041,7 +1009,6 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
   bool isContractSelected = false;
 
   void _showFilterDialog() {
-    // Use showDialog with StatefulBuilder to allow state updates in the dialog
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -1052,7 +1019,6 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Job Type filter (using fetched job types) with label
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Column(
@@ -1067,12 +1033,11 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                               value: 'All',
                               child: Text(translateText('All')),
                             ),
-                            // Create a DropdownMenuItem for each jobType
                             ..._jobTypes
                                 .map((job) => DropdownMenuItem<String>(
-                                      value: job.jobname,
-                                      child: Text(translateText(job.jobname)),
-                                    ))
+                              value: job.jobname,
+                              child: Text(translateText(job.jobname)),
+                            ))
                                 .toList(),
                           ],
                           onChanged: (value) {
@@ -1085,8 +1050,6 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                     ),
                   ),
                   const SizedBox(height: 10),
-
-                  // Category filter with label
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Column(
@@ -1098,9 +1061,9 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                           isExpanded: true,
                           items: ['All', 'Project Basis', 'Milestone Basis']
                               .map((category) => DropdownMenuItem<String>(
-                                    value: category,
-                                    child: Text(translateText(category)),
-                                  ))
+                            value: category,
+                            child: Text(translateText(category)),
+                          ))
                               .toList(),
                           onChanged: (value) {
                             setStateDialog(() {
@@ -1112,18 +1075,16 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                     ),
                   ),
                   const SizedBox(height: 10),
-
-                  // Search field
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: TextField(
                       controller: _labourSearchController,
                       decoration: InputDecoration(
                         prefixIcon:
-                            const Icon(Icons.search, color: Colors.green),
+                        const Icon(Icons.search, color: Colors.green),
                         suffixIcon: MicIconButton(controller: _labourSearchController),
                         hintText:
-                            translateText('Search by pincode, city, or state'),
+                        translateText('Search by pincode, city, or state'),
                         fillColor: Colors.white,
                         filled: true,
                         border: OutlineInputBorder(
@@ -1133,13 +1094,11 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           borderSide:
-                              const BorderSide(color: Colors.green, width: 2),
+                          const BorderSide(color: Colors.green, width: 2),
                         ),
                       ),
                     ),
                   ),
-
-                  // Price Range Slider
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Column(
@@ -1162,8 +1121,6 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                     ),
                   ),
                   const SizedBox(height: 10),
-
-                  // Project Type filter using checkboxes (Daily Wage and Contract)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Column(
@@ -1197,7 +1154,6 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Rating filter (optional)
                 ],
               ),
             ),
@@ -1212,14 +1168,13 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
               ),
               TextButton(
                 onPressed: () {
-                  // Reset filters to default values
                   setStateDialog(() {
                     selectedJobType = 'All';
                     selectedCategory = 'All';
                     selectedPriceRange = 1000000;
                     isDailyWageSelected = false;
                     isContractSelected = false;
-                    _labourSearchController.clear(); // Clear the search field
+                    _labourSearchController.clear();
                   });
                   setState(() {
                     _selectedCategoryFilter = null;
@@ -1253,8 +1208,6 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
       'dailyWage': isDailyWageSelected,
       'contract': isContractSelected,
     };
-
-    // Example API request to fetch filtered projects
 
     fetchFilteredProjects(filters);
   }
@@ -1311,7 +1264,7 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content:
-                  Text('Failed to fetch projects: ${response.statusCode}')),
+              Text('Failed to fetch projects: ${response.statusCode}')),
         );
       }
     } catch (e) {
@@ -1328,6 +1281,163 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
     'assets/slider3.png',
     'assets/slider5.png',
   ];
+
+  Widget _buildChip({
+    required IconData icon,
+    required String label,
+    required Color bgColor,
+    required Color textColor,
+    required Color iconColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: iconColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // CHANGED: _buildStatusBadge now matches the "View Details" button style
+  // – same padding (horizontal:12, vertical:8), same borderRadius(8),
+  //   same border approach, and font set to bold (not w700).
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildStatusBadge(dynamic project) {
+    String? appliedStatus = project['applyStatus']?.toString();
+    if (appliedStatus == null) return const SizedBox.shrink();
+
+    final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    String text = '';
+    Color bgColor = const Color(0xFFEAF4E8);
+    Color textColor = const Color(0xFF0E6805);
+    Color borderColor = const Color(0xFFC8E6C9);
+    IconData statusIcon = Icons.check;
+
+    if (appliedStatus == "0") {
+      text = translate('Applied', 'आवेदन किया');
+      bgColor = const Color(0xFFEAF4E8);
+      textColor = const Color(0xFF0E6805);
+      borderColor = const Color(0xFFC8E6C9);
+      statusIcon = Icons.check;
+    } else if (appliedStatus == "1") {
+      text = translate('Assigned', 'आवंटित');
+      bgColor = const Color(0xFFEFF6FF);
+      textColor = const Color(0xFF1E40AF);
+      borderColor = const Color(0xFFBFDBFE);
+      statusIcon = Icons.assignment_ind_outlined;
+    } else if (appliedStatus == "2") {
+      text = translate('Work Started', 'कार्य शुरू हुआ');
+      if (project['complete_confirm']?.toString() == "1") {
+        text = translate('Completion Requested', 'पूर्णता का अनुरोध');
+      } else if (project['cancel_confirm']?.toString() == "1") {
+        text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
+      }
+      bgColor = const Color(0xFFFFF7ED);
+      textColor = const Color(0xFFC2410C);
+      borderColor = const Color(0xFFFED7AA);
+      statusIcon = Icons.hourglass_top_outlined;
+    } else if (appliedStatus == "3") {
+      text = translate('Work Completed', 'कार्य पूर्ण');
+      bgColor = const Color(0xFFF0FDF4);
+      textColor = const Color(0xFF15803D);
+      borderColor = const Color(0xFFBBF7D0);
+      statusIcon = Icons.check_circle_outline;
+    } else if (appliedStatus == "4") {
+      text = translate('Work Cancelled', 'रद्द किया गया');
+      bgColor = const Color(0xFFFEF2F2);
+      textColor = const Color(0xFF991B1B);
+      borderColor = const Color(0xFFFCA5A5);
+      statusIcon = Icons.close;
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    // ── Same size as the "Contract" / project_type tag ──
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: borderColor, width: 0.8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(statusIcon, size: 11, color: textColor),
+          const SizedBox(width: 3),
+          Text(
+            text,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildViewDetailsButton(dynamic project) {
+    String? appliedStatus = project['applyStatus']?.toString();
+    final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    String label = appliedStatus == null
+        ? translate('Apply Now', 'आवेदन करें')
+        : translate('View Details', 'विवरण देखें');
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF4E8),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF0E6805),
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(width: 4),
+          const Icon(
+            Icons.arrow_forward_ios,
+            size: 10,
+            color: Color(0xFF0E6805),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final language =
@@ -1371,7 +1481,7 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFF9E6), // Amber notice tint
+                        color: const Color(0xFFFFF9E6),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: Constants.AppColors.amberNotice.withOpacity(0.4),
@@ -1389,32 +1499,32 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                           Expanded(
                             child: _isLoadingLocation
                                 ? Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 14,
-                                        height: 14,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  Constants.AppColors.amberNotice),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        translate('Fetching location...', 'स्थान प्राप्त हो रहा है...'),
-                                        style: Constants.AppTypography.label.copyWith(
-                                          color: Constants.AppColors.inkSoft,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Text(
-                                    _locationError,
-                                    style: Constants.AppTypography.label.copyWith(
-                                      color: Constants.AppColors.inkSoft,
-                                    ),
+                              children: [
+                                const SizedBox(
+                                  width: 14,
+                                  height: 14,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor:
+                                    AlwaysStoppedAnimation<Color>(
+                                        Constants.AppColors.amberNotice),
                                   ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  translate('Fetching location...', 'स्थान प्राप्त हो रहा है...'),
+                                  style: Constants.AppTypography.label.copyWith(
+                                    color: Constants.AppColors.inkSoft,
+                                  ),
+                                ),
+                              ],
+                            )
+                                : Text(
+                              _locationError,
+                              style: Constants.AppTypography.label.copyWith(
+                                color: Constants.AppColors.inkSoft,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -1536,9 +1646,9 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                                           shape: BoxShape.circle,
                                           border: _selectedCategoryFilter == job.jobname
                                               ? Border.all(
-                                                  color: Constants.AppColors.brand,
-                                                  width: 2.0,
-                                                )
+                                            color: Constants.AppColors.brand,
+                                            width: 2.0,
+                                          )
                                               : null,
                                         ),
                                         child: Center(
@@ -1619,77 +1729,174 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
                             );
                           },
                           child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                             decoration: BoxDecoration(
                               color: Constants.AppColors.card,
-                              borderRadius: BorderRadius.circular(Constants.AppRadii.lg),
-                              border: Border.all(color: Constants.AppColors.border),
-                              boxShadow: const [Constants.AppShadows.soft],
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(0xFFF1F5EE),
+                                width: 1.0,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 16,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(16),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  // ── TOP ROW: Avatar + Title/Meta + Status badge ──
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Flexible(
-                                        child: Text(
-                                          translateText(
-                                                project['title']
-                                                        ?.toString()
-                                                        .toUpperCase() ??
-                                                     'No Title',
-                                              ) ??
-                                              'No Title',
-                                          style: Constants.AppTypography.h3.copyWith(
-                                            color: Constants.AppColors.brandDeep,
-                                          ),
-                                          softWrap: true,
-                                          overflow: TextOverflow.visible,
+                                      // Left: Farmer Avatar
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF1F5EE),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: const Text(
+                                          '👨‍🌾',
+                                          style: TextStyle(fontSize: 26),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      // Right: Title + status badge row + Date + Type
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            // ── Title + status badge on same row ──
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    translateText(project['title']?.toString() ?? 'No Title') ?? 'No Title',
+                                                    style: Constants.AppTypography.h2.copyWith(
+                                                      color: Constants.AppColors.ink,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                if (project['applyStatus'] != null) ...[
+                                                  const SizedBox(width: 8),
+                                                  _buildStatusBadge(project),
+                                                ],
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
+                                            // ── Date + contract type tag row ──
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.calendar_today_outlined,
+                                                  size: 13,
+                                                  color: Colors.grey,
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  _formatDate(project['created_at']?.toString() ?? ''),
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color: Constants.AppColors.brandTint,
+                                                    borderRadius: BorderRadius.circular(6),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      const Text('🌾', style: TextStyle(fontSize: 12)),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        translateText(project['project_type'] ?? 'N/A') ?? 'N/A',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Constants.AppColors.brandDeep,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
-                                  _buildProjectDetailRow(
-                                    Icons.calendar_today_outlined,
-                                    '${translate('Posted Date', 'पोस्ट की गई तिथि') ?? 'Posted Date'}',
-                                    _formatDate(project['created_at']?.toString() ?? ''),
+                                  const SizedBox(height: 12),
+                                  const Divider(color: Color(0xFFF1F5EE), height: 1),
+                                  const SizedBox(height: 10),
+                                  // ── Location ──
+                                  Row(
+                                    children: [
+                                      const Text('📍', style: TextStyle(fontSize: 14)),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          "${translateText(project['city'] ?? 'N/A')}, ${translateText(project['state'] ?? 'N/A')}",
+                                          style: Constants.AppTypography.body.copyWith(
+                                            color: Constants.AppColors.inkSoft,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  _buildProjectDetailRow(
-                                    Icons.location_on_outlined,
-                                    '${AppLocalizations.of(context)!.location}',
-                                    '${translateText(project['city'] ?? 'N/A')} ${translateText(project['state'] ?? 'N/A')} ${project['pincode'] ?? 'N/A'}',
-                                  ),
-                                  _buildProjectDetailRow(
-                                    Icons.category_outlined,
-                                    '${translate('Project Type', 'प्रोजेक्ट प्रकार') ?? ''}',
-                                    translateText(project['project_type'] ?? 'N/A') ?? 'N/A',
-                                  ),
-                                  _buildProjectDetailRow(
-                                    Icons.people_outline,
-                                    '${translate('Labour Required', 'मजदूरों की आवश्यकता') ?? ''}',
-                                    '${project['qty_labours'] ?? 'N/A'}',
-                                  ),
-                                  _buildProjectDetailRow(
-                                    Icons.psychology_outlined,
-                                    '${translate('Required Skills', 'आवश्यक कौशल') ?? ''}',
-                                    translateText(project['required_skills'] ?? 'N/A') ?? 'N/A',
-                                  ),
-                                  _buildProjectDetailRow(
-                                    Icons.currency_rupee,
-                                    '${translateText('Budget')}',
-                                    '₹${project['budget'] ?? 'N/A'} (${translateText('Duration')}: ${project['days'] ?? 'N/A'})',
+                                  const SizedBox(height: 12),
+                                  // ── ROW 1: Workers · Amount · Duration ──
+                                  Row(
+                                    children: [
+                                      _buildChip(
+                                        icon: Icons.people_outline,
+                                        label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
+                                        bgColor: const Color(0xFFEAF4E8),
+                                        textColor: const Color(0xFF0E6805),
+                                        iconColor: const Color(0xFF0E6805),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      _buildChip(
+                                        icon: Icons.currency_rupee,
+                                        label: '₹${project['budget'] ?? '0'}',
+                                        bgColor: const Color(0xFFFFF3E0),
+                                        textColor: const Color(0xFFE65100),
+                                        iconColor: const Color(0xFFE65100),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      _buildChip(
+                                        icon: Icons.access_time,
+                                        label: translateText(project['days']?.toString() ?? '') ?? '',
+                                        bgColor: const Color(0xFFE3F2FD),
+                                        textColor: const Color(0xFF0D47A1),
+                                        iconColor: const Color(0xFF0D47A1),
+                                      ),
+                                    ],
                                   ),
                                   const SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      _buildApplyButton(project),
-                                    ],
+                                  // ── ROW 2: View Details right-aligned ──
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: _buildViewDetailsButton(project),
                                   ),
                                 ],
                               ),
@@ -1753,7 +1960,7 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
     String translate(String enText, String hiText) {
       return language == 'en' ? enText : hiText;
     }
-    
+
     Widget gradientButton(String text, VoidCallback onPressed) {
       return Container(
         decoration: BoxDecoration(
@@ -1803,7 +2010,7 @@ class _LabourHomepageState extends State<LabourHomepage> with WidgetsBindingObse
     if (appliedStatus == null) {
       return gradientButton(
         AppLocalizations.of(context)!.apply_now,
-        () {
+            () {
           Navigator.push(
             context,
             MaterialPageRoute(

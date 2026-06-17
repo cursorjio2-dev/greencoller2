@@ -101,6 +101,57 @@ class MyApp extends StatelessWidget {
             textTheme: GoogleFonts.plusJakartaSansTextTheme(
               Theme.of(context).textTheme,
             ),
+            primaryColor: AppColors.brand,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.brand,
+              primary: AppColors.brand,
+              secondary: AppColors.brandSoft,
+              surface: AppColors.surface,
+            ),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: AppColors.brand,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              centerTitle: false,
+              iconTheme: IconThemeData(color: Colors.white),
+            ),
+            cardTheme: CardThemeData(
+              color: AppColors.card,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadii.lg),
+                side: const BorderSide(color: AppColors.border, width: 1.0),
+              ),
+              shadowColor: AppColors.brandDeep.withOpacity(0.04),
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              fillColor: AppColors.card,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadii.sm),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadii.sm),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadii.sm),
+                borderSide: const BorderSide(color: AppColors.brand, width: 1.5),
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.brand,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadii.sm),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+              ),
+            ),
           ),
           home: const SplashScreen(),
         );
@@ -737,377 +788,402 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       backgroundColor: Constants.AppColors.surface,
-      body: SingleChildScrollView(
-        // To handle keyboard overflow
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              height: 80,
-            ),
-            Center(
-              child: SizedBox(
-                height: 200,
-                child: Image.asset(
-                  'assets/app.png', // Your image file path (replace with your image)
-                  fit: BoxFit
-                      .fill, // This will ensure the image covers the whole screen
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Constants.AppColors.brandTint,
+              Constants.AppColors.surface,
+            ],
+            stops: [0.0, 0.45],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.pleaseLogin,
-                    style: Constants.AppTypography.h1,
-                  ),
-                ],
-              ),
-            ),
-
-            // Row for Farmer and Labour selection
-
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // Farmer Option
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedOption = 'farmer'; // Set to 'farmer' on tap
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: selectedOption == 'farmer'
-                              ? Constants.AppColors.brand
-                              : Constants.AppColors.card,
-                          borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                          border: Border.all(
-                            color: selectedOption == 'farmer'
-                                ? Constants.AppColors.brand
-                                : Constants.AppColors.border,
-                          ),
-                          boxShadow: selectedOption == 'farmer'
-                              ? const [Constants.AppShadows.soft]
-                              : null,
-                        ),
-                        height: 50,
-                        child: Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.farmer,
-                            style: Constants.AppTypography.h3.copyWith(
-                              color: selectedOption == 'farmer'
-                                  ? Constants.AppColors.card
-                                  : Constants.AppColors.ink,
-                            ),
-                          ),
-                        ),
+                  const SizedBox(height: 40),
+                  // App Logo with soft shadow
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      height: 160,
+                      child: Image.asset(
+                        'assets/app.png',
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  // Title Header
+                  Text(
+                    AppLocalizations.of(context)!.pleaseLogin,
+                    style: Constants.AppTypography.display.copyWith(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
+                      color: Constants.AppColors.brandDeep,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
 
-                  const SizedBox(width: 10), // Add spacing between the cards
-
-                  // Labour Option
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedOption = 'labour'; // Set to 'labour' on tap
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: selectedOption == 'labour'
-                              ? Constants.AppColors.brand
-                              : Constants.AppColors.card,
-                          borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                          border: Border.all(
-                            color: selectedOption == 'labour'
-                                ? Constants.AppColors.brand
-                                : Constants.AppColors.border,
-                          ),
-                          boxShadow: selectedOption == 'labour'
-                              ? const [Constants.AppShadows.soft]
-                              : null,
-                        ),
-                        height: 50,
-                        child: Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.labour,
-                            style: Constants.AppTypography.h3.copyWith(
-                              color: selectedOption == 'labour'
-                                  ? Constants.AppColors.card
-                                  : Constants.AppColors.ink,
-                            ),
-                          ),
-                        ),
+                  // Main Interactive Form Card
+                  Container(
+                    padding: const EdgeInsets.all(20.0),
+                    decoration: BoxDecoration(
+                      color: Constants.AppColors.card,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: const [Constants.AppShadows.card],
+                      border: Border.all(
+                        color: Constants.AppColors.border,
+                        width: 1.0,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Phone Number Input with +91
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                key: _formKey, // Attach form key
-                child: Column(
-                  children: [
-                    Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Static +91
-                        Card(
-                          color: Constants.AppColors.brand,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(Constants.AppRadii.xs),
+                        // Row for Farmer and Labour selection
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            // Farmer Option
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedOption = 'farmer';
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: selectedOption == 'farmer'
+                                        ? Constants.AppColors.brand
+                                        : Constants.AppColors.surface2,
+                                    borderRadius: BorderRadius.circular(Constants.AppRadii.md),
+                                    border: Border.all(
+                                      color: selectedOption == 'farmer'
+                                          ? Constants.AppColors.brand
+                                          : Constants.AppColors.border,
+                                    ),
+                                    boxShadow: selectedOption == 'farmer'
+                                        ? const [Constants.AppShadows.soft]
+                                        : null,
+                                  ),
+                                  height: 48,
+                                  child: Center(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.farmer,
+                                      style: Constants.AppTypography.h3.copyWith(
+                                        color: selectedOption == 'farmer'
+                                            ? Constants.AppColors.card
+                                            : Constants.AppColors.ink,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Labour Option
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedOption = 'labour';
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: selectedOption == 'labour'
+                                        ? Constants.AppColors.brand
+                                        : Constants.AppColors.surface2,
+                                    borderRadius: BorderRadius.circular(Constants.AppRadii.md),
+                                    border: Border.all(
+                                      color: selectedOption == 'labour'
+                                          ? Constants.AppColors.brand
+                                          : Constants.AppColors.border,
+                                    ),
+                                    boxShadow: selectedOption == 'labour'
+                                        ? const [Constants.AppShadows.soft]
+                                        : null,
+                                  ),
+                                  height: 48,
+                                  child: Center(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.labour,
+                                      style: Constants.AppTypography.h3.copyWith(
+                                        color: selectedOption == 'labour'
+                                            ? Constants.AppColors.card
+                                            : Constants.AppColors.ink,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Form Fields
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.phone,
+                                style: Constants.AppTypography.label.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Constants.AppColors.ink,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // Phone Number Input with +91
+                              Row(
+                                children: [
+                                  // Static +91
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                                    height: 50,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: Constants.AppColors.brandTint,
+                                      borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                      border: Border.all(
+                                        color: Constants.AppColors.border,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "+91",
+                                      style: Constants.AppTypography.h3.copyWith(
+                                        color: Constants.AppColors.brandDeep,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  // TextField for phone number
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: phoneNumberController,
+                                      keyboardType: TextInputType.phone,
+                                      style: Constants.AppTypography.body.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: AppLocalizations.of(context)!.enterMobile,
+                                        hintStyle: Constants.AppTypography.body.copyWith(
+                                          color: Constants.AppColors.inkSoft,
+                                        ),
+                                        filled: true,
+                                        fillColor: Constants.AppColors.surface,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                          borderSide: const BorderSide(color: Constants.AppColors.border),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                          borderSide: const BorderSide(color: Constants.AppColors.brand, width: 1.5),
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 14,
+                                        ),
+                                      ),
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                        LengthLimitingTextInputFormatter(10),
+                                      ],
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return AppLocalizations.of(context)!.emptyMobileValidation;
+                                        } else if (value.length != 10) {
+                                          return AppLocalizations.of(context)!.mobileDigitValidation;
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              // Password Label
+                              Text(
+                                AppLocalizations.of(context)!.passwordHintText,
+                                style: Constants.AppTypography.label.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Constants.AppColors.ink,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // Password Input
+                              TextFormField(
+                                controller: passwordController,
+                                obscureText: !_isPasswordVisible,
+                                style: Constants.AppTypography.body.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: AppLocalizations.of(context)!.passwordHintText,
+                                  hintStyle: Constants.AppTypography.body.copyWith(
+                                    color: Constants.AppColors.inkSoft,
+                                  ),
+                                  filled: true,
+                                  fillColor: Constants.AppColors.surface,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                    borderSide: const BorderSide(color: Constants.AppColors.border),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                    borderSide: const BorderSide(color: Constants.AppColors.brand, width: 1.5),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0,
+                                    horizontal: 14,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                      color: Constants.AppColors.brand,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isPasswordVisible = !_isPasswordVisible;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return AppLocalizations.of(context)!.emptyPasswordValidation;
+                                  } else if (value.length < 6) {
+                                    return AppLocalizations.of(context)!.passwordCharValidation;
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           ),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            height: 50, // Match the height of the input
-                            alignment: Alignment.center,
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Button to continue
+                        SizedBox(
+                          height: 52,
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _isButtonDisabled
+                                ? null
+                                : () async {
+                                    if (_formKey.currentState?.validate() ?? false) {
+                                      await _submitForm();
+                                    }
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Constants.AppColors.brand,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                              ),
+                              elevation: 0,
+                            ),
                             child: Text(
-                              "+91",
-                              style: Constants.AppTypography.h3.copyWith(
+                              AppLocalizations.of(context)!.login,
+                              style: Constants.AppTypography.h2.copyWith(
                                 color: Constants.AppColors.card,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(
-                            width: 10), // Space between +91 and input field
-
-                        // TextField for phone number
-                        Expanded(
-                          child: TextFormField(
-                            controller: phoneNumberController,
-                            keyboardType: TextInputType.phone,
-                            style: Constants.AppTypography.body,
-                            decoration: InputDecoration(
-                              hintText:
-                                  AppLocalizations.of(context)!.enterMobile,
-                              hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(Constants.AppRadii.xs),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(Constants.AppRadii.xs),
-                                borderSide: BorderSide(color: Constants.AppColors.border),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(Constants.AppRadii.xs),
-                                borderSide: BorderSide(color: Constants.AppColors.brand, width: 1.5),
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 10),
-                            ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter
-                                  .digitsOnly, // Allow only digits
-                              LengthLimitingTextInputFormatter(
-                                  10), // Limit the input to 10 digits
-                            ],
-                            // maxLength: 10, // Restrict the input to 10 digits
-                            validator: (value) {
-                              // Phone number validation
-                              if (value == null || value.isEmpty) {
-                                return AppLocalizations.of(context)!
-                                    .emptyMobileValidation;
-                              } else if (value.length != 10) {
-                                return AppLocalizations.of(context)!
-                                    .mobileDigitValidation;
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
                       ],
                     ),
+                  ),
 
-                    // Password Input
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: !_isPasswordVisible, // To toggle password visibility
-                      style: Constants.AppTypography.body,
-                      decoration: InputDecoration(
-                        hintText:
-                            AppLocalizations.of(context)!.passwordHintText,
-                        hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(Constants.AppRadii.xs),
+                  const SizedBox(height: 24),
+
+                  // Register Now Link
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegistrationForm(),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(Constants.AppRadii.xs),
-                          borderSide: BorderSide(color: Constants.AppColors.border),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(Constants.AppRadii.xs),
-                          borderSide: BorderSide(color: Constants.AppColors.brand, width: 1.5),
-                        ),
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                        ),
+                      );
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.registernow,
+                      style: Constants.AppTypography.subhead.copyWith(
+                        color: Constants.AppColors.brandDeep,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Constants.AppColors.brandDeep,
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return AppLocalizations.of(context)!
-                              .emptyPasswordValidation;
-                        } else if (value.length < 6) {
-                          return AppLocalizations.of(context)!
-                              .passwordCharValidation;
-                        }
-                        return null;
-                      },
                     ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            // Button to continue (with validation)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: SizedBox(
-                height: 50,
-
-                width: double.infinity, // Makes the button take full width
-
-                child: ElevatedButton(
-                  onPressed: _isButtonDisabled
-                      ? null // Disable the button if _isButtonDisabled is true
-                      : () async {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            await _submitForm();
-                          }
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Constants.AppColors.brand,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          Constants.AppRadii.sm),
-                    ),
-                    elevation: 0,
                   ),
-                  child: Text(
-                    AppLocalizations.of(context)!.login,
-                    style: Constants.AppTypography.h2.copyWith(color: Constants.AppColors.card),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Padding(
-                  //   padding: const EdgeInsets.all(8.0),
-                  //   child: GestureDetector(
-                  //     onTap: () {
-                  //       print('Forgot Password clicked');
-                  //       // Navigate to Forgot Password page
-                  //     },
-                  //     child: Text(
-                  //       AppLocalizations.of(context)!.forgetPassword,
-                  //       style: const TextStyle(
-                  //         color: Colors.blue,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+
+                  const SizedBox(height: 16),
+
+                  // Terms & Conditions
                   Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 16),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RegistrationForm(),
-                          ),
-                        );
-                        // Navigate to Register Now page
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.registernow,
-                        style: Constants.AppTypography.subhead.copyWith(
-                          color: Constants.AppColors.brand,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Constants.AppColors.brand,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: RichText(
+                      text: TextSpan(
+                        text: AppLocalizations.of(context)!.termsAndCondition,
+                        style: Constants.AppTypography.label.copyWith(
+                          height: 1.5,
+                          color: Constants.AppColors.inkSoft,
                         ),
+                        children: [
+                          TextSpan(
+                            text: AppLocalizations.of(context)!.termsAndCondition2,
+                            style: const TextStyle(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyWebView(),
+                                  ),
+                                );
+                              },
+                          ),
+                          TextSpan(
+                            text: AppLocalizations.of(context)!.purnViram,
+                            style: Constants.AppTypography.label.copyWith(
+                              height: 1.5,
+                              color: Constants.AppColors.inkSoft,
+                            ),
+                          ),
+                        ],
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              child: RichText(
-                text: TextSpan(
-                  text: AppLocalizations.of(context)!.termsAndCondition,
-                  style: Constants.AppTypography.label.copyWith(
-                    height: 1.5,
-                    color: Constants.AppColors.ink,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: AppLocalizations.of(context)!.termsAndCondition2,
-                      style: const TextStyle(
-                        color: Colors.blue, // Button text color
-                        decoration:
-                            TextDecoration.underline, // Underline the text
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    MyWebView()), // Adjust the target page as needed
-                          );
-                          // Action when the text is clicked
-
-                          // Navigate to another page or show a dialog
-                        },
-                    ),
-                    TextSpan(
-                      text: AppLocalizations.of(context)!.purnViram,
-                      style: Constants.AppTypography.label.copyWith(
-                        height: 1.5,
-                        color: Constants.AppColors.ink,
-                      ),
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

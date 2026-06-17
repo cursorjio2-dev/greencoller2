@@ -2330,9 +2330,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   final _formKey = GlobalKey<FormState>();
 
   Widget _buildActionButton(Map<String, dynamic> project) {
-    final applyStatus = project['applyStatus'];
-    final cancelConfirm = project['cancel_confirm'];
-    final completeConfirm = project['complete_confirm'];
+    final applyStatus = project['applyStatus']?.toString();
+    final cancelConfirm = project['cancel_confirm']?.toString();
+    final completeConfirm = project['complete_confirm']?.toString();
 
     if (applyStatus == "1") {
       // Show Start Work button if project is assigned and not started
@@ -2340,36 +2340,40 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         onPressed: () => startWork(context, project['id'], project),
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(Constants.AppRadii.xs),
-            ),
+            borderRadius: BorderRadius.circular(12),
           ),
           backgroundColor: Constants.AppColors.brand,
-          foregroundColor: Constants.AppColors.card,
+          foregroundColor: Colors.white,
           elevation: 0,
         ),
         child: Text(
           AppLocalizations.of(context)!.workStart,
-          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       );
     } else if (applyStatus == "0") {
-      // Completed
+      // Applied but not started / assigned
       return ElevatedButton(
-        onPressed: () {},
+        onPressed: null,
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(Constants.AppRadii.xs),
-            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: Constants.AppColors.brand,
-          foregroundColor: Constants.AppColors.card,
+          backgroundColor: Colors.grey[400],
+          foregroundColor: Colors.white,
           elevation: 0,
         ),
         child: Text(
           AppLocalizations.of(context)!.applied,
-          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       );
     } else if (applyStatus == "2") {
@@ -2380,38 +2384,40 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           onPressed: () => confirmcancel(context, project['id']),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(Constants.AppRadii.xs),
-              ),
+              borderRadius: BorderRadius.circular(12),
             ),
-            backgroundColor: const Color.fromARGB(255, 143, 24, 16),
-            foregroundColor: Constants.AppColors.card,
+            backgroundColor: const Color(0xFFDC2626), // Premium red
+            foregroundColor: Colors.white,
             elevation: 0,
           ),
           child: Text(
             translateText('Confirm Cancelled'),
-            style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         );
       } else if (completeConfirm == "1") {
         // Complete request has been confirmed
         return ElevatedButton(
-          onPressed: () {
-            // Project is complete, no action needed
-          },
+          onPressed: null,
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(Constants.AppRadii.xs),
-              ),
+              borderRadius: BorderRadius.circular(12),
             ),
-            backgroundColor: Constants.AppColors.brand,
-            foregroundColor: Constants.AppColors.card,
+            backgroundColor: Colors.grey[400],
+            foregroundColor: Colors.white,
             elevation: 0,
           ),
           child: Text(
-            translateText('Request For Complete'),
-            style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+            translateText('Completion Requested'),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         );
       } else {
@@ -2420,132 +2426,252 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           onPressed: () => completework(context, project['id']),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(Constants.AppRadii.xs),
-              ),
+              borderRadius: BorderRadius.circular(12),
             ),
             backgroundColor: Constants.AppColors.brand,
-            foregroundColor: Constants.AppColors.card,
+            foregroundColor: Colors.white,
             elevation: 0,
           ),
           child: Text(
             translateText('Complete Work'),
-            style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         );
       }
     } else if (applyStatus == "3") {
-      // Completed
+      // Completed, worker can review or see completed status
+      final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+      String translate(String enText, String hiText) {
+        return language == 'en' ? enText : hiText;
+      }
       return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          ElevatedButton(
-            onPressed: _showReviewDialog,
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(Constants.AppRadii.xs),
+          Expanded(
+            child: SizedBox(
+              height: 52,
+              child: OutlinedButton(
+                onPressed: _showReviewDialog,
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Constants.AppColors.brand, width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  translate('Review', "समीक्षा"),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Constants.AppColors.brand,
+                  ),
                 ),
               ),
-              backgroundColor: Constants.AppColors.brand,
-              foregroundColor: Constants.AppColors.card,
-              elevation: 0,
-            ),
-            child: Text(
-              translate('Review', "समीक्षा"),
-              style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
             ),
           ),
-          SizedBox(
-            width: 10,
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(Constants.AppRadii.xs),
+          const SizedBox(width: 12),
+          Expanded(
+            child: SizedBox(
+              height: 52,
+              child: ElevatedButton(
+                onPressed: null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[400],
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  translateText('Completed'),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-              backgroundColor: Constants.AppColors.brand,
-              foregroundColor: Constants.AppColors.card,
-              elevation: 0,
-            ),
-            child: Text(
-              translateText('Completed'),
-              style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
             ),
           ),
         ],
       );
     } else if (applyStatus == "4") {
-      // Completed
+      // Cancelled
       return ElevatedButton(
-        onPressed: () {},
+        onPressed: null,
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(Constants.AppRadii.xs),
-            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: const Color.fromARGB(255, 85, 31, 33),
-          foregroundColor: Constants.AppColors.card,
+          backgroundColor: Colors.grey[400],
+          foregroundColor: Colors.white,
           elevation: 0,
         ),
         child: Text(
           translateText('Cancelled'),
-          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       );
     } else if (applyStatus == null) {
-      // Applied but not assigned yet
+      // Applied but not assigned yet (Form submit action)
       return ElevatedButton(
         onPressed: _isButtonDisabled
-            ? null // Disable the button if _isButtonDisabled is true
+            ? null
             : () async {
                 if (_formKey.currentState?.validate() ?? false) {
-                  // Proceed if form is valid
-                  await applyToProject(
-                      context, project['id']); // Pass the projectId
+                  await applyToProject(context, project['id']);
                 } else {
-                  // Show an error if validation fails
                   print('Form is invalid');
                 }
               },
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(Constants.AppRadii.xs),
-            ),
+            borderRadius: BorderRadius.circular(12),
           ),
           backgroundColor: Constants.AppColors.brand,
-          foregroundColor: Constants.AppColors.card,
+          foregroundColor: Colors.white,
           elevation: 0,
         ),
         child: Text(
           translateText('Apply Now'),
-          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       );
     } else {
-      // Cancelled
+      // Fallback Cancelled
       return ElevatedButton(
-        onPressed: () {},
+        onPressed: null,
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(Constants.AppRadii.xs),
-            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: const Color.fromARGB(255, 80, 27, 23),
-          foregroundColor: Constants.AppColors.card,
+          backgroundColor: Colors.grey[400],
+          foregroundColor: Colors.white,
           elevation: 0,
         ),
         child: Text(
           translateText('Cancelled'),
-          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       );
+    }
+  }
+
+  Widget _infoCell({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Expanded(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: const BoxDecoration(
+              color: Color(0xFFEAF4E8),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xFF0E6805),
+              size: 16,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey[500],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF152018),
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMilestoneAction({
+    required String label,
+    required Color color,
+    VoidCallback? onPressed,
+  }) {
+    return SizedBox(
+      height: 32,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        onPressed: onPressed,
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getEstimateDaysHindi(String val) {
+    switch (val) {
+      case '1 day': return '1 दिन';
+      case '2 days': return '2 दिन';
+      case '3-7 days': return '3-7 दिन';
+      case '8-15 days': return '8-15 दिन';
+      case '15-1 month': return '15-1 महीना';
+      case '1-3 months': return '1-3 महीने';
+      case '3-6 months': return '3-6 महीने';
+      case '6 months-1 year': return '6 महीने-1 साल';
+      case '>1 year': return '> 1 साल';
+      default: return val;
     }
   }
 
@@ -2591,7 +2717,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               ),
               TextButton(
                 onPressed: () {
-                  // Add the new milestone if inputs are valid
                   if (descriptionController.text.isNotEmpty &&
                       amountController.text.isNotEmpty) {
                     setState(() {
@@ -2633,7 +2758,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       final language = Provider.of<LanguageProvider>(context, listen: false)
           .selectedLanguage;
 
-      // Translation function (assumes you have 'translate' function implemented)
       String translate(String enText, String hiText) {
         return language == 'en' ? enText : hiText;
       }
@@ -2695,11 +2819,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               ),
               TextButton(
                 onPressed: () {
-                  // Update the milestone if inputs are valid
                   if (descriptionController.text.isNotEmpty &&
                       amountController.text.isNotEmpty) {
                     setState(() {
-                      // Update the milestone
                       milestones[index] = {
                         'sno': sno,
                         'description': descriptionController.text,
@@ -2707,31 +2829,18 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         'proposalamount':
                             double.tryParse(praposalController.text) ?? 0.0,
                         'duration': int.tryParse(durationController.text) ?? 0,
-                        'startdate':
-                            '', // Placeholder - consider using a proper date
-                        'completedate':
-                            '', // Placeholder - consider using a proper date
-                        'status':
-                            '0', // Ensure it's stored as a string if needed
-                        'paymentstatus': '0', // Same here
+                        'startdate': '',
+                        'completedate': '',
+                        'status': '0',
+                        'paymentstatus': '0',
                       };
 
-                      // Update the payController with the sum of proposalamounts
                       double totalProposalAmount =
                           milestones.fold(0.0, (sum, milestone) {
                         return sum + (milestone['proposalamount'] ?? 0.0);
                       });
                       _payController.text = totalProposalAmount.toString();
-
-                      // Update the wdayController with the sum of durations
-                      int totalDuration =
-                          milestones.fold<int>(0, (sum, milestone) {
-                        return (sum + (milestone['duration'] ?? 0))
-                            .toInt(); // Cast the result to int
-                      });
                     });
-
-                    print(milestones);
                     Navigator.pop(context);
                   }
                 },
@@ -2743,793 +2852,926 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       );
     }
 
-    // Function to delete a milestone
     final language =
         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
 
-    // Translation function (assumes you have 'translate' function implemented)
     String translate(String enText, String hiText) {
       return language == 'en' ? enText : hiText;
     }
 
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFFAFBF7),
+        appBar: AppBar(
+          backgroundColor: Constants.AppColors.brand,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          title: Text(
+            AppLocalizations.of(context)!.projectDetails,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Resolve details
+    final String title = translateText(project['title']?.toString() ?? 'No Title');
+    final String budget = project['budget'] != null ? '₹${project['budget']}' : 'N/A';
+    final String workers = project['qty_labours']?.toString() ?? 'N/A';
+    final String duration = project['days']?.toString() ?? 'N/A';
+    final String city = project['city']?.toString() ?? 'N/A';
+    final String state = project['state']?.toString() ?? 'N/A';
+    final String address = project['address']?.toString() ?? 'N/A';
+    final String projectType = translateText(project['project_type']?.toString() ?? 'N/A');
+    final String description = project['description']?.toString() ?? 'N/A';
+    final String paymentType = project['payment_type'] == "1"
+        ? translate('Milestone Basis', 'माइलस्टोन आधार')
+        : translate('Project Basis', 'प्रोजेक्ट आधार');
+    final String skillsText = translateText(project['required_skills']?.toString() ?? 'N/A');
+
     return Scaffold(
-      backgroundColor: Constants.AppColors.surface,
+      backgroundColor: const Color(0xFFFAFBF7),
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Constants.AppColors.card),
+        backgroundColor: Constants.AppColors.brand,
+        foregroundColor: Colors.white,
+        elevation: 0,
         title: Text(
           AppLocalizations.of(context)!.projectDetails,
-          style: Constants.AppTypography.h3.copyWith(color: Constants.AppColors.card),
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: Constants.AppColors.brandGradient,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
           ),
         ),
-        backgroundColor: Constants.AppColors.brand,
-        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _formKey, // Associate the form key with the form
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        translateText('${project['title'] ?? 'N/A'}'),
-                        style: Constants.AppTypography.h2.copyWith(
-                          color: Constants.AppColors.brand,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translate('Posted By', 'द्वारा पोस्ट किया गया')}: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Constants.AppColors.ink),
-                                ),
-                                Text(
-                                  translateText(
-                                          project['farmer_name'].toString() ??
-                                              'N/A') ??
-                                      'N/A',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ],
-                            ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ── Hero card ─────────────────────────────────────────────
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                      Row(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translate('Posted On', 'पोस्ट किया गया')}: ',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Constants.AppColors.ink,
-                                  ),
-                                ),
-                                Text(
-                                  translateText(
-                                          project['time_elapsed'] ?? 'N/A') ??
-                                      'N/A',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translateText('Budget')}: ',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  '${translateText(project['budget'].toString()) ?? 'N/A'} ₹',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    color: Constants.AppColors.ink,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translateText('Address')}: ',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  translateText(project['address'] ?? 'N/A') ??
-                                      'N/A',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translateText('Duration')}: ',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  translateText(project['days'] ?? 'N/A') ??
-                                      'N/A',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translate('Location', 'स्थान') ?? ''}: ',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  '${translateText(project['city'] ?? 'N/A')}' +
-                                      " ," +
-                                      '${translateText(project['state'] ?? 'N/A')}',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translate('Project Type', 'प्रोजेक्ट प्रकार') ?? ''}: ',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  translateText(
-                                          project['project_type'] ?? 'N/A') ??
-                                      'N/A',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translateText('No. Of Workers Required')}: ',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  (project['qty_labours'] ?? 'N/A') ?? 'N/A',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translateText('Skills')}: ',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  translateText(project['required_skills'] ??
-                                          'N/A') ??
-                                      'N/A',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // Description row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translateText('Description')}: ',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  translateText(
-                                          project['description'] ?? 'N/A') ??
-                                      'N/A',
-                                ),
-                              ],
-                            ),
-                          ),
-                          SpeakerIconButton(
-                            text: translateText(project['description'] ?? 'N/A') ?? 'N/A',
-                          ),
-                        ],
-                      ),
-
-                      // Payment Type row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translateText('Payment Type')}: ',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  project['payment_type'] == "1"
-                                      ? translateText('Milestone Basis')
-                                      : translateText('Project Basis'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (project['payment_type'] == "1")
-                        Scrollbar(
-                          controller: _milestoneScrollController,
-                          // Add the Scrollbar widget
-                          thumbVisibility:
-                              true, // Always show the scrollbar when scrolling
-                          radius:
-                              const Radius.circular(8), // Optional: Curved scrollbar
-                          child: SingleChildScrollView(
-                            controller: _milestoneScrollController,
-                            scrollDirection: Axis.horizontal,
-                            child: Container(
-                              constraints: BoxConstraints(
-                                  maxWidth: double
-                                      .infinity), // Constrain the width to avoid infinite width issue
-
-                              // This ensures that the table takes the full width of the parent
-                              child: DataTable(
-                                columns: [
-                                  DataColumn(
-                                    label: Text(
-                                      translateText('Description'),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight
-                                              .bold), // Bold text for the column label
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const CowAvatar(size: 70),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      title,
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF1B2B1B),
+                                      ),
                                     ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      translateText('Amount'),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight
-                                              .bold), // Bold text for the column label
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      translateText('Proposal Amount'),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight
-                                              .bold), // Bold text for the column label
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      translateText('Duration'),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight
-                                              .bold), // Bold text for the column label
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      translateText('Actions'),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight
-                                              .bold), // Bold text for the column label
-                                    ),
-                                  ),
-                                ],
-                                rows: List<DataRow>.generate(
-                                  milestones.length,
-                                  (index) {
-                                    return DataRow(
-                                      cells: [
-                                        DataCell(Text(translateText(
-                                            milestones[index]['description']))),
-                                        DataCell(Text(milestones[index]
-                                                ['amount']
-                                            .toString())),
-                                        DataCell(Text(
-                                          milestones[index]['proposalamount'] !=
-                                                  null
-                                              ? milestones[index]
-                                                      ['proposalamount']
-                                                  .toString()
-                                              : 'N/A',
-                                        )),
-                                        DataCell(Text(
-                                          milestones[index]['duration'] != null
-                                              ? milestones[index]['duration']
-                                                  .toString()
-                                              : 'N/A',
-                                        )),
-                                        DataCell(
-                                          Row(
-                                            children: [
-                                              if (milestones[index]['status']
-                                                      ?.toString() ==
-                                                  '2')
-                                                ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                        Radius.circular(
-                                                            Constants.AppRadii.xs),
-                                                      ),
-                                                    ),
-                                                    backgroundColor:
-                                                        Constants.AppColors.brand,
-                                                    foregroundColor:
-                                                        Constants.AppColors.card,
-                                                    elevation: 0,
-                                                  ),
-                                                  onPressed: () {
-                                                    // Call the milestone completion function
-                                                    handleMilestoneCompletion(
-                                                      context,
-                                                      milestones[index]['sno']
-                                                          .toString(),
-                                                    );
-                                                  },
-                                                  child: Text(
-                                                    translateText("Complete"),
-                                                    style: Constants.AppTypography.label.copyWith(
-                                                        color: Constants.AppColors.card),
-                                                  ),
-                                                ),
-                                              if (milestones[index]['status']
-                                                      ?.toString() ==
-                                                  '3')
-                                                ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                        Radius.circular(
-                                                            Constants.AppRadii.xs),
-                                                      ),
-                                                    ),
-                                                    backgroundColor:
-                                                        Constants.AppColors.brand,
-                                                    foregroundColor:
-                                                        Constants.AppColors.card,
-                                                    elevation: 0,
-                                                  ),
-                                                  onPressed: () {
-                                                    // Add functionality for "Submitted" state if needed
-                                                  },
-                                                  child: Text(
-                                                    translateText("Submitted"),
-                                                    style: Constants.AppTypography.label.copyWith(
-                                                        color: Constants.AppColors.card),
-                                                  ),
-                                                ),
-                                              if (milestones[index]['status']
-                                                      ?.toString() ==
-                                                  '4')
-                                                Row(
-                                                  children: [
-                                                    ElevatedButton(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                            Radius.circular(
-                                                                Constants.AppRadii.xs),
-                                                          ),
-                                                        ),
-                                                        backgroundColor:
-                                                            Constants.AppColors.brand,
-                                                        foregroundColor:
-                                                            Constants.AppColors.card,
-                                                        elevation: 0,
-                                                      ),
-                                                      onPressed: () {
-                                                        // Add your button action here
-                                                        print(
-                                                            'Button pressed for status 4');
-                                                      },
-                                                      child: Text(
-                                                        translateText(
-                                                            "Completed"),
-                                                        style: Constants.AppTypography.label.copyWith(
-                                                            color:
-                                                                Constants.AppColors.card),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              // If no status matches, show edit and delete buttons
-                                              if (!(milestones[index]['status']
-                                                          ?.toString() ==
-                                                      '2' ||
-                                                  milestones[index]['status']
-                                                          ?.toString() ==
-                                                      '3' ||
-                                                  milestones[index]['status']
-                                                          ?.toString() ==
-                                                      '4'))
-                                                Row(
-                                                  children: [
-                                                    IconButton(
-                                                      icon: const Icon(
-                                                          Icons.edit,
-                                                          color: Colors.blue),
-                                                      onPressed: () =>
-                                                          showEditMilestoneDialog(
-                                                              index, context),
-                                                    ),
-                                                  ],
-                                                ),
-                                            ],
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.person_outline,
+                                            size: 14, color: Colors.grey[500]),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          translate('Posted by ', 'द्वारा पोस्ट किया गया '),
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey[500]),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            translateText(project['farmer_name']?.toString() ?? 'N/A'),
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Constants.AppColors.brand,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
+                                        const SizedBox(width: 4),
+                                        Icon(Icons.calendar_today_outlined,
+                                            size: 11, color: Colors.grey[400]),
+                                        const SizedBox(width: 3),
+                                        Text(
+                                          translateText(project['time_elapsed']?.toString() ?? 'N/A'),
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey[500]),
+                                        ),
                                       ],
-                                    );
-                                  },
+                                    ),
+                                  ],
                                 ),
                               ),
+                              const SizedBox(width: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFEAF4E8),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                      color: const Color(0xFFA5D6A7), width: 1),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.check,
+                                        size: 11,
+                                        color: Constants.AppColors.brand),
+                                    const SizedBox(width: 2),
+                                    Text(
+                                      translateText(project['status']?.toString() ?? 'Active'),
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Constants.AppColors.brand,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+
+                          // 3x2 stats grid
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _infoCell(
+                                icon: Icons.currency_rupee,
+                                label: translate('Budget', 'बजट'),
+                                value: budget,
+                              ),
+                              _infoCell(
+                                icon: Icons.group_outlined,
+                                label: translate('Workers Required', 'आवश्यक मजदूर'),
+                                value: workers,
+                              ),
+                              _infoCell(
+                                icon: Icons.access_time_outlined,
+                                label: translate('Duration', 'अवधि'),
+                                value: duration,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _infoCell(
+                                icon: Icons.location_on_outlined,
+                                label: translate('Location', 'स्थान'),
+                                value: '${translateText(city)}, ${translateText(state)}',
+                              ),
+                              _infoCell(
+                                icon: Icons.business_outlined,
+                                label: translate('Address', 'पता'),
+                                value: address,
+                              ),
+                              _infoCell(
+                                icon: Icons.description_outlined,
+                                label: translate('Project Type', 'प्रोजेक्ट प्रकार'),
+                                value: projectType,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Skills Required Card
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFFF3E0),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.workspace_premium_outlined,
+                                  color: Color(0xFFFF8F00),
+                                  size: 18,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                translate('Skills Required', 'आवश्यक कौशल'),
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF1B2B1B),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: skillsText.split(',').map((skill) {
+                              final cleanSkill = skill.trim();
+                              if (cleanSkill.isEmpty) return const SizedBox.shrink();
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFFBEB),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: const Color(0xFFFDE68A), width: 1),
+                                ),
+                                child: Text(
+                                  cleanSkill,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFB45309),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Payment Type Card
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFEAF4E8),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.receipt_long_outlined,
+                              color: Color(0xFF0E6805),
+                              size: 18,
                             ),
                           ),
-                        ),
-                      if (project['applyStatus'] != null)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${translateText('Proposal Amount') ?? ''}: ',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  '${translateText(project['praposal_amount'] ?? 'N/A') ?? 'N/A'} ₹',
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      if (project['applyStatus'] != null)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Wrap(
-                              spacing: 8.0, // Horizontal space between elements
-                              runSpacing:
-                                  4.0, // Vertical space between lines of items
-                              children: [
-                                Text(
-                                  '${translateText('Estimate Duration') ?? ''}: ',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  translateText(project['wpay'] ?? 'N/A') ??
-                                      'N/A',
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      if (project['applyStatus'] != null)
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Wrap(
-                                spacing:
-                                    8.0, // Horizontal space between elements
-                                runSpacing:
-                                    4.0, // Vertical space between lines of items
-                                children: [
-                                  Text(
-                                    '${translateText('Comment') ?? ''}: ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                  translate('Payment Type', 'भुगतान का प्रकार'),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[500],
+                                    fontWeight: FontWeight.w500,
                                   ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  paymentType,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF152018),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Project Description Card
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.assignment_outlined,
+                                      color: Constants.AppColors.brand, size: 20),
+                                  const SizedBox(width: 8),
                                   Text(
-                                    translateText(
-                                            project['comment'] ?? 'N/A') ??
-                                        'N/A',
+                                    translate('Project Description', 'परियोजना विवरण'),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                      color: Constants.AppColors.ink,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SpeakerIconButton(
+                                text: translateText(description),
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            translateText(description),
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey[700],
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Milestone & Payment (only if Milestone Basis and milestones exist)
+                    if (project['payment_type'] == "1" && milestones.isNotEmpty) ...[
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.layers_outlined,
+                                    color: Constants.AppColors.brand, size: 20),
+                                const SizedBox(width: 8),
+                                Text(
+                                  translate('Milestone & Payment', 'माइलस्टोन और भुगतान'),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: Constants.AppColors.ink,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+
+                            // Table Header
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Constants.AppColors.brand,
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(8),
+                                  topRight: Radius.circular(8),
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      translate('Description', 'विवरण'),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 18,
+                                    child: Text(
+                                      translate('Amount', 'राशि'),
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 22,
+                                    child: Text(
+                                      translate('Proposal/Days', 'प्रस्ताव/दिन'),
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 20,
+                                    child: Text(
+                                      translate('Action', 'कार्रवाई'),
+                                      textAlign: TextAlign.right,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Rows
+                            ...List.generate(milestones.length, (index) {
+                              final milestone = milestones[index];
+                              final isEven = index % 2 == 0;
+                              final mStatus = milestone['status']?.toString();
+                              final proposalAmt = milestone['proposalamount'] ?? milestone['proposal'] ?? '-';
+                              final mDuration = milestone['duration'] ?? '-';
+
+                              return Container(
+                                color: isEven ? Colors.white : const Color(0xFFF9FBF9),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(color: Colors.grey[100]!, width: 1),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        translateText(milestone['description'] ?? 'N/A'),
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Constants.AppColors.ink,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 18,
+                                      child: Text(
+                                        milestone['amount']?.toString() ?? 'N/A',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Constants.AppColors.ink,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 22,
+                                      child: Text(
+                                        '$proposalAmt / $mDuration',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Constants.AppColors.ink,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 20,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: mStatus == '2'
+                                            ? _buildMilestoneAction(
+                                                label: translate('Complete', 'पूर्ण'),
+                                                color: Constants.AppColors.brand,
+                                                onPressed: () => handleMilestoneCompletion(
+                                                  context,
+                                                  milestone['sno'].toString(),
+                                                ),
+                                              )
+                                            : mStatus == '3'
+                                                ? _buildMilestoneAction(
+                                                    label: translate('Submitted', 'जमा किया'),
+                                                    color: const Color(0xFFF97316),
+                                                    onPressed: null,
+                                                  )
+                                                : mStatus == '4'
+                                                    ? _buildMilestoneAction(
+                                                        label: translate('Completed', 'पूर्ण किया'),
+                                                        color: const Color(0xFF16A34A),
+                                                        onPressed: null,
+                                                      )
+                                                    : IconButton(
+                                                        icon: const Icon(Icons.edit_outlined,
+                                                            color: Colors.blue, size: 20),
+                                                        padding: EdgeInsets.zero,
+                                                        constraints: const BoxConstraints(),
+                                                        onPressed: () => showEditMilestoneDialog(
+                                                            index, context),
+                                                      ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+
+                    // Proposal Summary / Form Input depending on applyStatus
+                    if (project['applyStatus'] != null) ...[
+                      // Applied: show proposal details in a premium card
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F9F1),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE2EFE2), width: 1),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            // Proposal Amount
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFEAF4E8),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.edit_note_outlined,
+                                      color: Color(0xFF0E6805),
+                                      size: 18,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          translate('Proposal Amount', 'प्रस्ताव राशि'),
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            color: Color(0xFF5B6B5E),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          project['praposal_amount'] != null
+                                              ? '₹${project['praposal_amount']}'
+                                              : 'N/A',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF152018),
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Estimate Duration
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFEAF4E8),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.access_time_outlined,
+                                      color: Color(0xFF0E6805),
+                                      size: 18,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          translate('Estimate Duration', 'अनुमानित अवधि'),
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            color: Color(0xFF5B6B5E),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          translateText(project['wpay']?.toString() ?? 'N/A'),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF152018),
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Comment
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFEAF4E8),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.chat_bubble_outline,
+                                      color: Color(0xFF0E6805),
+                                      size: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          translate('Comment', 'टिप्पणी'),
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            color: Color(0xFF5B6B5E),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          translateText(project['comment']?.toString() ?? 'N/A'),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF152018),
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
                           ],
                         ),
-
-                      const SizedBox(height: 20),
-                      if (project['applyStatus'] == null)
-                        TextFormField(
-                          controller: _payController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText:
-                                translate("Proposal Amount", "प्रस्ताव राशि"),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.green, // Default border color
-                                width: 2.0, // Border width
-                              ),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color:
-                                    Colors.red, // Red border in case of error
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors
-                                    .red, // Red border when focused and error exists
-                                width: 2.0,
-                              ),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 3, horizontal: 5),
-                          ),
-                          // Validator to ensure the field is not empty
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a proposal amount'; // Error message when the field is empty
-                            }
-                            // Optionally, you can add additional validation here to check if the input is a valid number.
-                            if (double.tryParse(value) == null) {
-                              return 'Please enter a valid number'; // Error message if input is not a valid number
-                            }
-                            return null; // Return null if no errors
-                          },
-                        ),
-                      if (project['applyStatus'] == null)
-                        const SizedBox(height: 20),
-                      if (project['applyStatus'] == null)
-                        DropdownButtonFormField<String>(
-                          value: selectedEstimateDays,
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedEstimateDays = newValue;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            labelText:
-                                translate('Estimated Days', 'अनुमानित दिन'),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.green,
-                                width: 2.0,
-                              ),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.red,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.red,
-                                width: 2.0,
-                              ),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 3, horizontal: 5),
-                          ),
-                          items: [
-                            // Dropdown item for "1 Day"
-                            DropdownMenuItem<String>(
-                              value: '1 day',
-                              child: Text(translate('1 day', '1 दिन')),
-                            ),
-
-                            // Dropdown item for "2 Days"
-                            DropdownMenuItem<String>(
-                              value: '2 days',
-                              child: Text(translate('2 days', '2 दिन')),
-                            ),
-
-                            // Dropdown item for "3-7 Days"
-                            DropdownMenuItem<String>(
-                              value: '3-7 days',
-                              child: Text(translate('3-7 days', '3-7 दिन')),
-                            ),
-
-                            // Dropdown item for "8-15 Days"
-                            DropdownMenuItem<String>(
-                              value: '8-15 days',
-                              child: Text(translate('8-15 days', '8-15 दिन')),
-                            ),
-
-                            // Dropdown item for "15-1 Month"
-                            DropdownMenuItem<String>(
-                              value: '15-1 month',
-                              child:
-                                  Text(translate('15-1 month', '15-1 महीना')),
-                            ),
-
-                            // Dropdown item for "1 Month - 3 Months"
-                            DropdownMenuItem<String>(
-                              value: '1-3 months',
-                              child: Text(translate('1-3 months', '1-3 महीने')),
-                            ),
-
-                            // Dropdown item for "3 Months - 6 Months"
-                            DropdownMenuItem<String>(
-                              value: '3-6 months',
-                              child: Text(translate('3-6 months', '3-6 महीने')),
-                            ),
-
-                            // Dropdown item for "6 Months - 1 Year"
-                            DropdownMenuItem<String>(
-                              value: '6 months-1 year',
-                              child: Text(translate(
-                                  '6 months-1 year', '6 महीने-1 साल')),
-                            ),
-
-                            // Dropdown item for "> 1 Year"
-                            DropdownMenuItem<String>(
-                              value: '>1 year',
-                              child: Text(translate('>1 year', '> 1 साल')),
+                      ),
+                    ] else ...[
+                      // Not applied: show Proposal inputs inside a card
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
                             ),
                           ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return translate(
-                                  'Please enter the estimated days.',
-                                  'कृपया अनुमानित दिन दर्ज करें।');
-                            }
-                            return null;
-                          },
                         ),
-                      if (project['applyStatus'] == null)
-                        const SizedBox(height: 20),
-                      if (project['applyStatus'] == null)
-                        TextField(
-                          controller: _commentController,
-                          decoration: InputDecoration(
-                            labelText: translate(
-                                "Enter your Comment", "अपनी टिप्पणी दर्ज करें"),
-                            suffixIcon: MicIconButton(controller: _commentController),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.green, // Default border color
-                                width: 2.0, // Border width
-                              ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.rate_review_outlined,
+                                    color: Constants.AppColors.brand, size: 20),
+                                const SizedBox(width: 8),
+                                Text(
+                                  translate('Submit Your Proposal', 'अपना प्रस्ताव जमा करें'),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: Constants.AppColors.ink,
+                                  ),
+                                ),
+                              ],
                             ),
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color:
-                                    Colors.red, // Red border in case of error
-                                width: 2.0,
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _payController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: translate("Proposal Amount", "प्रस्ताव राशि"),
+                                labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[200]!),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Constants.AppColors.brand, width: 1.5),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return translate('Please enter a proposal amount', 'कृपया प्रस्ताव राशि दर्ज करें');
+                                }
+                                if (double.tryParse(value) == null) {
+                                  return translate('Please enter a valid number', 'कृपया एक मान्य संख्या दर्ज करें');
+                                }
+                                return null;
+                              },
                             ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors
-                                    .red, // Red border when focused and error exists
-                                width: 2.0,
+                            const SizedBox(height: 16),
+                            DropdownButtonFormField<String>(
+                              value: selectedEstimateDays,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  selectedEstimateDays = newValue;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                labelText: translate('Estimated Days', 'अनुमानित दिन'),
+                                labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[200]!),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Constants.AppColors.brand, width: 1.5),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                               ),
+                              items: _validEstimateDays.map((val) {
+                                return DropdownMenuItem<String>(
+                                  value: val,
+                                  child: Text(translate(val, _getEstimateDaysHindi(val))),
+                                );
+                              }).toList(),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return translate(
+                                      'Please enter the estimated days.',
+                                      'कृपया अनुमानित दिन दर्ज करें।');
+                                }
+                                return null;
+                              },
                             ),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 3, horizontal: 5),
-                          ),
-                          maxLines: 3, // Allow multiline comments
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _commentController,
+                              decoration: InputDecoration(
+                                labelText: translate("Enter your Comment", "अपनी टिप्पणी दर्ज करें"),
+                                labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                suffixIcon: MicIconButton(controller: _commentController),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[200]!),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Constants.AppColors.brand, width: 1.5),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                              ),
+                              maxLines: 2,
+                            ),
+                          ],
                         ),
-                      const SizedBox(height: 20),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: _buildActionButton(project),
                       ),
                     ],
-                  ),
+
+                    const SizedBox(height: 100),
+                  ],
                 ),
               ),
             ),
+          ),
+
+          // ── Fixed bottom CTA ───────────────────────────────────────────────
+          Container(
+            color: const Color(0xFFFAFBF7),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+            child: SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: _buildActionButton(project),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -4634,4 +4876,122 @@ class _AppliedProjectsState extends State<AppliedProjects> {
       ),
     );
   }
+}
+
+// ─── Custom Cow Avatar & Painter ──────────────────────────────────────────────
+
+class CowAvatar extends StatelessWidget {
+  final double size;
+  const CowAvatar({Key? key, this.size = 70}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(
+        color: Color(0xFFEAF4E8),
+        shape: BoxShape.circle,
+      ),
+      child: CustomPaint(
+        size: Size(size, size),
+        painter: CowPainter(),
+      ),
+    );
+  }
+}
+
+class CowPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFF0E6805)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final fillPaint = Paint()
+      ..color = const Color(0xFF0E6805)
+      ..style = PaintingStyle.fill;
+
+    final double w = size.width;
+    final double h = size.height;
+    final double scale = w / 100;
+
+    // Head / Face outline path
+    final facePath = Path()
+      ..moveTo(38 * scale, 32 * scale)
+      ..lineTo(62 * scale, 32 * scale)
+      ..quadraticBezierTo(65 * scale, 45 * scale, 64 * scale, 58 * scale)
+      ..quadraticBezierTo(50 * scale, 60 * scale, 36 * scale, 58 * scale)
+      ..quadraticBezierTo(35 * scale, 45 * scale, 38 * scale, 32 * scale);
+    canvas.drawPath(facePath, paint);
+
+    // Muzzle / Snout cup shape
+    final muzzlePath = Path()
+      ..moveTo(36 * scale, 58 * scale)
+      ..cubicTo(32 * scale, 68 * scale, 40 * scale, 76 * scale, 50 * scale, 76 * scale)
+      ..cubicTo(60 * scale, 76 * scale, 68 * scale, 68 * scale, 64 * scale, 58 * scale)
+      ..quadraticBezierTo(50 * scale, 60 * scale, 36 * scale, 58 * scale);
+    canvas.drawPath(muzzlePath, paint);
+
+    // Left Ear
+    final leftEar = Path()
+      ..moveTo(35 * scale, 38 * scale)
+      ..quadraticBezierTo(15 * scale, 35 * scale, 12 * scale, 45 * scale)
+      ..quadraticBezierTo(18 * scale, 52 * scale, 35 * scale, 46 * scale);
+    canvas.drawPath(leftEar, paint);
+
+    // Right Ear
+    final rightEar = Path()
+      ..moveTo(65 * scale, 38 * scale)
+      ..quadraticBezierTo(85 * scale, 35 * scale, 88 * scale, 45 * scale)
+      ..quadraticBezierTo(82 * scale, 52 * scale, 65 * scale, 46 * scale);
+    canvas.drawPath(rightEar, paint);
+
+    // Left Horn
+    final leftHorn = Path()
+      ..moveTo(39 * scale, 32 * scale)
+      ..quadraticBezierTo(32 * scale, 14 * scale, 22 * scale, 17 * scale)
+      ..quadraticBezierTo(30 * scale, 24 * scale, 43 * scale, 30 * scale);
+    canvas.drawPath(leftHorn, paint);
+
+    // Right Horn
+    final rightHorn = Path()
+      ..moveTo(61 * scale, 32 * scale)
+      ..quadraticBezierTo(68 * scale, 14 * scale, 78 * scale, 17 * scale)
+      ..quadraticBezierTo(70 * scale, 24 * scale, 57 * scale, 30 * scale);
+    canvas.drawPath(rightHorn, paint);
+
+    // Eyes
+    canvas.drawCircle(Offset(44 * scale, 44 * scale), 1.8 * scale, fillPaint);
+    canvas.drawCircle(Offset(56 * scale, 44 * scale), 1.8 * scale, fillPaint);
+
+    // Nostrils
+    canvas.drawCircle(Offset(44 * scale, 66 * scale), 1.5 * scale, fillPaint);
+    canvas.drawCircle(Offset(56 * scale, 66 * scale), 1.5 * scale, fillPaint);
+
+    // "IWM" text below the muzzle
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: 'IWM',
+        style: TextStyle(
+          color: const Color(0xFF0E6805),
+          fontSize: 8.5 * scale,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0.8,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset((50 * scale) - (textPainter.width / 2), 79 * scale),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

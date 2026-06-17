@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:greencollar/main.dart'; // Import your login screen
+import 'package:greencollar/constants.dart' as Constants;
 
 class MyWebView extends StatefulWidget {
   @override
@@ -49,21 +50,13 @@ class _MyWebViewState extends State<MyWebView> {
       child: Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.green, Colors.teal],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+            decoration: const BoxDecoration(
+              gradient: Constants.AppColors.brandGradient,
             ),
           ),
           title: Text(
             'Privacy Policy',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.w400,
-            ),
+            style: Constants.AppTypography.h3.copyWith(color: Colors.white),
           ),
           leading: IconButton(
             icon: const Icon(
