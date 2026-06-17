@@ -219,6 +219,7 @@ import 'package:greencollar/constants.dart' as Constants;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:translator/translator.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 
 class NearbyProjectPage extends StatefulWidget {
   @override
@@ -941,403 +942,192 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                                 itemBuilder: (context, index) {
                                   final project = filteredProjects[index];
                                   return InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ProjectDetailsPage(
-                                            projectId: project['id'],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 16),
-                                      decoration: BoxDecoration(
-                                        color: Constants.AppColors.card,
-                                        borderRadius: BorderRadius.circular(
-                                            Constants.AppRadii.xs),
-                                        border: Border.all(
-                                            color: Constants.AppColors.border,
-                                            width: 0.5),
-                                        boxShadow: const [
-                                          Constants.AppShadows.soft,
-                                        ],
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    translateText(
-                                                          project['title']
-                                                                  ?.toString()
-                                                                  .toUpperCase() ??
-                                                              'No Title', // Assuming you have a language selection
-                                                        ) ??
-                                                        'No Title',
-                                                    style: Constants.AppTypography.h3,
-                                                    softWrap: true,
-                                                    overflow:
-                                                        TextOverflow.visible,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                // Farmer Name
-                                                Wrap(
-                                                  spacing:
-                                                      8.0, // Horizontal space between elements
-                                                  runSpacing:
-                                                      4.0, // Vertical space between lines of items
-                                                  children: [
-                                                    Text(
-                                                      '${translate('Farmer Name', 'किसान का नाम') ?? 'Farmer Name'}: ',
-                                                      style: Constants.AppTypography.label.copyWith(
-                                                          color: Constants.AppColors.ink),
-                                                    ),
-                                                    Text(
-                                                      translateText(project[
-                                                                  'farmer_name'] ??
-                                                              'N/A') ??
-                                                          'N/A',
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                // City, State, and Pincode in a row
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      AppLocalizations.of(
-                                                                  context)!
-                                                              .location +
-                                                          " : ",
-                                                      style:
-                                                          Constants.AppTypography.label,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        "${translateText(project['city'] ?? 'N/A')} ${translateText(project['state'] ?? 'N/A')} ${project['pincode'] ?? 'N/A'}",
-                                                        style:
-                                                            Constants.AppTypography.body,
-                                                      ),
-                                                    ),
-                                                  ],
+                                     onTap: () {
+                                       Navigator.push(
+                                         context,
+                                         MaterialPageRoute(
+                                           builder: (context) =>
+                                               ProjectDetailsPage(
+                                             projectId: project['id'],
+                                           ),
+                                         ),
+                                       );
+                                     },
+                                     child: Container(
+                                       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                       decoration: BoxDecoration(
+                                         color: Constants.AppColors.card,
+                                         borderRadius: BorderRadius.circular(16),
+                                         border: Border.all(
+                                           color: const Color(0xFFF1F5EE),
+                                           width: 1.0,
+                                         ),
+                                         boxShadow: [
+                                           BoxShadow(
+                                             color: Colors.black.withOpacity(0.04),
+                                             blurRadius: 16,
+                                             offset: const Offset(0, 6),
+                                           ),
+                                         ],
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(16),
+                                         child: Column(
+                                           crossAxisAlignment: CrossAxisAlignment.start,
+                                           children: [
+                                             // ── TOP ROW: Avatar + Title/Meta + Status badge ──
+                                             Row(
+                                               crossAxisAlignment: CrossAxisAlignment.start,
+                                               children: [
+                                                 // Left: Farmer Avatar
+                                                 Container(
+                                                   width: 50,
+                                                   height: 50,
+                                                   decoration: const BoxDecoration(
+                                                     color: Color(0xFFF1F5EE),
+                                                     shape: BoxShape.circle,
+                                                   ),
+                                                   alignment: Alignment.center,
+                                                   child: const Text(
+                                                     '👨‍🌾',
+                                                     style: TextStyle(fontSize: 26),
+                                                   ),
                                                  ),
-                                                //
-                                                // Project Type
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      '${translate('Project Type', 'प्रोजेक्ट प्रकार') ?? ''}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      translateText(project[
-                                                                  'project_type'] ??
-                                                              'N/A') ??
-                                                          'N/A',
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                // Labour Required
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      '${translate('Labour Required', 'मजदूरों की आवश्यकता') ?? ''}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      translateText(
-                                                              '${project['qty_labours'] ?? 'N/A'}') ??
-                                                          'N/A',
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                // Required Skills
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      '${translate('Required Skills', 'आवश्यक कौशल') ?? ''}: ',
-                                                      style: Constants.AppTypography.label.copyWith(
-                                                          color: Constants.AppColors.ink),
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        translateText(project[
-                                                                    'required_skills'] ??
-                                                                'N/A') ??
-                                                            'N/A',
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                // Budget & Duration
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      '${translateText('Budget') ?? ''}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      "₹ " +
-                                                              translateText(
-                                                                '${project['budget'] ?? 'N/A'}',
-                                                              ) ??
-                                                          'N/A',
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Text(
-                                                      '${translateText(
-                                                            'Duration',
-                                                          ) ?? ''}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      translateText(
-                                                            '${project['days'] ?? 'N/A'}',
-                                                          ) ??
-                                                          'N/A',
-                                                    ),
-                                                  ],
-                                                ),
-                                                // Duration
-                                              ],
-                                            ),
-                                            const SizedBox(height: 16),
-                                            Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Builder(
-                                                builder: (context) {
-                                                  String? appliedStatus =
-                                                      project['applyStatus']?.toString();
-                                                  if (appliedStatus == null) {
-                                                    return ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) => ProjectDetailsPage(
-                                                              projectId: project['id'],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: Constants.AppColors.brand,
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          AppLocalizations.of(context)!.apply_now,
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  } else if (appliedStatus == "0") {
-                                                    return ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) => ProjectDetailsPage(
-                                                              projectId: project['id'],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: Constants.AppColors.brand,
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          AppLocalizations.of(context)!.applied,
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  } else if (appliedStatus == "1") {
-                                                    return ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) => ProjectDetailsPage(
-                                                              projectId: project['id'],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: Constants.AppColors.brand,
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          AppLocalizations.of(context)!.assigned,
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  } else if (appliedStatus == "2") {
-                                                    return Row(
-                                                      mainAxisAlignment: MainAxisAlignment.end,
-                                                      children: [
-                                                        Padding(
-                                                          padding: const EdgeInsets.all(2.0),
-                                                          child: ElevatedButton(
-                                                            onPressed: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (context) => ProjectDetailsPage(
-                                                                    projectId: project['id'],
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
-                                                            style: ElevatedButton.styleFrom(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                              minimumSize: const Size(0, 0),
-                                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                              shape: RoundedRectangleBorder(
-                                                                borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                              ),
-                                                              backgroundColor: Constants.AppColors.brand,
-                                                              elevation: 0,
-                                                            ),
-                                                            child: Column(
-                                                              mainAxisSize: MainAxisSize.min,
-                                                              children: [
-                                                                Text(
-                                                                    AppLocalizations.of(context)!.workStarted,
-                                                                    style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                                Text(
-                                                                    '${project['startdate']} ',
-                                                                    style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        if (project['cancel_confirm'] == "1")
-                                                          Padding(
-                                                            padding: const EdgeInsets.all(2.0),
-                                                            child: ElevatedButton(
-                                                              onPressed: () {},
-                                                              style: ElevatedButton.styleFrom(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                                                minimumSize: const Size(0, 0),
-                                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                                ),
-                                                                backgroundColor: Constants.AppColors.amberNotice,
-                                                                elevation: 0,
-                                                              ),
-                                                              child: Text(
-                                                                  AppLocalizations.of(context)!.cancelledRequested,
-                                                                  style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                            ),
-                                                          ),
-                                                        if (project['complete_confirm'] == "1")
-                                                          Padding(
-                                                            padding: const EdgeInsets.all(2.0),
-                                                            child: ElevatedButton(
-                                                              onPressed: () {},
-                                                              style: ElevatedButton.styleFrom(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                                minimumSize: const Size(0, 0),
-                                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                                ),
-                                                                backgroundColor: Constants.AppColors.brand,
-                                                                elevation: 0,
-                                                              ),
-                                                              child: Column(
-                                                                mainAxisSize: MainAxisSize.min,
-                                                                children: [
-                                                                  Text(AppLocalizations.of(context)!.completedRequested,
-                                                                      style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                                  Text('${project['completedate']}',
-                                                                      style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                      ],
-                                                    );
-                                                  } else if (appliedStatus == "3") {
-                                                    return ElevatedButton(
-                                                      onPressed: () {},
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: Constants.AppColors.brand,
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          translateText(
-                                                              '${AppLocalizations.of(context)!.completed} ${project['completedate']}'),
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  } else {
-                                                    return ElevatedButton(
-                                                      onPressed: () {},
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: const Color.fromARGB(255, 91, 20, 15),
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          AppLocalizations.of(context)!.cancelled,
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
+                                                 const SizedBox(width: 12),
+                                                 // Right: Title + status badge row + Date + Type
+                                                 Expanded(
+                                                   child: Column(
+                                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                                     children: [
+                                                       // ── Title + status badge on same row ──
+                                                       Row(
+                                                         crossAxisAlignment: CrossAxisAlignment.start,
+                                                         children: [
+                                                           Expanded(
+                                                             child: Text(
+                                                               translateText(project['title']?.toString() ?? 'No Title') ?? 'No Title',
+                                                               style: Constants.AppTypography.h2.copyWith(
+                                                                 color: Constants.AppColors.ink,
+                                                                 fontWeight: FontWeight.bold,
+                                                                 fontSize: 16,
+                                                               ),
+                                                               maxLines: 2,
+                                                               overflow: TextOverflow.ellipsis,
+                                                             ),
+                                                           ),
+                                                           if (project['applyStatus'] != null) ...[
+                                                             const SizedBox(width: 8),
+                                                             _buildStatusBadge(project),
+                                                           ],
+                                                         ],
+                                                       ),
+                                                       const SizedBox(height: 6),
+                                                       // ── Date + contract type tag row ──
+                                                       Row(
+                                                         children: [
+                                                           const Icon(
+                                                             Icons.calendar_today_outlined,
+                                                             size: 13,
+                                                             color: Colors.grey,
+                                                           ),
+                                                           const SizedBox(width: 4),
+                                                           Text(
+                                                             _formatDate(project['created_at']?.toString() ?? ''),
+                                                             style: const TextStyle(
+                                                               fontSize: 13,
+                                                               color: Colors.grey,
+                                                             ),
+                                                           ),
+                                                           const SizedBox(width: 10),
+                                                           Container(
+                                                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                             decoration: BoxDecoration(
+                                                               color: Constants.AppColors.brandTint,
+                                                               borderRadius: BorderRadius.circular(6),
+                                                             ),
+                                                             child: Row(
+                                                               mainAxisSize: MainAxisSize.min,
+                                                               children: [
+                                                                 const Text('🌾', style: TextStyle(fontSize: 12)),
+                                                                 const SizedBox(width: 4),
+                                                                 Text(
+                                                                   translateText(project['project_type'] ?? 'N/A') ?? 'N/A',
+                                                                   style: TextStyle(
+                                                                     fontSize: 12,
+                                                                     fontWeight: FontWeight.bold,
+                                                                     color: Constants.AppColors.brandDeep,
+                                                                   ),
+                                                                 ),
+                                                               ],
+                                                             ),
+                                                           ),
+                                                         ],
+                                                       ),
+                                                     ],
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                             const SizedBox(height: 12),
+                                             const Divider(color: Color(0xFFF1F5EE), height: 1),
+                                             const SizedBox(height: 10),
+                                             // ── Location ──
+                                             Row(
+                                               children: [
+                                                 const Text('📍', style: TextStyle(fontSize: 14)),
+                                                 const SizedBox(width: 6),
+                                                 Expanded(
+                                                   child: Text(
+                                                     "${translateText(project['city'] ?? 'N/A')}, ${translateText(project['state'] ?? 'N/A')}",
+                                                     style: Constants.AppTypography.body.copyWith(
+                                                       color: Constants.AppColors.inkSoft,
+                                                       fontWeight: FontWeight.w600,
+                                                       fontSize: 14,
+                                                     ),
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                             const SizedBox(height: 12),
+                                             // ── ROW 1: Workers · Amount · Duration ──
+                                             Row(
+                                               children: [
+                                                 _buildChip(
+                                                   icon: Icons.people_outline,
+                                                   label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
+                                                   bgColor: const Color(0xFFEAF4E8),
+                                                   textColor: const Color(0xFF0E6805),
+                                                   iconColor: const Color(0xFF0E6805),
+                                                 ),
+                                                 const SizedBox(width: 8),
+                                                 _buildChip(
+                                                   icon: Icons.currency_rupee,
+                                                   label: '₹${project['budget'] ?? '0'}',
+                                                   bgColor: const Color(0xFFFFF3E0),
+                                                   textColor: const Color(0xFFE65100),
+                                                   iconColor: const Color(0xFFE65100),
+                                                 ),
+                                                 const SizedBox(width: 8),
+                                                 _buildChip(
+                                                   icon: Icons.access_time,
+                                                   label: translateText(project['days']?.toString() ?? '') ?? '',
+                                                   bgColor: const Color(0xFFE3F2FD),
+                                                   textColor: const Color(0xFF0D47A1),
+                                                   iconColor: const Color(0xFF0D47A1),
+                                                 ),
+                                               ],
+                                             ),
+                                             const SizedBox(height: 10),
+                                             // ── ROW 2: View Details right-aligned ──
+                                             Align(
+                                               alignment: Alignment.centerRight,
+                                               child: _buildViewDetailsButton(project),
+                                             ),
+                                           ],
+                                         ),
+                                       ),
+                                     ),
+                                   );
                                 },
                               ),
                             ),
@@ -1348,6 +1138,166 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildChip({
+    required IconData icon,
+    required String label,
+    required Color bgColor,
+    required Color textColor,
+    required Color iconColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: iconColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(dynamic project) {
+    String? appliedStatus = project['applyStatus']?.toString();
+    if (appliedStatus == null) return const SizedBox.shrink();
+
+    final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    String text = '';
+    Color bgColor = const Color(0xFFEAF4E8);
+    Color textColor = const Color(0xFF0E6805);
+    Color borderColor = const Color(0xFFC8E6C9);
+    IconData statusIcon = Icons.check;
+
+    if (appliedStatus == "0") {
+      text = translate('Applied', 'आवेदन किया');
+      bgColor = const Color(0xFFEAF4E8);
+      textColor = const Color(0xFF0E6805);
+      borderColor = const Color(0xFFC8E6C9);
+      statusIcon = Icons.check;
+    } else if (appliedStatus == "1") {
+      text = translate('Assigned', 'आवंटित');
+      bgColor = const Color(0xFFEFF6FF);
+      textColor = const Color(0xFF1E40AF);
+      borderColor = const Color(0xFFBFDBFE);
+      statusIcon = Icons.assignment_ind_outlined;
+    } else if (appliedStatus == "2") {
+      text = translate('Work Started', 'कार्य शुरू हुआ');
+      if (project['complete_confirm']?.toString() == "1") {
+        text = translate('Completion Requested', 'पूर्णता का अनुरोध');
+      } else if (project['cancel_confirm']?.toString() == "1") {
+        text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
+      }
+      bgColor = const Color(0xFFFFF7ED);
+      textColor = const Color(0xFFC2410C);
+      borderColor = const Color(0xFFFED7AA);
+      statusIcon = Icons.hourglass_top_outlined;
+    } else if (appliedStatus == "3") {
+      text = translate('Work Completed', 'कार्य पूर्ण');
+      bgColor = const Color(0xFFF0FDF4);
+      textColor = const Color(0xFF15803D);
+      borderColor = const Color(0xFFBBF7D0);
+      statusIcon = Icons.check_circle_outline;
+    } else if (appliedStatus == "4") {
+      text = translate('Work Cancelled', 'रद्द किया गया');
+      bgColor = const Color(0xFFFEF2F2);
+      textColor = const Color(0xFF991B1B);
+      borderColor = const Color(0xFFFCA5A5);
+      statusIcon = Icons.close;
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: borderColor, width: 0.8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(statusIcon, size: 11, color: textColor),
+          const SizedBox(width: 3),
+          Text(
+            text,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildViewDetailsButton(dynamic project) {
+    String? appliedStatus = project['applyStatus']?.toString();
+    final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    String label = appliedStatus == null
+        ? translate('Apply Now', 'आवेदन करें')
+        : translate('View Details', 'विवरण देखें');
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF4E8),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF0E6805),
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(width: 4),
+          const Icon(
+            Icons.arrow_forward_ios,
+            size: 10,
+            color: Color(0xFF0E6805),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(String dateString) {
+    if (dateString.isEmpty) return 'N/A';
+    try {
+      DateTime dateTime = DateTime.parse(dateString);
+      return DateFormat('dd MMM yyyy').format(dateTime);
+    } catch (e) {
+      return dateString;
+    }
   }
 }
 
@@ -4464,418 +4414,192 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                                 itemBuilder: (context, index) {
                                   final project = filteredProjects[index];
                                   return InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ProjectDetailsPage(
-                                            projectId: project['id'],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 15),
-                                      decoration: BoxDecoration(
-                                        color: Colors
-                                            .white, // Background color of the container
-                                        borderRadius: BorderRadius.circular(
-                                            8), // Rounds the corners
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                                0.1), // Shadow color with transparency
-                                            blurRadius:
-                                                8, // How soft the shadow is
-                                            spreadRadius:
-                                                3, // How much the shadow expands
-                                            offset: Offset(0,
-                                                4), // Vertical and horizontal offset for the shadow
-                                          ),
-                                        ],
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    translateText(
-                                                          project['title']
-                                                                  ?.toString()
-                                                                  .toUpperCase() ??
-                                                              'No Title', // Assuming you have a language selection
-                                                        ) ??
-                                                        'No Title',
-                                                    style: const TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                    softWrap: true,
-                                                    overflow:
-                                                        TextOverflow.visible,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                // Farmer Name
-                                                Wrap(
-                                                  spacing:
-                                                      8.0, // Horizontal space between elements
-                                                  runSpacing:
-                                                      4.0, // Vertical space between lines of items
-                                                  children: [
-                                                    Text(
-                                                      '${translate('Farmer Name', 'किसान का नाम') ?? 'Farmer Name'}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      translateText(project[
-                                                                  'farmer_name'] ??
-                                                              'N/A') ??
-                                                          'N/A',
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                // City, State, and Pincode in a row
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      AppLocalizations.of(
-                                                                  context)!
-                                                              .location +
-                                                          " : ",
-                                                      style:
-                                                          const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight
-                                                            .w600, // Semi-bold for title
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        "${translateText(project['city'] ?? 'N/A')} ${translateText(project['state'] ?? 'N/A')} ${project['pincode'] ?? 'N/A'}",
-                                                        style:
-                                                            const TextStyle(
-                                                                fontSize: 16),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                //
-                                                // Project Type
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      '${translate('Project Type', 'प्रोजेक्ट प्रकार') ?? ''}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      translateText(project[
-                                                                  'project_type'] ??
-                                                              'N/A') ??
-                                                          'N/A',
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                // Labour Required
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      '${translate('Labour Required', 'मजदूरों की आवश्यकता') ?? ''}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      translateText(
-                                                              '${project['qty_labours'] ?? 'N/A'}') ??
-                                                          'N/A',
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                // Required Skills
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      '${translate('Required Skills', 'आवश्यक कौशल') ?? ''}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        translateText(project[
-                                                                    'required_skills'] ??
-                                                                'N/A') ??
-                                                            'N/A',
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                // Budget & Duration
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      '${translateText('Budget') ?? ''}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      "₹ " +
-                                                              translateText(
-                                                                '${project['budget'] ?? 'N/A'}',
-                                                              ) ??
-                                                          'N/A',
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Text(
-                                                      '${translateText(
-                                                            'Duration',
-                                                          ) ?? ''}: ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Text(
-                                                      translateText(
-                                                            '${project['days'] ?? 'N/A'}',
-                                                          ) ??
-                                                          'N/A',
-                                                    ),
-                                                  ],
-                                                ),
-                                                // Duration
-                                              ],
-                                            ),
-                                            const SizedBox(height: 16),
-                                            Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Builder(
-                                                builder: (context) {
-                                                  String? appliedStatus =
-                                                      project['applyStatus']?.toString();
-                                                  if (appliedStatus == null) {
-                                                    return ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) => ProjectDetailsPage(
-                                                              projectId: project['id'],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: Constants.AppColors.brand,
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          AppLocalizations.of(context)!.apply_now,
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  } else if (appliedStatus == "0") {
-                                                    return ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) => ProjectDetailsPage(
-                                                              projectId: project['id'],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: Constants.AppColors.brand,
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          AppLocalizations.of(context)!.applied,
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  } else if (appliedStatus == "1") {
-                                                    return ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) => ProjectDetailsPage(
-                                                              projectId: project['id'],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: Constants.AppColors.brand,
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          AppLocalizations.of(context)!.assigned,
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  } else if (appliedStatus == "2") {
-                                                    return Row(
-                                                      mainAxisAlignment: MainAxisAlignment.end,
-                                                      children: [
-                                                        Padding(
-                                                          padding: const EdgeInsets.all(2.0),
-                                                          child: ElevatedButton(
-                                                            onPressed: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (context) => ProjectDetailsPage(
-                                                                    projectId: project['id'],
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
-                                                            style: ElevatedButton.styleFrom(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                              minimumSize: const Size(0, 0),
-                                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                              shape: RoundedRectangleBorder(
-                                                                borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                              ),
-                                                              backgroundColor: Constants.AppColors.brand,
-                                                              elevation: 0,
-                                                            ),
-                                                            child: Column(
-                                                              mainAxisSize: MainAxisSize.min,
-                                                              children: [
-                                                                Text(
-                                                                    AppLocalizations.of(context)!.workStarted,
-                                                                    style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                                Text(
-                                                                    '${project['startdate']} ',
-                                                                    style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        if (project['cancel_confirm'] == "1")
-                                                          Padding(
-                                                            padding: const EdgeInsets.all(2.0),
-                                                            child: ElevatedButton(
-                                                              onPressed: () {},
-                                                              style: ElevatedButton.styleFrom(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                                                minimumSize: const Size(0, 0),
-                                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(Constants.AppRadii.xs)),
-                                                                backgroundColor: Constants.AppColors.amberNotice,
-                                                                elevation: 0,
-                                                              ),
-                                                              child: Text(
-                                                                  AppLocalizations.of(context)!.cancelledRequested,
-                                                                  style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                            ),
-                                                          ),
-                                                        if (project['complete_confirm'] == "1")
-                                                          Padding(
-                                                            padding: const EdgeInsets.all(2.0),
-                                                            child: ElevatedButton(
-                                                              onPressed: () {},
-                                                              style: ElevatedButton.styleFrom(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                                minimumSize: const Size(0, 0),
-                                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(Constants.AppRadii.xs)),
-                                                                backgroundColor: Constants.AppColors.brand,
-                                                                elevation: 0,
-                                                              ),
-                                                              child: Column(
-                                                                mainAxisSize: MainAxisSize.min,
-                                                                children: [
-                                                                  Text(AppLocalizations.of(context)!.completedRequested,
-                                                                      style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                                  Text('${project['completedate']}',
-                                                                      style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                      ],
-                                                    );
-                                                  } else if (appliedStatus == "3") {
-                                                    return ElevatedButton(
-                                                      onPressed: () {},
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: Constants.AppColors.brand,
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          translateText(
-                                                              '${AppLocalizations.of(context)!.completed} ${project['completedate']}'),
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  } else {
-                                                    return ElevatedButton(
-                                                      onPressed: () {},
-                                                      style: ElevatedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(Constants.AppRadii.xs)),
-                                                        ),
-                                                        backgroundColor: const Color.fromARGB(255, 91, 20, 15),
-                                                        elevation: 0,
-                                                      ),
-                                                      child: Text(
-                                                          AppLocalizations.of(context)!.cancelled,
-                                                          style: Constants.AppTypography.label.copyWith(color: Constants.AppColors.card)),
-                                                    );
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
+                                     onTap: () {
+                                       Navigator.push(
+                                         context,
+                                         MaterialPageRoute(
+                                           builder: (context) =>
+                                               ProjectDetailsPage(
+                                             projectId: project['id'],
+                                           ),
+                                         ),
+                                       );
+                                     },
+                                     child: Container(
+                                       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                       decoration: BoxDecoration(
+                                         color: Constants.AppColors.card,
+                                         borderRadius: BorderRadius.circular(16),
+                                         border: Border.all(
+                                           color: const Color(0xFFF1F5EE),
+                                           width: 1.0,
+                                         ),
+                                         boxShadow: [
+                                           BoxShadow(
+                                             color: Colors.black.withOpacity(0.04),
+                                             blurRadius: 16,
+                                             offset: const Offset(0, 6),
+                                           ),
+                                         ],
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(16),
+                                         child: Column(
+                                           crossAxisAlignment: CrossAxisAlignment.start,
+                                           children: [
+                                             // ── TOP ROW: Avatar + Title/Meta + Status badge ──
+                                             Row(
+                                               crossAxisAlignment: CrossAxisAlignment.start,
+                                               children: [
+                                                 // Left: Farmer Avatar
+                                                 Container(
+                                                   width: 50,
+                                                   height: 50,
+                                                   decoration: const BoxDecoration(
+                                                     color: Color(0xFFF1F5EE),
+                                                     shape: BoxShape.circle,
+                                                   ),
+                                                   alignment: Alignment.center,
+                                                   child: const Text(
+                                                     '👨‍🌾',
+                                                     style: TextStyle(fontSize: 26),
+                                                   ),
+                                                 ),
+                                                 const SizedBox(width: 12),
+                                                 // Right: Title + status badge row + Date + Type
+                                                 Expanded(
+                                                   child: Column(
+                                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                                     children: [
+                                                       // ── Title + status badge on same row ──
+                                                       Row(
+                                                         crossAxisAlignment: CrossAxisAlignment.start,
+                                                         children: [
+                                                           Expanded(
+                                                             child: Text(
+                                                               translateText(project['title']?.toString() ?? 'No Title') ?? 'No Title',
+                                                               style: Constants.AppTypography.h2.copyWith(
+                                                                 color: Constants.AppColors.ink,
+                                                                 fontWeight: FontWeight.bold,
+                                                                 fontSize: 16,
+                                                               ),
+                                                               maxLines: 2,
+                                                               overflow: TextOverflow.ellipsis,
+                                                             ),
+                                                           ),
+                                                           if (project['applyStatus'] != null) ...[
+                                                             const SizedBox(width: 8),
+                                                             _buildStatusBadge(project),
+                                                           ],
+                                                         ],
+                                                       ),
+                                                       const SizedBox(height: 6),
+                                                       // ── Date + contract type tag row ──
+                                                       Row(
+                                                         children: [
+                                                           const Icon(
+                                                             Icons.calendar_today_outlined,
+                                                             size: 13,
+                                                             color: Colors.grey,
+                                                           ),
+                                                           const SizedBox(width: 4),
+                                                           Text(
+                                                             _formatDate(project['created_at']?.toString() ?? ''),
+                                                             style: const TextStyle(
+                                                               fontSize: 13,
+                                                               color: Colors.grey,
+                                                             ),
+                                                           ),
+                                                           const SizedBox(width: 10),
+                                                           Container(
+                                                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                             decoration: BoxDecoration(
+                                                               color: Constants.AppColors.brandTint,
+                                                               borderRadius: BorderRadius.circular(6),
+                                                             ),
+                                                             child: Row(
+                                                               mainAxisSize: MainAxisSize.min,
+                                                               children: [
+                                                                 const Text('🌾', style: TextStyle(fontSize: 12)),
+                                                                 const SizedBox(width: 4),
+                                                                 Text(
+                                                                   translateText(project['project_type'] ?? 'N/A') ?? 'N/A',
+                                                                   style: TextStyle(
+                                                                     fontSize: 12,
+                                                                     fontWeight: FontWeight.bold,
+                                                                     color: Constants.AppColors.brandDeep,
+                                                                   ),
+                                                                 ),
+                                                               ],
+                                                             ),
+                                                           ),
+                                                         ],
+                                                       ),
+                                                     ],
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                             const SizedBox(height: 12),
+                                             const Divider(color: Color(0xFFF1F5EE), height: 1),
+                                             const SizedBox(height: 10),
+                                             // ── Location ──
+                                             Row(
+                                               children: [
+                                                 const Text('📍', style: TextStyle(fontSize: 14)),
+                                                 const SizedBox(width: 6),
+                                                 Expanded(
+                                                   child: Text(
+                                                     "${translateText(project['city'] ?? 'N/A')}, ${translateText(project['state'] ?? 'N/A')}",
+                                                     style: Constants.AppTypography.body.copyWith(
+                                                       color: Constants.AppColors.inkSoft,
+                                                       fontWeight: FontWeight.w600,
+                                                       fontSize: 14,
+                                                     ),
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                             const SizedBox(height: 12),
+                                             // ── ROW 1: Workers · Amount · Duration ──
+                                             Row(
+                                               children: [
+                                                 _buildChip(
+                                                   icon: Icons.people_outline,
+                                                   label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
+                                                   bgColor: const Color(0xFFEAF4E8),
+                                                   textColor: const Color(0xFF0E6805),
+                                                   iconColor: const Color(0xFF0E6805),
+                                                 ),
+                                                 const SizedBox(width: 8),
+                                                 _buildChip(
+                                                   icon: Icons.currency_rupee,
+                                                   label: '₹${project['budget'] ?? '0'}',
+                                                   bgColor: const Color(0xFFFFF3E0),
+                                                   textColor: const Color(0xFFE65100),
+                                                   iconColor: const Color(0xFFE65100),
+                                                 ),
+                                                 const SizedBox(width: 8),
+                                                 _buildChip(
+                                                   icon: Icons.access_time,
+                                                   label: translateText(project['days']?.toString() ?? '') ?? '',
+                                                   bgColor: const Color(0xFFE3F2FD),
+                                                   textColor: const Color(0xFF0D47A1),
+                                                   iconColor: const Color(0xFF0D47A1),
+                                                 ),
+                                               ],
+                                             ),
+                                             const SizedBox(height: 10),
+                                             // ── ROW 2: View Details right-aligned ──
+                                             Align(
+                                               alignment: Alignment.centerRight,
+                                               child: _buildViewDetailsButton(project),
+                                             ),
+                                           ],
+                                         ),
+                                       ),
+                                     ),
+                                   );
                                 },
                               ),
                             ),
@@ -4886,6 +4610,166 @@ class _AppliedProjectsState extends State<AppliedProjects> {
         ),
       ),
     );
+  }
+
+  Widget _buildChip({
+    required IconData icon,
+    required String label,
+    required Color bgColor,
+    required Color textColor,
+    required Color iconColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: iconColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(dynamic project) {
+    String? appliedStatus = project['applyStatus']?.toString();
+    if (appliedStatus == null) return const SizedBox.shrink();
+
+    final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    String text = '';
+    Color bgColor = const Color(0xFFEAF4E8);
+    Color textColor = const Color(0xFF0E6805);
+    Color borderColor = const Color(0xFFC8E6C9);
+    IconData statusIcon = Icons.check;
+
+    if (appliedStatus == "0") {
+      text = translate('Applied', 'आवेदन किया');
+      bgColor = const Color(0xFFEAF4E8);
+      textColor = const Color(0xFF0E6805);
+      borderColor = const Color(0xFFC8E6C9);
+      statusIcon = Icons.check;
+    } else if (appliedStatus == "1") {
+      text = translate('Assigned', 'आवंटित');
+      bgColor = const Color(0xFFEFF6FF);
+      textColor = const Color(0xFF1E40AF);
+      borderColor = const Color(0xFFBFDBFE);
+      statusIcon = Icons.assignment_ind_outlined;
+    } else if (appliedStatus == "2") {
+      text = translate('Work Started', 'कार्य शुरू हुआ');
+      if (project['complete_confirm']?.toString() == "1") {
+        text = translate('Completion Requested', 'पूर्णता का अनुरोध');
+      } else if (project['cancel_confirm']?.toString() == "1") {
+        text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
+      }
+      bgColor = const Color(0xFFFFF7ED);
+      textColor = const Color(0xFFC2410C);
+      borderColor = const Color(0xFFFED7AA);
+      statusIcon = Icons.hourglass_top_outlined;
+    } else if (appliedStatus == "3") {
+      text = translate('Work Completed', 'कार्य पूर्ण');
+      bgColor = const Color(0xFFF0FDF4);
+      textColor = const Color(0xFF15803D);
+      borderColor = const Color(0xFFBBF7D0);
+      statusIcon = Icons.check_circle_outline;
+    } else if (appliedStatus == "4") {
+      text = translate('Work Cancelled', 'रद्द किया गया');
+      bgColor = const Color(0xFFFEF2F2);
+      textColor = const Color(0xFF991B1B);
+      borderColor = const Color(0xFFFCA5A5);
+      statusIcon = Icons.close;
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: borderColor, width: 0.8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(statusIcon, size: 11, color: textColor),
+          const SizedBox(width: 3),
+          Text(
+            text,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildViewDetailsButton(dynamic project) {
+    String? appliedStatus = project['applyStatus']?.toString();
+    final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
+    String label = appliedStatus == null
+        ? translate('Apply Now', 'आवेदन करें')
+        : translate('View Details', 'विवरण देखें');
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF4E8),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF0E6805),
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(width: 4),
+          const Icon(
+            Icons.arrow_forward_ios,
+            size: 10,
+            color: Color(0xFF0E6805),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(String dateString) {
+    if (dateString.isEmpty) return 'N/A';
+    try {
+      DateTime dateTime = DateTime.parse(dateString);
+      return DateFormat('dd MMM yyyy').format(dateTime);
+    } catch (e) {
+      return dateString;
+    }
   }
 }
 
