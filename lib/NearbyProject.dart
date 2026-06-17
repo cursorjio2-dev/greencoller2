@@ -3299,158 +3299,169 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                             ),
                             const SizedBox(height: 12),
 
-                            // Table Header
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Constants.AppColors.brand,
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(8),
-                                  topRight: Radius.circular(8),
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text(
-                                      translate('Description', 'विवरण'),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 18,
-                                    child: Text(
-                                      translate('Amount', 'राशि'),
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 22,
-                                    child: Text(
-                                      translate('Proposal/Days', 'प्रस्ताव/दिन'),
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 20,
-                                    child: Text(
-                                      translate('Action', 'कार्रवाई'),
-                                      textAlign: TextAlign.right,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Rows
-                            ...List.generate(milestones.length, (index) {
-                              final milestone = milestones[index];
-                              final isEven = index % 2 == 0;
-                              final mStatus = milestone['status']?.toString();
-                              final proposalAmt = milestone['proposalamount'] ?? milestone['proposal'] ?? '-';
-                              final mDuration = milestone['duration'] ?? '-';
-
-                              return Container(
-                                color: isEven ? Colors.white : const Color(0xFFF9FBF9),
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(color: Colors.grey[100]!, width: 1),
-                                  ),
-                                ),
-                                child: Row(
+                            // Horizontally Scrollable Table
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: SizedBox(
+                                width: 560,
+                                child: Column(
                                   children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Text(
-                                        translateText(milestone['description'] ?? 'N/A'),
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Constants.AppColors.ink,
+                                    // Table Header
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Constants.AppColors.brand,
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(8),
+                                          topRight: Radius.circular(8),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 18,
-                                      child: Text(
-                                        milestone['amount']?.toString() ?? 'N/A',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Constants.AppColors.ink,
-                                        ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 3,
+                                            child: Text(
+                                              translate('Description', 'विवरण'),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              translate('Amount', 'राशि'),
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              translate('Proposal/Days', 'प्रस्ताव/दिन'),
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              translate('Action', 'कार्रवाई'),
+                                              textAlign: TextAlign.right,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Expanded(
-                                      flex: 22,
-                                      child: Text(
-                                        '$proposalAmt / $mDuration',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Constants.AppColors.ink,
+
+                                    // Rows
+                                    ...List.generate(milestones.length, (index) {
+                                      final milestone = milestones[index];
+                                      final isEven = index % 2 == 0;
+                                      final mStatus = milestone['status']?.toString();
+                                      final proposalAmt = milestone['proposalamount'] ?? milestone['proposal'] ?? '-';
+                                      final mDuration = milestone['duration'] ?? '-';
+
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                        decoration: BoxDecoration(
+                                          color: isEven ? Colors.white : const Color(0xFFF9FBF9),
+                                          border: Border(
+                                            bottom: BorderSide(color: Colors.grey[100]!, width: 1),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 20,
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: mStatus == '2'
-                                            ? _buildMilestoneAction(
-                                                label: translate('Complete', 'पूर्ण'),
-                                                color: Constants.AppColors.brand,
-                                                onPressed: () => handleMilestoneCompletion(
-                                                  context,
-                                                  milestone['sno'].toString(),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: Text(
+                                                translateText(milestone['description'] ?? 'N/A'),
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Constants.AppColors.ink,
                                                 ),
-                                              )
-                                            : mStatus == '3'
-                                                ? _buildMilestoneAction(
-                                                    label: translate('Submitted', 'जमा किया'),
-                                                    color: const Color(0xFFF97316),
-                                                    onPressed: null,
-                                                  )
-                                                : mStatus == '4'
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                milestone['amount']?.toString() ?? 'N/A',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Constants.AppColors.ink,
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                '$proposalAmt / $mDuration',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Constants.AppColors.ink,
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Align(
+                                                alignment: Alignment.centerRight,
+                                                child: mStatus == '2'
                                                     ? _buildMilestoneAction(
-                                                        label: translate('Completed', 'पूर्ण किया'),
-                                                        color: const Color(0xFF16A34A),
-                                                        onPressed: null,
+                                                        label: translate('Complete', 'पूर्ण'),
+                                                        color: Constants.AppColors.brand,
+                                                        onPressed: () => handleMilestoneCompletion(
+                                                          context,
+                                                          milestone['sno'].toString(),
+                                                        ),
                                                       )
-                                                    : IconButton(
-                                                        icon: const Icon(Icons.edit_outlined,
-                                                            color: Colors.blue, size: 20),
-                                                        padding: EdgeInsets.zero,
-                                                        constraints: const BoxConstraints(),
-                                                        onPressed: () => showEditMilestoneDialog(
-                                                            index, context),
-                                                      ),
-                                      ),
-                                    ),
+                                                    : mStatus == '3'
+                                                        ? _buildMilestoneAction(
+                                                            label: translate('Submitted', 'जमा किया'),
+                                                            color: const Color(0xFFF97316),
+                                                            onPressed: null,
+                                                          )
+                                                        : mStatus == '4'
+                                                            ? _buildMilestoneAction(
+                                                                label: translate('Completed', 'पूर्ण किया'),
+                                                                color: const Color(0xFF16A34A),
+                                                                onPressed: null,
+                                                              )
+                                                            : IconButton(
+                                                                icon: const Icon(Icons.edit_outlined,
+                                                                    color: Colors.blue, size: 20),
+                                                                padding: EdgeInsets.zero,
+                                                                constraints: const BoxConstraints(),
+                                                                onPressed: () => showEditMilestoneDialog(
+                                                                    index, context),
+                                                              ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }),
                                   ],
                                 ),
-                              );
-                            }),
+                              ),
+                            ),
                           ],
                         ),
                       ),

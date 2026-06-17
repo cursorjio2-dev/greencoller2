@@ -1514,116 +1514,128 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                           ),
                           const SizedBox(height: 12),
 
-                          // Table header with rounded top corners
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Constants.AppColors.brand,
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 10),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    AppLocalizations.of(context)!
-                                        .descriptionColumn,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    'Amount (₹)',
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    'Your Proposal (₹)',
-                                    textAlign: TextAlign.right,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                            // Horizontally Scrollable Table
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: SizedBox(
+                                width: 560,
+                                child: Column(
+                                  children: [
+                                    // Table header with rounded top corners
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Constants.AppColors.brand,
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(8),
+                                          topRight: Radius.circular(8),
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 10),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 3,
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .descriptionColumn,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              'Amount (₹)',
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              'Your Proposal (₹)',
+                                              textAlign: TextAlign.right,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
 
-                          // Table rows
-                          ...List.generate(milestones.length, (index) {
-                            final milestone = milestones[index];
-                            final isEven = index % 2 == 0;
-                            return Container(
-                              color: isEven
-                                  ? Colors.white
-                                  : const Color(0xFFF9FBF9),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 12),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.grey[100]!,
-                                    width: 1,
+                                      // Table rows
+                                      ...List.generate(milestones.length, (index) {
+                                        final milestone = milestones[index];
+                                        final isEven = index % 2 == 0;
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 12),
+                                          decoration: BoxDecoration(
+                                            color: isEven
+                                                ? Colors.white
+                                                : const Color(0xFFF9FBF9),
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: Colors.grey[100]!,
+                                                width: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  translateText(
+                                                      milestone['description'] ?? 'N/A'),
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Constants.AppColors.ink,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  milestone['amount']?.toString() ?? 'N/A',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Constants.AppColors.ink,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  milestone['proposal']?.toString() ?? '-',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Constants.AppColors.ink,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                    ],
                                   ),
                                 ),
                               ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text(
-                                      translateText(
-                                          milestone['description'] ?? 'N/A'),
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Constants.AppColors.ink,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      milestone['amount']?.toString() ?? 'N/A',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Constants.AppColors.ink,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      milestone['proposal']?.toString() ?? '-',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Constants.AppColors.ink,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
+                            ),
 
                           const SizedBox(height: 12),
 
