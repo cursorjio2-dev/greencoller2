@@ -25,18 +25,25 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:translator/translator.dart';
+import 'package:greencollar/api_logger.dart';
 
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
-  WidgetsFlutterBinding.ensureInitialized();
-  final languageProvider = LanguageProvider();
-  await languageProvider.loadLanguage();
 
-  runApp(
-    ChangeNotifierProvider<LanguageProvider>.value(
-      value: languageProvider,
-      child: MyApp(),
-    ),
+  http.runWithClient(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      final languageProvider = LanguageProvider();
+      await languageProvider.loadLanguage();
+
+      runApp(
+        ChangeNotifierProvider<LanguageProvider>.value(
+          value: languageProvider,
+          child: MyApp(),
+        ),
+      );
+    },
+    () => LoggingHttpClient(http.Client()),
   );
 }
 
@@ -86,6 +93,7 @@ class MyApp extends StatelessWidget {
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+          navigatorObservers: [ScreenObserver()],
           title: 'Green Collar',
           supportedLocales: [Locale('en'), Locale('hi')],
           locale: _locale, // Set locale dynamically

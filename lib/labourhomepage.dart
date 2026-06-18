@@ -30,6 +30,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:greencollar/wallet_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:greencollar/speech_helper.dart';
+import 'package:greencollar/api_logger.dart';
 
 class TranslationService {
   final GoogleTranslator _translator = GoogleTranslator();
@@ -173,6 +174,7 @@ class _LabourhomepageState extends State<Labourhomepage> {
     loadLanguage();
     _loadUserInfo();
     _loadWalletBalance();
+    ApiLogger.logScreenOpened('LabourHomepage');
   }
 
   Future<void> _loadWalletBalance() async {
@@ -558,6 +560,10 @@ class _LabourhomepageState extends State<Labourhomepage> {
                   setState(() {
                     _currentIndex = index;
                   });
+                  final pages = ['LabourHomepage', 'FarmerPage', 'NearbyProjectPage'];
+                  if (index >= 0 && index < pages.length) {
+                    ApiLogger.logScreenOpened(pages[index]);
+                  }
                 },
               ),
             ),
