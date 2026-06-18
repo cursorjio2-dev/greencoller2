@@ -17,6 +17,7 @@ import 'package:greencollar/labourhomepage.dart';
 import 'package:greencollar/privacypolicy.dart';
 import 'package:greencollar/register.dart';
 import 'package:provider/provider.dart';
+import 'package:greencollar/location_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -37,8 +38,11 @@ Future<void> main() async {
       await languageProvider.loadLanguage();
 
       runApp(
-        ChangeNotifierProvider<LanguageProvider>.value(
-          value: languageProvider,
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<LanguageProvider>.value(value: languageProvider),
+            ChangeNotifierProvider<LocationProvider>(create: (context) => LocationProvider()),
+          ],
           child: MyApp(),
         ),
       );

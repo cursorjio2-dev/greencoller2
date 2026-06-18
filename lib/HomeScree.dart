@@ -3199,6 +3199,7 @@ import 'package:greencollar/workerdetails.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:greencollar/location_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:translator/translator.dart';
@@ -3458,26 +3459,97 @@ class _HomePageState extends State<HomePage> {
         extendBody: true,
         appBar: AppBar(
           title: _currentIndex == 0
-              ? Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.20),
-                  borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                  border: Border.all(color: Colors.white30, width: 0.5),
-                ),
-                child: Text(
-                  _selectedLanguage == 'en' ? 'Farmer' : 'किसान',
-                  style: Constants.AppTypography.micro.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          )
+              ? Consumer<LocationProvider>(
+                  builder: (context, locationProvider, child) {
+                    Widget locationWidget;
+                    if (locationProvider.isLoading) {
+                      locationWidget = Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(
+                            width: 12,
+                            height: 12,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            _selectedLanguage == 'en' ? 'Finding location...' : 'स्थान खोज रहे हैं...',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white.withOpacity(0.8),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else if (locationProvider.error.isNotEmpty || (locationProvider.city.isEmpty && locationProvider.state.isEmpty)) {
+                      locationWidget = Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.location_off, size: 14, color: Colors.white70),
+                          const SizedBox(width: 4),
+                          Text(
+                            _selectedLanguage == 'en' ? 'Location unavailable' : 'स्थान अनुपलब्ध',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white.withOpacity(0.8),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      locationWidget = Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.location_on, size: 14, color: Colors.white),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              '${locationProvider.city}, ${locationProvider.state}',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.20),
+                                borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                border: Border.all(color: Colors.white30, width: 0.5),
+                              ),
+                              child: Text(
+                                _selectedLanguage == 'en' ? 'Farmer' : 'किसान',
+                                style: Constants.AppTypography.micro.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        locationWidget,
+                      ],
+                    );
+                  },
+                )
               : Text(
             _currentIndex == 1
                 ? AppLocalizations.of(context)!.nearbylabours
@@ -3493,14 +3565,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           actions: [
-            WalletHelper.buildWalletButton(
-              coinBalance: _walletCoins,
-              onTap: () {
-                WalletHelper.showCoinShop(context, onCoinsAdded: (newBalance) {
-                  setState(() => _walletCoins = newBalance);
-                });
-              },
-            ),
             // Show the unread notification count in the AppBar using a badge
             IconButton(
               icon: Stack(
@@ -3766,6 +3830,30 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
 
+                    // Wallet
+                    _buildDrawerTile(
+                      icon: Icons.account_balance_wallet,
+                      title: FutureBuilder<String>(
+                        future: translateText('Wallet'),
+                        builder: (context, snapshot) {
+                          final walletTitle = snapshot.data ?? 'Wallet';
+                          final coinsText = _selectedLanguage == 'en'
+                              ? '($_walletCoins coins)'
+                              : '($_walletCoins सिक्के)';
+                          return Text(
+                            '$walletTitle $coinsText',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        WalletHelper.showCoinShop(context, onCoinsAdded: (newBalance) {
+                          setState(() => _walletCoins = newBalance);
+                        });
+                      },
+                    ),
+
                     // Profile
                     _buildDrawerTile(
                       icon: Icons.person,
@@ -4002,7 +4090,6 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
       _fetchCurrentLocation(force: true);
     }
   }
-
   Future<void> _fetchCurrentLocation({bool force = false}) async {
     if (!force && (_cachedCity.isNotEmpty || _cachedState.isNotEmpty)) {
       if (mounted) {
@@ -4012,9 +4099,25 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
           _isLoadingLocation = false;
           _locationError = _cachedError;
         });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            final locProv = Provider.of<LocationProvider>(context, listen: false);
+            if (_cachedError.isNotEmpty) {
+              locProv.setError(_cachedError);
+            } else {
+              locProv.setLocation(city: _currentCity, state: _currentState);
+            }
+          }
+        });
       }
       return;
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Provider.of<LocationProvider>(context, listen: false).setLoading(true);
+      }
+    });
 
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -4023,6 +4126,11 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
           setState(() {
             _isLoadingLocation = false;
             _locationError = 'Location services are disabled';
+          });
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              Provider.of<LocationProvider>(context, listen: false).setError('Location services are disabled');
+            }
           });
         }
         return;
@@ -4037,6 +4145,11 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
               _isLoadingLocation = false;
               _locationError = 'Location permission denied';
             });
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                Provider.of<LocationProvider>(context, listen: false).setError('Location permission denied');
+              }
+            });
           }
           return;
         }
@@ -4047,6 +4160,11 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
           setState(() {
             _isLoadingLocation = false;
             _locationError = 'Location permission permanently denied';
+          });
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              Provider.of<LocationProvider>(context, listen: false).setError('Location permission permanently denied');
+            }
           });
         }
         return;
@@ -4073,6 +4191,11 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
           _currentState = _cachedState;
           _isLoadingLocation = false;
         });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            Provider.of<LocationProvider>(context, listen: false).setLocation(city: _currentCity, state: _currentState);
+          }
+        });
       }
     } catch (e) {
       print('Error fetching location: $e');
@@ -4082,10 +4205,14 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
           _isLoadingLocation = false;
           _locationError = _cachedError;
         });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            Provider.of<LocationProvider>(context, listen: false).setError(_cachedError);
+          }
+        });
       }
     }
   }
-
   String translateText(String text) {
     if (text.isEmpty) return "";
 
@@ -4424,107 +4551,7 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Current Location Display
-                    // Current Location Display notice banner
-                    if (_locationError.isNotEmpty || _isLoadingLocation)
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF9E6), // Amber notice tint
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: Constants.AppColors.amberNotice.withOpacity(0.4),
-                            width: 1.0,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.location_off,
-                              color: Constants.AppColors.amberNotice,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _isLoadingLocation
-                                  ? Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 14,
-                                    height: 14,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor:
-                                      AlwaysStoppedAnimation<Color>(
-                                          Constants.AppColors.amberNotice),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    translate('Fetching location...', 'स्थान प्राप्त हो रहा है...'),
-                                    style: Constants.AppTypography.label.copyWith(
-                                      color: Constants.AppColors.inkSoft,
-                                    ),
-                                  ),
-                                ],
-                              )
-                                  : Text(
-                                _locationError,
-                                style: Constants.AppTypography.label.copyWith(
-                                  color: Constants.AppColors.inkSoft,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    else if (_currentCity.isNotEmpty)
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Constants.AppColors.brandTint,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: Constants.AppColors.brandSoft.withOpacity(0.3),
-                            width: 1.0,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.location_on,
-                              color: Constants.AppColors.brand,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                '$_currentCity, $_currentState',
-                                style: Constants.AppTypography.label.copyWith(
-                                  color: Constants.AppColors.brandDeep,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _isLoadingLocation = true;
-                                  _locationError = '';
-                                });
-                                _fetchCurrentLocation(force: true);
-                              },
-                              child: const Icon(
-                                Icons.refresh,
-                                color: Constants.AppColors.brand,
-                                size: 18,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+
                     Container(
                       width: double.infinity,
                       height: 200,
