@@ -79,6 +79,174 @@ class WalletHelper {
     await setCoins(current + amount);
   }
 
+  static int? _cachedCoinCharge;
+
+  /// Fetch required coin charge to unlock one contact.
+  static Future<int> getCoinCharge() async {
+    try {
+      final url = Uri.parse('${Constants.AppConstants.apiUrl}coincharge');
+      final response = await http.post(url).timeout(const Duration(seconds: 5));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data != null && data['coin_charge'] != null) {
+          int charge = int.tryParse(data['coin_charge'].toString()) ?? 5;
+          _cachedCoinCharge = charge;
+          await _storage.write(key: 'coin_charge', value: charge.toString());
+          return charge;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error getting coin charge: $e');
+    }
+    // Fallback to cache, local storage, or default 5
+    if (_cachedCoinCharge != null) return _cachedCoinCharge!;
+    String? local = await _storage.read(key: 'coin_charge');
+    if (local != null) {
+      _cachedCoinCharge = int.tryParse(local) ?? 5;
+      return _cachedCoinCharge!;
+    }
+    return 5;
+  }
+
+  /// Fetch dynamic packages from API.
+  static Future<List<Map<String, dynamic>>> getCoinPackages() async {
+    try {
+      final url = Uri.parse('${Constants.AppConstants.apiUrl}coinpackages');
+      final response = await http.get(url).timeout(const Duration(seconds: 10));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        var list = data is List ? data : (data['data'] ?? data['packages']);
+        if (list != null && list is List) {
+          return list.map<Map<String, dynamic>>((e) {
+            return {
+              'coins': int.tryParse(e['coins'].toString()) ?? 0,
+              'price': int.tryParse((e['amount'] ?? e['price']).toString()) ?? 0,
+              'name': e['name']?.toString() ?? 'Package',
+            };
+          }).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching packages: $e');
+    }
+    // Default packages fallback
+    return [
+      {'coins': 50, 'price': 25, 'name': 'Basic'},
+      {'coins': 100, 'price': 50, 'name': 'Standard'},
+      {'coins': 250, 'price': 100, 'name': 'Popular'},
+      {'coins': 500, 'price': 200, 'name': 'Premium'},
+      {'coins': 1000, 'price': 350, 'name': 'Super'},
+    ];
+  }
+
+  /// Call API to record phone view and deduct coins on backend.
+  static Future<bool> unlockPhoneNumber({
+    required String farmerId,
+    required String labourId,
+  }) async {
+    try {
+      final url = Uri.parse('${Constants.AppConstants.apiUrl}farmer/phoneview');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'farmer_id': farmerId,
+          'labour_id': labourId,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data != null && (data['success'] == true || data['status'] == true)) {
+          return true;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error unlocking phone number: $e');
+    }
+    return false;
+  }
+
+  /// Show coin unlock confirmation dialog.
+  static Future<bool> showCoinUnlockDialog({
+    required BuildContext context,
+    required int coinCost,
+    required String workerName,
+  }) async {
+    bool confirm = false;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF3E0),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.lock_open, color: Color(0xFFFFA500), size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Unlock Contact',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+          content: RichText(
+            text: TextSpan(
+              style: const TextStyle(fontSize: 15, color: Colors.black87, height: 1.5),
+              children: [
+                const TextSpan(text: 'To see the contact number for '),
+                TextSpan(
+                  text: workerName,
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+                const TextSpan(text: ', '),
+                TextSpan(
+                  text: '$coinCost coins',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFFFFA500),
+                  ),
+                ),
+                const TextSpan(text: ' will be debited.\n\nDo you want to proceed?'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Constants.AppColors.brand,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () {
+                confirm = true;
+                Navigator.pop(ctx);
+              },
+              child: const Text('Yes, Unlock'),
+            ),
+          ],
+        );
+      },
+    );
+    return confirm;
+  }
+
   // ── Unlocked Contacts ─────────────────────────────────────────────────
 
   static Future<List<String>> _getUnlockedList() async {
@@ -344,21 +512,12 @@ class WalletHelper {
 
   /// Show the Coin Shop bottom sheet.
   static void showCoinShop(BuildContext context, {required Function(int) onCoinsAdded}) {
-    final packages = [
-      {'coins': 50, 'price': 25},
-      {'coins': 100, 'price': 50},
-      {'coins': 250, 'price': 100},
-      {'coins': 500, 'price': 200},
-      {'coins': 1000, 'price': 350},
-    ];
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
         return _CoinShopSheet(
-          packages: packages,
           onCoinsAdded: onCoinsAdded,
         );
       },
@@ -501,10 +660,9 @@ class WalletHelper {
 // ═══════════════════════════════════════════════════════════════════════
 
 class _CoinShopSheet extends StatefulWidget {
-  final List<Map<String, int>> packages;
   final Function(int) onCoinsAdded;
 
-  const _CoinShopSheet({required this.packages, required this.onCoinsAdded});
+  const _CoinShopSheet({required this.onCoinsAdded});
 
   @override
   State<_CoinShopSheet> createState() => _CoinShopSheetState();
@@ -516,6 +674,8 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
   bool _showSuccess = false;
   int _addedCoins = 0;
   List<Map<String, dynamic>> _purchaseHistory = [];
+  List<Map<String, dynamic>> _packages = [];
+  bool _isLoadingPackages = true;
   late TabController _tabController;
 
   @override
@@ -534,18 +694,22 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
   Future<void> _loadData() async {
     int bal = await WalletHelper.getCoins();
     List<Map<String, dynamic>> history = await WalletHelper.getPurchaseHistory();
+    List<Map<String, dynamic>> pkgs = await WalletHelper.getCoinPackages();
+
     if (mounted) {
       setState(() {
         _currentBalance = bal;
         _purchaseHistory = history;
+        _packages = pkgs;
+        _isLoadingPackages = false;
       });
     }
   }
 
   Future<void> _purchasePackage(int index) async {
-    final pkg = widget.packages[index];
-    final coins = pkg['coins']!;
-    final price = pkg['price']!;
+    final pkg = _packages[index];
+    final coins = int.tryParse(pkg['coins'].toString()) ?? 0;
+    final price = int.tryParse(pkg['price'].toString()) ?? 0;
 
     setState(() => _processingIndex = index);
 
@@ -736,14 +900,26 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
   }
 
   Widget _buildBuyCoinsTab() {
+    if (_isLoadingPackages) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(40.0),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFA500)),
+          ),
+        ),
+      );
+    }
+
     return ListView.builder(
       shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemCount: widget.packages.length,
+      itemCount: _packages.length,
       itemBuilder: (context, index) {
-        final pkg = widget.packages[index];
-        final coins = pkg['coins']!;
-        final price = pkg['price']!;
+        final pkg = _packages[index];
+        final coins = int.tryParse(pkg['coins'].toString()) ?? 0;
+        final price = int.tryParse(pkg['price'].toString()) ?? 0;
+        final name = pkg['name']?.toString() ?? 'Package';
         final isProcessing = _processingIndex == index;
 
         return Container(
@@ -800,12 +976,12 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '$coins Coins',
+                            name.isNotEmpty ? '$name ($coins Coins)' : '$coins Coins',
                             style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Unlock ${coins ~/ 5} contacts',
+                            'Add $coins coins to your wallet',
                             style: TextStyle(color: Colors.grey[500], fontSize: 12),
                           ),
                         ],

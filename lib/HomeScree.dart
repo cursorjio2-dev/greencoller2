@@ -3941,6 +3941,16 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
   int _currentIndex = 0; // To track the current index of the carousel
 // Use PageController here
   String _selectedLanguage = 'en'; // Default language is English
+  int _coinCharge = 5;
+
+  Future<void> _loadCoinCharge() async {
+    int charge = await WalletHelper.getCoinCharge();
+    if (mounted) {
+      setState(() {
+        _coinCharge = charge;
+      });
+    }
+  }
 
   Future<void> loadLanguage() async {
     // Read the selected language from FlutterSecureStorage
@@ -3975,6 +3985,7 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
         fetchJobTypes(); // Assuming you have this function to fetch the job types
     fetchLabours();
     _fetchCurrentLocation();
+    _loadCoinCharge();
   }
 
   @override
@@ -4856,6 +4867,33 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
                                                         ),
                                                       ),
                                                     ),
+                                                    if (labour['phone_view'] != 1) ...[
+                                                      const SizedBox(height: 4),
+                                                      Container(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                        decoration: BoxDecoration(
+                                                          color: const Color(0xFFFFF3E0),
+                                                          borderRadius: BorderRadius.circular(4),
+                                                          border: Border.all(color: const Color(0xFFFFB74D), width: 0.5),
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            const Icon(Icons.monetization_on, color: Color(0xFFFFA500), size: 10),
+                                                            const SizedBox(width: 3),
+                                                            Text(
+                                                              '$_coinCharge ${translateText("Coins")}',
+                                                              style: Constants.AppTypography.micro.copyWith(
+                                                                color: const Color(0xFFE65100),
+                                                                fontSize: 9,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ],
                                                 ),
                                               ),

@@ -1359,13 +1359,10 @@
 
 
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:greencollar/HomeScree.dart';
 import 'package:greencollar/constants.dart' as Constants;
-import 'package:http/http.dart' as http;
 import 'package:greencollar/wallet_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:translator/translator.dart' show GoogleTranslator;
@@ -1391,6 +1388,7 @@ class _LabourDetailsPageState extends State<LabourDetailsPage> {
 
   // phone_view from API: 1 = unlocked, 0 = locked
   bool _isUnlocked = false;
+  int _coinBalance = 0;
 
   @override
   void initState() {
@@ -1399,7 +1397,17 @@ class _LabourDetailsPageState extends State<LabourDetailsPage> {
     labour = widget.labour;
     // Use the phone_view field directly from the API response
     _isUnlocked = labour['phone_view'] == 1;
+    _loadCoins();
     print(labour);
+  }
+
+  Future<void> _loadCoins() async {
+    int coins = await WalletHelper.getCoins();
+    if (mounted) {
+      setState(() {
+        _coinBalance = coins;
+      });
+    }
   }
 
   // ---------- Language & Translation ----------
@@ -1457,40 +1465,99 @@ class _LabourDetailsPageState extends State<LabourDetailsPage> {
 
   // ---------- Unlock Phone (API call) ----------
   Future<void> _unlockPhone() async {
-    // Replace with your actual unlock API endpoint
-    final String apiUrl =
-        '${Constants.AppConstants.apiUrl}labour/unlockPhone';
-    String? userId = await _secureStorage.read(key: 'id');
-    if (userId == null) return;
+    String? farmerId = await _secureStorage.read(key: 'id');
+    if (farmerId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User session not found. Please log in again.')),
+      );
+      return;
+    }
+
+    // Show loading overlay
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Constants.AppColors.brand),
+        ),
+      ),
+    );
 
     try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'labour_id': labour['id']}),
-      );
+      // Fetch dynamic coin charge amount and current balance
+      int coinCharge = await WalletHelper.getCoinCharge();
+      int currentCoins = await WalletHelper.getCoins();
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          setState(() {
-            _isUnlocked = true;
-            labour['phone_view'] = 1; // update local copy
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Phone number unlocked!')),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(data['message'] ?? 'Failed to unlock')),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server error. Please try again.')),
+      // Dismiss loading overlay
+      Navigator.pop(context);
+
+      if (currentCoins < coinCharge) {
+        // Insufficient coins dialog
+        WalletHelper.showInsufficientFundsDialog(
+          context,
+          onBuyCoins: () {
+            WalletHelper.showCoinShop(
+              context,
+              onCoinsAdded: (newBalance) {
+                setState(() {
+                  _coinBalance = newBalance;
+                });
+              },
+            );
+          },
         );
+      } else {
+        // Confirmation dialog
+        bool confirmed = await WalletHelper.showCoinUnlockDialog(
+          context: context,
+          coinCost: coinCharge,
+          workerName: labour['name'] ?? 'this worker',
+        );
+
+        if (confirmed) {
+          // Show loading overlay
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Constants.AppColors.brand),
+              ),
+            ),
+          );
+
+          // API call to /api/farmer/phoneview
+          bool apiSuccess = await WalletHelper.unlockPhoneNumber(
+            farmerId: farmerId,
+            labourId: labour['id'].toString(),
+          );
+
+          // Dismiss loading overlay
+          Navigator.pop(context);
+
+          if (apiSuccess) {
+            await WalletHelper.deductCoins(coinCharge);
+            int newBalance = await WalletHelper.getCoins();
+
+            setState(() {
+              _coinBalance = newBalance;
+              _isUnlocked = true;
+              labour['phone_view'] = 1;
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Contact unlocked successfully!')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to unlock contact. Please try again.')),
+            );
+          }
+        }
       }
     } catch (e) {
+      Navigator.pop(context); // Dismiss loading if showing
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -1839,6 +1906,26 @@ class _LabourDetailsPageState extends State<LabourDetailsPage> {
             );
           },
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Center(
+              child: WalletHelper.buildWalletButton(
+                coinBalance: _coinBalance,
+                onTap: () {
+                  WalletHelper.showCoinShop(
+                    context,
+                    onCoinsAdded: (newBalance) {
+                      setState(() {
+                        _coinBalance = newBalance;
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
         elevation: 0,
       ),
       body: SingleChildScrollView(

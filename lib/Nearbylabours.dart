@@ -657,6 +657,7 @@ import 'package:provider/provider.dart';
 import 'package:translator/translator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:greencollar/constants.dart' as Constants;
+import 'package:greencollar/wallet_helper.dart';
 
 class LabourPage extends StatefulWidget {
   @override
@@ -669,6 +670,16 @@ class _LabourPageState extends State<LabourPage> {
   List<dynamic> labours = [];
   bool isLoading = false;
   String _selectedLanguage = 'en';
+  int _coinCharge = 5;
+
+  Future<void> _loadCoinCharge() async {
+    int charge = await WalletHelper.getCoinCharge();
+    if (mounted) {
+      setState(() {
+        _coinCharge = charge;
+      });
+    }
+  }
 
   Future<void> loadLanguage() async {
     String? language = await _secureStorage.read(key: 'selectedLanguage');
@@ -685,6 +696,7 @@ class _LabourPageState extends State<LabourPage> {
     super.initState();
     loadLanguage();
     fetchLabours();
+    _loadCoinCharge();
   }
 
   String translateText(String text) {
@@ -1023,6 +1035,34 @@ class _LabourPageState extends State<LabourPage> {
                                                     ),
                                                   ),
                                                 ),
+
+                                                if (labour['phone_view'] != 1) ...[
+                                                  const SizedBox(height: 4),
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(0xFFFFF3E0),
+                                                      borderRadius: BorderRadius.circular(4),
+                                                      border: Border.all(color: const Color(0xFFFFB74D), width: 0.5),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        const Icon(Icons.monetization_on, color: Color(0xFFFFA500), size: 10),
+                                                        const SizedBox(width: 3),
+                                                        Text(
+                                                          '$_coinCharge ' + translateText("Coins"),
+                                                          style: Constants.AppTypography.micro.copyWith(
+                                                            color: const Color(0xFFE65100),
+                                                            fontSize: 9,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ],
                                             ),
                                           ),
