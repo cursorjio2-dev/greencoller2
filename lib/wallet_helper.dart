@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:greencollar/constants.dart' as Constants;
@@ -17,28 +15,28 @@ class WalletHelper {
   static const int _defaultCoins = 100;
   static const int _unlockCost = 5;
 
-  // ── PhonePe Sandbox Credentials ────────────────────────────────────────
-  static const String _environment = 'SANDBOX';
-  static const String _merchantId = 'PGTESTPAYUAT86';
-  static const String _saltKey = '96434309-7796-489d-8924-ab56988a6076';
-  static const int _saltIndex = 1;
+  // ── PhonePe Config ─────────────────────────────────────────────────────
   static const String _packageName = 'com.apstia.greencollar';
   static bool _sdkInitialized = false;
 
   // ── SDK Init ───────────────────────────────────────────────────────────
 
-  /// Initialize PhonePe SDK (call once at app start or before first payment).
-  static Future<void> initPhonePeSdk() async {
-    if (_sdkInitialized) return;
+  /// Initialize PhonePe SDK with server-provided configuration.
+  static Future<void> initPhonePeSdk({
+    required String environment,
+    required String merchantId,
+    String? appId,
+  }) async {
     try {
+      _sdkInitialized = false;
       bool result = await PhonePePaymentSdk.init(
-        _environment,
-        null, // appId (null for sandbox — per SDK docs)
-        _merchantId, // merchantId
+        environment,
+        appId,
+        merchantId,
         true, // enableLogging
       );
       _sdkInitialized = result;
-      debugPrint('PhonePe SDK Init Success: $result');
+      debugPrint('PhonePe SDK Init Success: $result (env: $environment, merchant: $merchantId)');
       if (!result) {
         debugPrint('PhonePe SDK Init returned false — SDK may not be available on this device');
       }
@@ -112,16 +110,17 @@ class WalletHelper {
   static Future<List<Map<String, dynamic>>> getCoinPackages() async {
     try {
       final url = Uri.parse('${Constants.AppConstants.apiUrl}coinpackages');
-      final response = await http.get(url).timeout(const Duration(seconds: 10));
+      final response = await http.post(url).timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        var list = data is List ? data : (data['data'] ?? data['packages']);
+        var list = data is List ? data : (data['coin_packages'] ?? data['data'] ?? data['packages']);
         if (list != null && list is List) {
           return list.map<Map<String, dynamic>>((e) {
             return {
+              'id': e['id'],
               'coins': int.tryParse(e['coins'].toString()) ?? 0,
-              'price': int.tryParse((e['amount'] ?? e['price']).toString()) ?? 0,
-              'name': e['name']?.toString() ?? 'Package',
+              'price': (double.tryParse((e['amount'] ?? e['price']).toString()) ?? 0).toInt(),
+              'name': (e['package_name'] ?? e['name'])?.toString() ?? 'Package',
             };
           }).toList();
         }
@@ -131,11 +130,11 @@ class WalletHelper {
     }
     // Default packages fallback
     return [
-      {'coins': 50, 'price': 25, 'name': 'Basic'},
-      {'coins': 100, 'price': 50, 'name': 'Standard'},
-      {'coins': 250, 'price': 100, 'name': 'Popular'},
-      {'coins': 500, 'price': 200, 'name': 'Premium'},
-      {'coins': 1000, 'price': 350, 'name': 'Super'},
+      {'id': 0, 'coins': 50, 'price': 25, 'name': 'Basic'},
+      {'id': 0, 'coins': 100, 'price': 50, 'name': 'Standard'},
+      {'id': 0, 'coins': 250, 'price': 100, 'name': 'Popular'},
+      {'id': 0, 'coins': 500, 'price': 200, 'name': 'Premium'},
+      {'id': 0, 'coins': 1000, 'price': 350, 'name': 'Super'},
     ];
   }
 
@@ -314,95 +313,99 @@ class WalletHelper {
     return phone.substring(0, 2) + 'X' * (phone.length - 2);
   }
 
-  // ── PhonePe Payment ───────────────────────────────────────────────────
+  // ── PhonePe Payment (Server-Driven) ────────────────────────────────────
 
-  /// Generate a unique transaction ID.
-  static String _generateTransactionId() {
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final random = Random().nextInt(999999).toString().padLeft(6, '0');
-    return 'GC$timestamp$random';
-  }
-
-  /// Create the PhonePe request body (Base64 encoded).
-  static Map<String, String> _buildPaymentRequest(int amountInPaise, String transactionId) {
-    final requestBody = {
-      "merchantId": _merchantId,
-      "merchantTransactionId": transactionId,
-      "merchantUserId": "MUID_${DateTime.now().millisecondsSinceEpoch}",
-      "amount": amountInPaise,
-      "callbackUrl": "https://webhook.site/callback-url",
-      "mobileNumber": "9999999999",
-      "paymentInstrument": {
-        "type": "PAY_PAGE",
-      },
-    };
-
-    final jsonString = jsonEncode(requestBody);
-    final base64Body = base64Encode(utf8.encode(jsonString));
-    final checksum = _generateChecksum(base64Body);
-
-    return {
-      'body': base64Body,
-      'checksum': checksum,
-    };
-  }
-
-  /// Generate SHA256 checksum for PhonePe.
-  static String _generateChecksum(String base64Body) {
-    final dataToHash = '$base64Body/pg/v1/pay$_saltKey';
-    final hash = sha256.convert(utf8.encode(dataToHash)).toString();
-    return '$hash###$_saltIndex';
-  }
-
-  /// Start a PhonePe payment transaction.
+  /// Start a PhonePe payment transaction via backend API.
+  /// The server generates the payment payload, checksum, and provides SDK config.
   /// Returns true if payment succeeded, false otherwise.
   static Future<bool> startPhonePePayment({
-    required int amountInPaise,
+    required int packageId,
     required int coins,
+    required int priceInr,
   }) async {
     try {
-      await initPhonePeSdk();
+      // 1. Get farmer_id from secure storage
+      final farmerId = await _storage.read(key: 'id');
+      if (farmerId == null) {
+        debugPrint('PhonePe Payment aborted — farmer_id not found in storage');
+        return false;
+      }
 
-      // Guard: abort if SDK failed to initialize
+      // 2. Call backend to create payment
+      debugPrint('PhonePe: Calling create-coin-payment API (farmer: $farmerId, package: $packageId)');
+      final createUrl = Uri.parse('${Constants.AppConstants.apiUrl}createcoinpayment');
+      final createResp = await http.post(
+        createUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'farmer_id': farmerId,
+          'package_id': packageId,
+        }),
+      ).timeout(const Duration(seconds: 15));
+
+      debugPrint('PhonePe: Create API status: ${createResp.statusCode}');
+      debugPrint('PhonePe: Create API response: ${createResp.body}');
+
+      if (createResp.statusCode != 200) {
+        debugPrint('PhonePe: Create payment API returned status ${createResp.statusCode}');
+        return false;
+      }
+
+      final createData = jsonDecode(createResp.body);
+      if (createData['success'] != true) {
+        debugPrint('PhonePe: Create payment API returned success=false: ${createData['message']}');
+        return false;
+      }
+
+      final paymentData = createData['data'] ?? createData;
+      final String body = paymentData['body'];
+      final String checksum = paymentData['checksum'] ?? '';
+      final String merchantId = paymentData['merchant_id'];
+      final String? appId = paymentData['app_id'];
+      final String environment = paymentData['environment'];
+      final String transactionId = paymentData['transaction_id'];
+
+      // 3. Init SDK with server-provided config
+      await initPhonePeSdk(
+        environment: environment,
+        merchantId: merchantId,
+        appId: appId,
+      );
+
       if (!_sdkInitialized) {
         debugPrint('PhonePe Payment aborted — SDK not initialized');
         return false;
       }
 
-      final transactionId = _generateTransactionId();
-      final paymentData = _buildPaymentRequest(amountInPaise, transactionId);
-
-      debugPrint('PhonePe: Starting transaction $transactionId for ₹${amountInPaise ~/ 100}');
-
+      // 4. Start PhonePe transaction
+      debugPrint('PhonePe: Starting transaction $transactionId for ₹$priceInr');
       final response = await PhonePePaymentSdk.startTransaction(
-        paymentData['body']!,
+        body,
         '', // appSchema (not needed for Android)
-        paymentData['checksum']!,
+        checksum,
         _packageName,
       );
 
       debugPrint('PhonePe Response: $response');
 
       if (response != null) {
-        // Parse response — SDK returns Map with 'status' key
         final status = response['status']?.toString() ?? '';
         if (status == 'SUCCESS') {
-          // Verify actual transaction status via PhonePe Status API
-          final isActualSuccess = await checkTransactionStatus(transactionId);
-          if (isActualSuccess) {
-            await addCoins(coins);
+          // 5. Verify on backend — server checks PhonePe Status API & credits coins
+          final verified = await _verifyPaymentOnServer(transactionId);
+          if (verified) {
             await _addPurchaseRecord(
               coins: coins,
-              priceInr: amountInPaise ~/ 100,
+              priceInr: priceInr,
               transactionId: transactionId,
               status: 'SUCCESS',
             );
             return true;
           } else {
-            debugPrint('PhonePe: Transaction $transactionId completed flow, but Status API returned FAILED');
+            debugPrint('PhonePe: Transaction $transactionId — server verification failed');
             await _addPurchaseRecord(
               coins: coins,
-              priceInr: amountInPaise ~/ 100,
+              priceInr: priceInr,
               transactionId: transactionId,
               status: 'FAILED',
             );
@@ -411,13 +414,13 @@ class WalletHelper {
           debugPrint('PhonePe: Transaction $transactionId ended with status: $status');
           await _addPurchaseRecord(
             coins: coins,
-            priceInr: amountInPaise ~/ 100,
+            priceInr: priceInr,
             transactionId: transactionId,
             status: status,
           );
         }
       } else {
-        debugPrint('PhonePe: Transaction $transactionId returned null response');
+        debugPrint('PhonePe: Transaction returned null response');
       }
       return false;
     } catch (e) {
@@ -426,42 +429,37 @@ class WalletHelper {
     }
   }
 
-  /// Check transaction status from PhonePe server using API.
-  static Future<bool> checkTransactionStatus(String transactionId) async {
+  /// Verify payment via backend API.
+  /// The server checks PhonePe Status API and credits coins to the farmer.
+  /// Returns true if verified and coins credited successfully.
+  static Future<bool> _verifyPaymentOnServer(String transactionId) async {
     try {
-      final apiPath = '/pg/v1/status/$_merchantId/$transactionId';
-      final saltStr = '$apiPath$_saltKey';
-      final hash = sha256.convert(utf8.encode(saltStr)).toString();
-      final xVerify = '$hash###$_saltIndex';
-
-      final url = Uri.parse('https://api-preprod.phonepe.com/apis/pg-sandbox$apiPath');
-      
-      final httpResponse = await http.get(
+      debugPrint('PhonePe: Verifying transaction $transactionId on server...');
+      final url = Uri.parse('${Constants.AppConstants.apiUrl}verify-coin-payment');
+      final resp = await http.post(
         url,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-VERIFY': xVerify,
-          'X-MERCHANT-ID': _merchantId,
-        },
-      ).timeout(const Duration(seconds: 15));
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'transaction_id': transactionId}),
+      ).timeout(const Duration(seconds: 20));
 
-      debugPrint('PhonePe Status API Code: ${httpResponse.statusCode}');
-      debugPrint('PhonePe Status API Response: ${httpResponse.body}');
+      debugPrint('PhonePe: Verify API status: ${resp.statusCode}');
+      debugPrint('PhonePe: Verify API response: ${resp.body}');
 
-      if (httpResponse.statusCode == 200) {
-        final Map<String, dynamic> json = jsonDecode(httpResponse.body);
-        final bool success = json['success'] ?? false;
-        final String code = json['code'] ?? '';
-        final data = json['data'];
-        final String responseCode = data != null ? (data['responseCode'] ?? '') : '';
-
-        if (success && code == 'PAYMENT_SUCCESS' && responseCode == 'SUCCESS') {
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['success'] == true) {
+          // Server credited coins — update local balance from server response
+          final newBalance = data['data']?['new_balance'];
+          if (newBalance != null) {
+            await setCoins(int.tryParse(newBalance.toString()) ?? await getCoins());
+          }
+          debugPrint('PhonePe: Transaction $transactionId verified successfully. New balance: $newBalance');
           return true;
         }
       }
       return false;
     } catch (e) {
-      debugPrint('Error checking PhonePe status: $e');
+      debugPrint('Error verifying payment on server: $e');
       return false;
     }
   }
@@ -708,15 +706,29 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
 
   Future<void> _purchasePackage(int index) async {
     final pkg = _packages[index];
+    final packageId = pkg['id'];
     final coins = int.tryParse(pkg['coins'].toString()) ?? 0;
     final price = int.tryParse(pkg['price'].toString()) ?? 0;
 
+    if (packageId == null || packageId == 0) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Invalid package. Please try again later.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
     setState(() => _processingIndex = index);
 
-    // Start PhonePe payment
+    // Start PhonePe payment via server API
     bool success = await WalletHelper.startPhonePePayment(
-      amountInPaise: price * 100,
+      packageId: packageId,
       coins: coins,
+      priceInr: price,
     );
 
     if (success) {
