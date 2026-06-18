@@ -940,10 +940,10 @@ class _LabourPageState extends State<LabourPage> {
                                       ),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(27),
-                                        child: (labour['profile'] != null &&
-                                            labour['profile'].toString().isNotEmpty)
+                                        child: (labour['profile_image'] != null &&
+                                            labour['profile_image'].toString().isNotEmpty)
                                             ? Image.network(
-                                          '${Constants.AppConstants.folderUrl}storage/upload/labourprofile/${labour['profile']}',
+                                          labour['profile_image'].toString(),
                                           fit: BoxFit.cover,
                                           errorBuilder: (context, error, stackTrace) {
                                             return const Icon(Icons.person,

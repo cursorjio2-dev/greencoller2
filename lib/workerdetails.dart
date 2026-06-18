@@ -1873,7 +1873,7 @@ class _LabourDetailsPageState extends State<LabourDetailsPage> {
                           ? ClipRRect(
                         borderRadius: BorderRadius.circular(Constants.AppRadii.xl - 2),
                         child: Image.network(
-                          '${Constants.AppConstants.folderUrl}storage/upload/labourprofile/${labour['profile_image']}',
+                          labour['profile_image'].toString(),
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return const Icon(

@@ -295,16 +295,17 @@ class _LabourPageState extends State<LabourPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(10),
                                               ),
-                                              child: labour['profile'] !=
+                                              child: labour['profile_image'] !=
                                                           null &&
-                                                      labour['profile']
+                                                      labour['profile_image']
+                                                          .toString()
                                                           .isNotEmpty
                                                   ? ClipRRect(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10),
                                                       child: Image.network(
-                                                        '${Constants.AppConstants.folderUrl}storage/upload/labourprofile/${labour['profile']}',
+                                                        labour['profile_image'].toString(),
                                                         fit: BoxFit.cover,
                                                         errorBuilder: (context,
                                                             error, stackTrace) {
