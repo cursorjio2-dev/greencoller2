@@ -1416,11 +1416,93 @@ class _RegistrationFormState extends State<RegistrationForm> {
   }
 
   // ---------- Form Submission ----------
+  Future<Position?> _checkAndGetLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await _showLocationRequiredDialog(
+        title: 'Location Service Disabled',
+        message: 'Location service is disabled. Please turn on location to register.',
+      );
+      return null;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        await _showLocationRequiredDialog(
+          title: 'Location Permission Denied',
+          message: 'Location permission is required to register. Please grant permission.',
+        );
+        return null;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      await _showLocationRequiredDialog(
+        title: 'Location Permission Permanently Denied',
+        message: 'Location permission is permanently denied. Please enable it in device settings to register.',
+      );
+      return null;
+    }
+
+    try {
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: translateText('Failed to get current location: ') + e.toString(),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+      return null;
+    }
+  }
+
+  Future<void> _showLocationRequiredDialog({
+    required String title,
+    required String message,
+  }) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(translateText(title)),
+          content: Text(translateText(message)),
+          actions: <Widget>[
+            TextButton(
+              child: Text(translateText('OK')),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         _isButtonDisabled = true;
       });
+
+      // Verify and fetch GPS location
+      final position = await _checkAndGetLocation();
+      if (position == null) {
+        setState(() {
+          _isButtonDisabled = false;
+        });
+        return;
+      }
 
       final String apiUrl = selectedOption == "farmer"
           ? '${Constants.AppConstants.apiUrl}farmer/register'
@@ -1436,6 +1518,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
         'userType': 'individual', // always individual now
         'city': selectedCity ?? '',
         'state': selectedState ?? '',
+        'latitude': position.latitude.toString(),
+        'longitude': position.longitude.toString(),
       };
 
       if (_profileImage != null) {

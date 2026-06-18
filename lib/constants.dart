@@ -5,10 +5,11 @@ class AppConstants {
   // static const String apiUrl = 'https://completewomencares.com/api/';
   // static const String apiUrl = 'https://gc.internal.apstia.com/api/';
   // static const String folderUrl = 'https://gc.internal.apstia.com/';
-  static const String apiUrl = 'https://greencollar.in/api/';
-  static const String folderUrl = 'https://greencollar.in/';
+  // static const String apiUrl = 'https://greencollar.in/api/';
+  static const String apiUrl = 'http://10.200.170.10:8000/api/';
+  // static const String folderUrl = 'https://greencollar.in/';
   // static const String apiUrl = 'http://10.200.150.6:8000/api/';
-  // static const String folderUrl = 'http://10.200.150.6:8000/';
+  static const String folderUrl = 'http://10.200.170.10:8000/';
   // static const String apiUrl = 'https://achs.apstia.com/api/';
   // static const String apiUrl = 'http://10.200.170.8:8001/api/';
 
