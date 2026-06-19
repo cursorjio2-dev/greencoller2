@@ -4240,6 +4240,7 @@ import 'package:greencollar/wallet_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:greencollar/speech_helper.dart';
 import 'package:greencollar/api_logger.dart';
+import 'package:greencollar/ProjectDetails.dart';
 
 // ──────────────────────────────────────────────────────────────────────────
 // OUTER WIDGET – Labourhomepage (Scaffold + Drawer + BottomNav)
@@ -4727,7 +4728,7 @@ class _LabourhomepageState extends State<Labourhomepage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AppliedProjects()),
+                          MaterialPageRoute(builder: (context) => NearbyProjectPage()),
                         );
                       },
                     ),
@@ -4742,7 +4743,7 @@ class _LabourhomepageState extends State<Labourhomepage> {
                           //     ? '($_walletCoins coins)'
                           //     : '($_walletCoins सिक्के)';
                           return Text(
-                            '$walletTitle-------------------------------------------',
+                            '$walletTitle',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           );
                         },
@@ -5871,8 +5872,8 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ProjectDetailsPage(
-                                        projectId: project['id'],
+                                      builder: (context) => ProjectDetails(
+                                        projectId: project['id'].toString(),
                                       ),
                                     ),
                                   );
@@ -6106,8 +6107,8 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ProjectDetailsPage(
-                                                      projectId: project['id'],
+                                                    ProjectDetails(
+                                                      projectId: project['id'].toString(),
                                                     ),
                                               ),
                                             );

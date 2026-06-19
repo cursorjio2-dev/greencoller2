@@ -3786,29 +3786,30 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                       Icon(Icons.person_outline,
                                           size: 14, color: Colors.grey[500]),
                                       const SizedBox(width: 4),
-                                      Text(
-                                        'Posted by ',
-                                        style: TextStyle(
+                                      Flexible(
+                                        child: Text(
+                                          'Posted by ${postedBy ?? ''}',
+                                          style: TextStyle(
                                             fontSize: 11,
-                                            color: Colors.grey[500]),
-                                      ),
-                                      Text(
-                                        postedBy ?? '',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Constants.AppColors.brand,
-                                          fontWeight: FontWeight.bold,
+                                            color: Colors.grey[500],
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                         ),
                                       ),
                                       const SizedBox(width: 8),
                                       Icon(Icons.calendar_today_outlined,
                                           size: 11, color: Colors.grey[400]),
                                       const SizedBox(width: 3),
-                                      Text(
-                                        postedDate ?? '',
-                                        style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.grey[500]),
+                                      Flexible(
+                                        child: Text(
+                                          postedDate ?? '',
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey[500]),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
                                       ),
                                     ],
                                   ),

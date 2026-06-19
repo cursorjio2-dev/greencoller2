@@ -5685,7 +5685,9 @@ class _ProjectPageState extends State<ProjectPage> {
                                     const SizedBox(height: 14),
 
                                     // ── Stats Chips ──
-                                    Row(
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
                                       children: [
                                         _buildPremiumChip(
                                           icon: Icons.people_outline,
@@ -5694,7 +5696,6 @@ class _ProjectPageState extends State<ProjectPage> {
                                           iconColor: const Color(0xFF16A34A),
                                           labelColor: const Color(0xFF166534),
                                         ),
-                                        const SizedBox(width: 8),
                                         _buildPremiumChip(
                                           icon: Icons.currency_rupee,
                                           label: '₹$budgetFormatted',
@@ -5702,7 +5703,6 @@ class _ProjectPageState extends State<ProjectPage> {
                                           iconColor: const Color(0xFFEA580C),
                                           labelColor: const Color(0xFF9A3412),
                                         ),
-                                        const SizedBox(width: 8),
                                         _buildPremiumChip(
                                           icon: Icons.access_time_outlined,
                                           label: durationLabel,
@@ -5710,8 +5710,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                           iconColor: const Color(0xFF2563EB),
                                           labelColor: const Color(0xFF1E3A8A),
                                         ),
-                                        if (project['applicants'] != null && int.tryParse(project['applicants'].toString())! > 0) ...[
-                                          const SizedBox(width: 8),
+                                        if (project['applicants'] != null && int.tryParse(project['applicants'].toString())! > 0)
                                           _buildPremiumChip(
                                             icon: Icons.person_add_alt_1,
                                             label: '${project['applicants']} ${translate('Applied', 'आवेदन')}',
@@ -5719,7 +5718,6 @@ class _ProjectPageState extends State<ProjectPage> {
                                             iconColor: const Color(0xFF7C3AED),
                                             labelColor: const Color(0xFF4C1D95),
                                           ),
-                                        ],
                                       ],
                                     ),
                                     const SizedBox(height: 16),
