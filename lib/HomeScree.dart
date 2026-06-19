@@ -5272,17 +5272,14 @@ class _ProjectPageState extends State<ProjectPage> {
   String translateText(String text) {
     if (text.isEmpty) return "";
     String targetLang = _selectedLanguage ?? 'en';
-
     if (translations.containsKey(text) &&
         translations[text]!.containsKey(targetLang)) {
       return translations[text]![targetLang]!;
     }
-
     if (_cachedTranslations.containsKey(text) &&
         _cachedTranslations[text]!.containsKey(targetLang)) {
       return _cachedTranslations[text]![targetLang]!;
     }
-
     _fetchTranslation(text, targetLang);
     return text;
   }
@@ -5433,6 +5430,81 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 
+  // ── Status Badge ──
+  Widget _buildProjectStatusBadge(Map<String, dynamic> project) {
+    final status = project['status']?.toString() ?? '1';
+    final labourId = project['labourId']?.toString() ?? '';
+    final bool isAssigned = labourId.trim().isNotEmpty;
+
+    String label;
+    Color bgColor;
+    Color textColor;
+    IconData icon;
+
+    switch (status) {
+      case '1':
+        if (isAssigned) {
+          label = translateText('Assigned');
+          bgColor = const Color(0xFFEFF6FF);
+          textColor = const Color(0xFF1E40AF);
+          icon = Icons.assignment_ind_outlined;
+        } else {
+          label = translateText('Open');
+          bgColor = const Color(0xFFEAF4E8);
+          textColor = const Color(0xFF0E6805);
+          icon = Icons.check_circle_outline;
+        }
+        break;
+      case '2':
+        label = translateText('Work Started');
+        bgColor = const Color(0xFFFFF7ED);
+        textColor = const Color(0xFFC2410C);
+        icon = Icons.hourglass_top_outlined;
+        break;
+      case '3':
+        label = translateText('Completed');
+        bgColor = const Color(0xFFF0FDF4);
+        textColor = const Color(0xFF15803D);
+        icon = Icons.check_circle_outline;
+        break;
+      case '4':
+        label = translateText('Cancelled');
+        bgColor = const Color(0xFFFEF2F2);
+        textColor = const Color(0xFF991B1B);
+        icon = Icons.cancel_outlined;
+        break;
+      default:
+        label = translateText('Unknown');
+        bgColor = const Color(0xFFF1F5F9);
+        textColor = const Color(0xFF64748B);
+        icon = Icons.help_outline;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: textColor.withOpacity(0.2), width: 0.8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 11, color: textColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // ── Duration helper ──
   String _getDurationLabel(dynamic days) {
     if (days == null) return translateText('N/A');
@@ -5459,34 +5531,34 @@ class _ProjectPageState extends State<ProjectPage> {
       },
       child: Scaffold(
         body: Container(
-          color: Colors.white,
+          color: Constants.AppColors.surface,
           child: SafeArea(
             child: Column(
               children: [
-                // Search Bar
+                // ── Search Bar ──
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: TextField(
                     controller: _searchController,
                     onChanged: filterProjects,
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search, color: Colors.green),
+                      prefixIcon: const Icon(Icons.search, color: Constants.AppColors.brand),
                       hintText: AppLocalizations.of(context)!.searchlabour,
                       fillColor: Colors.white,
                       filled: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15.0),
-                        borderSide: const BorderSide(color: Colors.green),
+                        borderSide: const BorderSide(color: Constants.AppColors.border),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15.0),
-                        borderSide: const BorderSide(color: Colors.green, width: 2),
+                        borderSide: const BorderSide(color: Constants.AppColors.brand, width: 2),
                       ),
                       suffixIcon: MicIconButton(controller: _searchController),
                     ),
                   ),
                 ),
-                // Project List – Premium Cards
+                // ── Project List ──
                 Expanded(
                   child: isLoading
                       ? const Center(child: CircularProgressIndicator())
@@ -5507,7 +5579,6 @@ class _ProjectPageState extends State<ProjectPage> {
                     itemBuilder: (context, index) {
                       final project = filteredProjects[index];
 
-                      // Determine icon
                       String iconEmoji = '📋';
                       String projectType = project['project_type'] ?? '';
                       if (projectType.contains('Crop')) iconEmoji = '🌾';
@@ -5519,6 +5590,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       String durationLabel = _getDurationLabel(project['days']);
                       String budgetFormatted =
                       NumberFormat('#,##0').format(project['budget'] ?? 0);
+                      int applicants = project['applicants'] ?? 0;
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: 12),
@@ -5551,7 +5623,6 @@ class _ProjectPageState extends State<ProjectPage> {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
-                                // Navigate to project details (same as before)
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -5572,7 +5643,6 @@ class _ProjectPageState extends State<ProjectPage> {
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // Category Icon
                                         Container(
                                           width: 48,
                                           height: 48,
@@ -5595,7 +5665,6 @@ class _ProjectPageState extends State<ProjectPage> {
                                           ),
                                         ),
                                         const SizedBox(width: 14),
-                                        // Title and Type
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -5637,38 +5706,19 @@ class _ProjectPageState extends State<ProjectPage> {
                                             ],
                                           ),
                                         ),
-                                        // Date Badge
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFF8FAFC),
-                                            borderRadius: BorderRadius.circular(12),
-                                            border: Border.all(color: const Color(0xFFE2E8F0), width: 0.8),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              const Icon(Icons.calendar_today_outlined, size: 11, color: Color(0xFF64748B)),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                _formatDate(project['created_at']?.toString() ?? ''),
-                                                style: const TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Color(0xFF64748B),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                        // ── Status Badge ──
+                                        _buildProjectStatusBadge(project),
                                       ],
                                     ),
-                                    const SizedBox(height: 14),
+                                    const SizedBox(height: 12),
+                                    const Divider(color: Color(0xFFF1F5EE), height: 1),
+                                    const SizedBox(height: 10),
 
                                     // ── Location ──
                                     Row(
                                       children: [
-                                        const Icon(Icons.location_on_outlined, size: 14, color: Color(0xFF64748B)),
+                                        const Icon(Icons.location_on_outlined,
+                                            size: 14, color: Color(0xFF64748B)),
                                         const SizedBox(width: 6),
                                         Expanded(
                                           child: Text(
@@ -5680,14 +5730,38 @@ class _ProjectPageState extends State<ProjectPage> {
                                             ),
                                           ),
                                         ),
+                                        if (applicants > 0)
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFF3E8FF),
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: const Color(0xFFD8B4FE), width: 0.5),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.person_add_alt_1,
+                                                    size: 11, color: const Color(0xFF7C3AED)),
+                                                const SizedBox(width: 3),
+                                                Text(
+                                                  '$applicants',
+                                                  style: const TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xFF4C1D95),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                       ],
                                     ),
-                                    const SizedBox(height: 14),
+                                    const SizedBox(height: 12),
 
                                     // ── Stats Chips ──
-                                    Wrap(
-                                      spacing: 8,
-                                      runSpacing: 8,
+                                    Row(
                                       children: [
                                         _buildPremiumChip(
                                           icon: Icons.people_outline,
@@ -5696,6 +5770,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                           iconColor: const Color(0xFF16A34A),
                                           labelColor: const Color(0xFF166534),
                                         ),
+                                        const SizedBox(width: 8),
                                         _buildPremiumChip(
                                           icon: Icons.currency_rupee,
                                           label: '₹$budgetFormatted',
@@ -5703,6 +5778,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                           iconColor: const Color(0xFFEA580C),
                                           labelColor: const Color(0xFF9A3412),
                                         ),
+                                        const SizedBox(width: 8),
                                         _buildPremiumChip(
                                           icon: Icons.access_time_outlined,
                                           label: durationLabel,
@@ -5710,14 +5786,6 @@ class _ProjectPageState extends State<ProjectPage> {
                                           iconColor: const Color(0xFF2563EB),
                                           labelColor: const Color(0xFF1E3A8A),
                                         ),
-                                        if (project['applicants'] != null && int.tryParse(project['applicants'].toString())! > 0)
-                                          _buildPremiumChip(
-                                            icon: Icons.person_add_alt_1,
-                                            label: '${project['applicants']} ${translate('Applied', 'आवेदन')}',
-                                            bgColor: const Color(0xFFF3E8FF),
-                                            iconColor: const Color(0xFF7C3AED),
-                                            labelColor: const Color(0xFF4C1D95),
-                                          ),
                                       ],
                                     ),
                                     const SizedBox(height: 16),
@@ -5725,90 +5793,81 @@ class _ProjectPageState extends State<ProjectPage> {
                                     // ── Action Buttons ──
                                     Row(
                                       children: [
-                                        // View Details Button
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 48,
-                                            child: OutlinedButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) => ProjectDetails(
-                                                      projectId: project['id'].toString(),
+                                        // View Applications (only if applicants > 0)
+                                        if (applicants > 0)
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 44,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProjectApplicationsPage(
+                                                            projectId: project['id'].toString(),
+                                                          ),
+                                                    ),
+                                                  );
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: const Color(0xFF1A4F2A),
+                                                  foregroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                  padding: EdgeInsets.zero,
+                                                ),
+                                                child: FittedBox(
+                                                  fit: BoxFit.scaleDown,
+                                                  child: Text(
+                                                    AppLocalizations.of(context)!.viewApplications,
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
                                                     ),
                                                   ),
-                                                );
-                                              },
-                                              style: OutlinedButton.styleFrom(
-                                                side: BorderSide(
-                                                  color: Constants.AppColors.brand,
-                                                  width: 1.5,
                                                 ),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(12),
-                                                ),
-                                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                              ),
-                                              child: Text(
-                                                AppLocalizations.of(context)!.viewDetails,
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Constants.AppColors.brand,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        // View Applications Button
+                                        if (applicants > 0)
+                                          const SizedBox(width: 8),
+                                        // View Details (always)
                                         Expanded(
-                                          child: Container(
-                                            height: 48,
-                                            decoration: BoxDecoration(
-                                              gradient: Constants.AppColors.brandGradient,
-                                              borderRadius: BorderRadius.circular(12),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Constants.AppColors.brand.withOpacity(0.3),
-                                                  blurRadius: 8,
-                                                  offset: const Offset(0, 3),
-                                                ),
-                                              ],
-                                            ),
+                                          child: SizedBox(
+                                            height: 44,
                                             child: ElevatedButton(
                                               onPressed: () {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) => ProjectApplicationsPage(
-                                                      projectId: project['id'].toString(),
-                                                    ),
+                                                    builder: (context) =>
+                                                        ProjectDetails(
+                                                          projectId: project['id'].toString(),
+                                                        ),
                                                   ),
                                                 );
                                               },
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.transparent,
-                                                shadowColor: Colors.transparent,
+                                                backgroundColor: Constants.AppColors.brand,
+                                                foregroundColor: Colors.white,
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderRadius: BorderRadius.circular(10),
                                                 ),
-                                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                                padding: EdgeInsets.zero,
                                               ),
-                                              child: Text(
-                                                AppLocalizations.of(context)!.viewApplications,
-                                                style: const TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.white,
+                                              child: FittedBox(
+                                                fit: BoxFit.scaleDown,
+                                                child: Text(
+                                                  translateText('Details'),
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
-                                                textAlign: TextAlign.center,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                           ),

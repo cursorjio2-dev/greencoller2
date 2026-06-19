@@ -276,6 +276,50 @@ class WalletHelper {
 
   /// Get purchase history as a list of maps.
   static Future<List<Map<String, dynamic>>> getPurchaseHistory() async {
+    try {
+      final farmerId = await _storage.read(key: 'id');
+      if (farmerId == null) {
+        debugPrint('getPurchaseHistory: Farmer ID not found in secure storage');
+        return _getLocalPurchaseHistory();
+      }
+
+      final url = Uri.parse('${Constants.AppConstants.apiUrl}farmer/purchasecoins');
+      debugPrint('getPurchaseHistory: Fetching from API (farmer: $farmerId)');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'farmer_id': farmerId}),
+      ).timeout(const Duration(seconds: 10));
+
+      debugPrint('getPurchaseHistory: API Status: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (responseData['success'] == true && responseData['data'] != null) {
+          final List<dynamic> list = responseData['data'];
+          final List<Map<String, dynamic>> parsedHistory = list.map<Map<String, dynamic>>((e) {
+            return {
+              'coins': int.tryParse(e['package_coins']?.toString() ?? '') ?? 0,
+              'price': double.tryParse(e['package_amount']?.toString() ?? '')?.toInt() ?? 0,
+              'transactionId': e['merchant_transaction_id']?.toString() ?? '',
+              'status': e['payment_status']?.toString() ?? 'FAILED',
+              'date': e['created_at']?.toString() ?? '',
+            };
+          }).toList();
+
+          // Update local secure storage copy
+          await _storage.write(key: _historyKey, value: jsonEncode(parsedHistory));
+          return parsedHistory;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error getting purchase history from API: $e');
+    }
+
+    // Fallback to local storage if API call fails or ID is missing
+    return _getLocalPurchaseHistory();
+  }
+
+  static Future<List<Map<String, dynamic>>> _getLocalPurchaseHistory() async {
     String? val = await _storage.read(key: _historyKey);
     if (val == null || val.isEmpty) return [];
     try {
