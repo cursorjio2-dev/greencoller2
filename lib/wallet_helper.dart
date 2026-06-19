@@ -64,6 +64,45 @@ class WalletHelper {
     await _storage.write(key: _coinsKey, value: coins.toString());
   }
 
+  /// Fetch coin balance from server and sync locally.
+  static Future<int> fetchCoinBalanceFromServer(String farmerId) async {
+    try {
+      final url = Uri.parse('${Constants.AppConstants.apiUrl}farmer/coinbalance');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'farmer_id': farmerId}),
+      ).timeout(const Duration(seconds: 10));
+
+      debugPrint('CoinBalance API status: ${response.statusCode}');
+      debugPrint('CoinBalance API response: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data != null && (data['success'] == true || data['status'] == true)) {
+          final coinBalance = data['coin_balance'] ?? data['data']?['coin_balance'];
+          if (coinBalance != null) {
+            int coins = int.tryParse(coinBalance.toString()) ?? 0;
+            await setCoins(coins);
+            return coins;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching coin balance from server: $e');
+    }
+    return getCoins();
+  }
+
+  /// Sync coin balance using logged-in farmer's ID.
+  static Future<int> syncCoinBalance() async {
+    final farmerId = await _storage.read(key: 'id');
+    if (farmerId == null) {
+      return getCoins();
+    }
+    return fetchCoinBalanceFromServer(farmerId);
+  }
+
   /// Deduct coins. Returns true if successful, false if insufficient funds.
   static Future<bool> deductCoins(int amount) async {
     int current = await getCoins();
@@ -521,6 +560,11 @@ class WalletHelper {
           final newBalance = data['data']?['new_balance'];
           if (newBalance != null) {
             await setCoins(int.tryParse(newBalance.toString()) ?? await getCoins());
+          }
+          // Fetch and sync the official balance using the farmer's ID
+          final farmerId = await _storage.read(key: 'id');
+          if (farmerId != null) {
+            await fetchCoinBalanceFromServer(farmerId);
           }
           debugPrint('PhonePe: Transaction $transactionId verified successfully. New balance: $newBalance');
           return true;

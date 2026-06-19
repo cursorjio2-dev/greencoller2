@@ -3248,7 +3248,7 @@ class _HomePageState extends State<HomePage> {
   int _walletCoins = 0;
 
   Future<void> _loadWalletBalance() async {
-    int coins = await WalletHelper.getCoins();
+    int coins = await WalletHelper.syncCoinBalance();
     if (mounted) {
       setState(() {
         _walletCoins = coins;

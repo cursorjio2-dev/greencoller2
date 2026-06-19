@@ -440,7 +440,6 @@ import 'package:greencollar/constants.dart' as Constants;
 import 'package:http/http.dart' as http;
 import 'package:translator/translator.dart' show GoogleTranslator;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:greencollar/wallet_helper.dart';
 
 class FarmerDetailsPage extends StatefulWidget {
   final Map<String, dynamic> farmer;
@@ -461,58 +460,13 @@ class _FarmerDetailsPageState extends State<FarmerDetailsPage> {
       Constants.AppConstants.translations;
   String _selectedLanguage = 'en';
 
-  bool _isUnlocked = false;
-
-  Future<void> _checkUnlockStatus() async {
-    String phone = widget.farmer['phone']?.toString() ?? '';
-    if (phone.isEmpty) return;
-    bool unlocked = await WalletHelper.isContactUnlocked(phone);
-    if (mounted) {
-      setState(() {
-        _isUnlocked = unlocked;
-      });
-    }
-  }
-
-  Future<void> _handleUnlock() async {
-    String phone = widget.farmer['phone']?.toString() ?? '';
-    if (phone.isEmpty) return;
-
-    bool success = await WalletHelper.showUnlockDialog(
-      context,
-      contactId: phone,
-      onInsufficientFunds: () {
-        WalletHelper.showInsufficientFundsDialog(
-          context,
-          onBuyCoins: () {
-            WalletHelper.showCoinShop(context, onCoinsAdded: (newBalance) {
-              // Refresh or take action if required
-            });
-          },
-        );
-      },
-    );
-
-    if (success) {
-      if (mounted) {
-        setState(() {
-          _isUnlocked = true;
-        });
-      }
-    }
-  }
-
   Widget _buildPhoneRow(String phone) {
     if (phone.isEmpty) {
       return _buildInfoRow(Icons.phone_outlined, "Phone", "N/A");
     }
 
-    String displayText = _isUnlocked
-        ? phone
-        : WalletHelper.maskPhone(phone);
-
     return InkWell(
-      onTap: _isUnlocked ? () => _launchPhoneDialer(phone) : _handleUnlock,
+      onTap: () => _launchPhoneDialer(phone),
       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 4.0),
@@ -537,42 +491,17 @@ class _FarmerDetailsPageState extends State<FarmerDetailsPage> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    displayText,
+                    phone,
                     style: Constants.AppTypography.body.copyWith(
-                      color: _isUnlocked ? Constants.AppColors.brandDeep : Constants.AppColors.ink,
+                      color: Constants.AppColors.brandDeep,
                       fontWeight: FontWeight.w600,
-                      decoration: _isUnlocked ? TextDecoration.underline : TextDecoration.none,
+                      decoration: TextDecoration.underline,
                     ),
                   ),
                 ],
               ),
             ),
-            if (!_isUnlocked)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF3E0),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFFFB74D), width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.lock, color: Color(0xFFE65100), size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      translateText("Unlock"),
-                      style: const TextStyle(
-                        color: Color(0xFFE65100),
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else
-              const Icon(Icons.chevron_right, color: Constants.AppColors.inkSoft, size: 20),
+            const Icon(Icons.chevron_right, color: Constants.AppColors.inkSoft, size: 20),
           ],
         ),
       ),
@@ -584,7 +513,6 @@ class _FarmerDetailsPageState extends State<FarmerDetailsPage> {
     super.initState();
     loadLanguage();
     farmer = widget.farmer;
-    _checkUnlockStatus();
   }
 
   Future<void> loadLanguage() async {

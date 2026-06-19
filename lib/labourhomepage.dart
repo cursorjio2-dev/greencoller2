@@ -4236,7 +4236,6 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:translator/translator.dart';
-import 'package:greencollar/wallet_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:greencollar/speech_helper.dart';
 import 'package:greencollar/api_logger.dart';
@@ -4256,7 +4255,6 @@ class _LabourhomepageState extends State<Labourhomepage> {
   String _selectedLanguage = 'en';
   String _userName = '';
   String _userType = '';
-  int _walletCoins = 0;
 
   Map<String, Map<String, String>> _cachedTranslations = {};
   Map<String, Map<String, String>> translations =
@@ -4270,7 +4268,6 @@ class _LabourhomepageState extends State<Labourhomepage> {
     super.initState();
     loadLanguage();
     _loadUserInfo();
-    _loadWalletBalance();
     ApiLogger.logScreenOpened('LabourHomepage');
   }
 
@@ -4287,11 +4284,6 @@ class _LabourhomepageState extends State<Labourhomepage> {
     await fetchUnreadNotificationsCount();
     String? language = await _secureStorage.read(key: 'selectedLanguage');
     _selectedLanguage = language ?? 'en';
-  }
-
-  Future<void> _loadWalletBalance() async {
-    int coins = await WalletHelper.getCoins();
-    if (mounted) setState(() => _walletCoins = coins);
   }
 
   Future<void> fetchUnreadNotificationsCount() async {
@@ -4730,29 +4722,6 @@ class _LabourhomepageState extends State<Labourhomepage> {
                           context,
                           MaterialPageRoute(builder: (context) => NearbyProjectPage()),
                         );
-                      },
-                    ),
-                    // Wallet
-                    _buildDrawerTile(
-                      icon: Icons.account_balance_wallet,
-                      title: FutureBuilder<String>(
-                        future: translateText('Wallet'),
-                        builder: (context, snapshot) {
-                          final walletTitle = snapshot.data ?? 'Wallet';
-                          // final coinsText = _selectedLanguage == 'en'
-                          //     ? '($_walletCoins coins)'
-                          //     : '($_walletCoins सिक्के)';
-                          return Text(
-                            '$walletTitle',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          );
-                        },
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                        WalletHelper.showCoinShop(context, onCoinsAdded: (newBalance) {
-                          setState(() => _walletCoins = newBalance);
-                        });
                       },
                     ),
 
