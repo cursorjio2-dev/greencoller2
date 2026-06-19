@@ -3304,6 +3304,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:greencollar/Addproject.dart';
 import 'package:greencollar/HomeScree.dart';
+import 'package:greencollar/UpdateProject.dart';
 import 'package:provider/provider.dart';
 import 'package:greencollar/main.dart';
 import 'package:http/http.dart' as http;
@@ -3353,6 +3354,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
   String? postedBy;
   String? postedDate;
   String? projectStatus;
+  String? labourId;
   bool _isSpeaking = false;
 
   Future<Map<String, dynamic>> fetchProjectDetails() async {
@@ -3383,6 +3385,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
       postedBy = projectData['posted_by'] ?? '';
       postedDate = projectData['created_at'] ?? '';
       projectStatus = projectData['status'] ?? 'Active';
+      labourId = projectData['labourId']?.toString() ?? '';
 
       if (projectData['required_skills'] != null) {
         if (projectData['required_skills'] is String) {
@@ -4484,35 +4487,79 @@ class _ProjectDetailsState extends State<ProjectDetails> {
           ),
 
           // ── Fixed bottom CTA ───────────────────────────────────────────────
-          Container(
-            color: const Color(0xFFFAFBF7),
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            child: SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: submitForm,
-                icon: const Icon(Icons.send, color: Colors.white, size: 18),
-                label: const Text(
-                  'Request For Complete',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 0.3,
+          // ── Fixed bottom CTA ───────────────────────────────────────────────
+          if (labourId == null || labourId!.isEmpty) ...[
+            Container(
+              color: const Color(0xFFFAFBF7),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              child: SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UpdateProject(
+                          projectId: widget.projectId,
+                        ),
+                      ),
+                    ).then((_) {
+                      fetchProjectData();
+                    });
+                  },
+                  icon: const Icon(Icons.edit, color: Colors.white, size: 18),
+                  label: Text(
+                    translateText('Edit Project'),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.3,
+                    ),
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Constants.AppColors.brand,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Constants.AppColors.brand,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+          ] else ...[
+            Container(
+              color: const Color(0xFFFAFBF7),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              child: SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Icons.lock, color: Colors.white70, size: 18),
+                  label: Text(
+                    translateText('Assigned (Read Only)'),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white70,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[400],
+                    disabledBackgroundColor: Colors.grey[400],
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
