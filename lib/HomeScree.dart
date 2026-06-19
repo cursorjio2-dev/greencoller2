@@ -4529,17 +4529,12 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
       },
       child: RefreshIndicator(
           onRefresh: () async {
-            // Assuming loadLanguage, fetchProjects, and fetchJobTypes are async functions.
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
-            );
-
             setState(() {
-              // If you need to update the UI state, you can do it here after all async tasks are done.
+              _jobTypes = fetchJobTypes();
             });
+            await fetchLabours();
+            await _fetchCurrentLocation();
+            await _loadCoinCharge();
           },
           child: Scaffold(
             body: Container(
@@ -5808,7 +5803,9 @@ class _ProjectPageState extends State<ProjectPage> {
                                                             projectId: project['id'].toString(),
                                                           ),
                                                     ),
-                                                  );
+                                                  ).then((_) {
+                                                    fetchProjects();
+                                                  });
                                                 },
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor: const Color(0xFF1A4F2A),
@@ -5848,7 +5845,9 @@ class _ProjectPageState extends State<ProjectPage> {
                                                           projectId: project['id'].toString(),
                                                         ),
                                                   ),
-                                                );
+                                                ).then((_) {
+                                                  fetchProjects();
+                                                });
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: Constants.AppColors.brand,
@@ -6868,10 +6867,7 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
             const SnackBar(content: Text('Project assigned successfully')),
           );
           Future.delayed(const Duration(seconds: 1), () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
+            Navigator.pop(context, true);
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -6958,10 +6954,7 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
+            Navigator.pop(context);
           },
         ),
         elevation: 0,

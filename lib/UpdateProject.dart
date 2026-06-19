@@ -623,14 +623,9 @@ class _UpdateProjectState extends State<UpdateProject> {
           fontSize: 16.0,
         );
 
-        // Wait for 1 second before navigating
+        // Wait for 1 second before navigating back
         Future.delayed(Duration(seconds: 1), () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(),
-            ),
-          );
+          Navigator.pop(context, true);
         });
       } else {
         // Handle failure
