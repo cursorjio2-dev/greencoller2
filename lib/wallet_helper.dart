@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -379,19 +380,39 @@ class WalletHelper {
 
       // 4. Start PhonePe transaction
       debugPrint('PhonePe: Starting transaction $transactionId for ₹$priceInr');
-      final response = await PhonePePaymentSdk.startTransaction(
+
+      // Use Completer since PhonePe SDK await may not resolve properly
+      final completer = Completer<bool>();
+
+      PhonePePaymentSdk.startTransaction(
         body,
-        '', // appSchema (not needed for Android)
+        '', // appSchema
         checksum,
         _packageName,
-      );
+      ).then((response) async {
+        debugPrint('PhonePe SDK Raw Response: $response');
+        debugPrint('PhonePe SDK Response Type: ${response.runtimeType}');
 
-      debugPrint('PhonePe Response: $response');
+        // Parse status from response
+        String status = '';
+        if (response != null) {
+          final dynamic rawResponse = response;
+          if (rawResponse is Map) {
+            status = rawResponse['status']?.toString() ?? '';
+          } else if (rawResponse is String) {
+            try {
+              final parsed = jsonDecode(rawResponse);
+              status = parsed['status']?.toString() ?? '';
+            } catch (_) {
+              status = rawResponse;
+            }
+          }
+        }
 
-      if (response != null) {
-        final status = response['status']?.toString() ?? '';
-        if (status == 'SUCCESS') {
-          // 5. Verify on backend — server checks PhonePe Status API & credits coins
+        debugPrint('PhonePe: Parsed status = "$status"');
+
+        if (status.toUpperCase() == 'SUCCESS') {
+          debugPrint('PhonePe: SDK returned SUCCESS, verifying on server...');
           final verified = await _verifyPaymentOnServer(transactionId);
           if (verified) {
             await _addPurchaseRecord(
@@ -400,7 +421,7 @@ class WalletHelper {
               transactionId: transactionId,
               status: 'SUCCESS',
             );
-            return true;
+            completer.complete(true);
           } else {
             debugPrint('PhonePe: Transaction $transactionId — server verification failed');
             await _addPurchaseRecord(
@@ -409,6 +430,7 @@ class WalletHelper {
               transactionId: transactionId,
               status: 'FAILED',
             );
+            completer.complete(false);
           }
         } else {
           debugPrint('PhonePe: Transaction $transactionId ended with status: $status');
@@ -416,13 +438,16 @@ class WalletHelper {
             coins: coins,
             priceInr: priceInr,
             transactionId: transactionId,
-            status: status,
+            status: status.isNotEmpty ? status : 'UNKNOWN',
           );
+          completer.complete(false);
         }
-      } else {
-        debugPrint('PhonePe: Transaction returned null response');
-      }
-      return false;
+      }).catchError((error) {
+        debugPrint('PhonePe SDK Error: $error');
+        completer.complete(false);
+      });
+
+      return await completer.future;
     } catch (e) {
       debugPrint('PhonePe Payment Error: $e');
       return false;
@@ -435,7 +460,7 @@ class WalletHelper {
   static Future<bool> _verifyPaymentOnServer(String transactionId) async {
     try {
       debugPrint('PhonePe: Verifying transaction $transactionId on server...');
-      final url = Uri.parse('${Constants.AppConstants.apiUrl}verify-coin-payment');
+      final url = Uri.parse('${Constants.AppConstants.apiUrl}verifycoinpayment');
       final resp = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},

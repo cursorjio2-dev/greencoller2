@@ -3837,11 +3837,11 @@ class _HomePageState extends State<HomePage> {
                         future: translateText('Wallet'),
                         builder: (context, snapshot) {
                           final walletTitle = snapshot.data ?? 'Wallet';
-                          final coinsText = _selectedLanguage == 'en'
-                              ? '($_walletCoins coins)'
-                              : '($_walletCoins सिक्के)';
+                          // final coinsText = _selectedLanguage == 'en'
+                          //     ? '($_walletCoins coins)'
+                          //     : '($_walletCoins सिक्के)';
                           return Text(
-                            '$walletTitle $coinsText',
+                            '$walletTitle',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           );
                         },
@@ -5234,6 +5234,8 @@ class _LabourAnimatedState extends State<LabourAnimated> {
   }
 }
 
+
+
 class ProjectPage extends StatefulWidget {
   @override
   _ProjectPageState createState() => _ProjectPageState();
@@ -5242,20 +5244,13 @@ class ProjectPage extends StatefulWidget {
 class _ProjectPageState extends State<ProjectPage> {
   final _secureStorage = const FlutterSecureStorage();
   List<dynamic> projects = [];
-  List<dynamic> filteredProjects = []; // To store filtered results
+  List<dynamic> filteredProjects = [];
   bool isLoading = true;
-  TextEditingController _searchController = TextEditingController();
-  String _selectedLanguage = 'en'; // Default language is English
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedLanguage = 'en';
 
-  Future<void> loadLanguage() async {
-    // Read the selected language from FlutterSecureStorage
-    String? language = await _secureStorage.read(key: 'selectedLanguage');
-    _selectedLanguage = language ?? 'en';
-    print(language); // Default to English if null
-  }
-
+  // Translation maps
   Map<String, Map<String, String>> _cachedTranslations = {};
-
   Map<String, Map<String, String>> translations =
       Constants.AppConstants.translations;
   final GoogleTranslator _translator = GoogleTranslator();
@@ -5265,81 +5260,49 @@ class _ProjectPageState extends State<ProjectPage> {
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
-
     fetchProjects();
     loadLanguage();
   }
 
-  String translateText(String text) {
-    final language =
-        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
-    if (text.isEmpty) return "";
-
-    // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
-    String targetLang = language ?? 'en'; // Default to English if null
-
-    // ✅ Check manual translations first
-    if (translations.containsKey(text) &&
-        translations[text]!.containsKey(targetLang)) {
-      return translations[text]![targetLang]!; // Return manual translation
-    }
-
-    // ✅ Check cached translations
-    if (_cachedTranslations.containsKey(text) &&
-        _cachedTranslations[text]!.containsKey(targetLang)) {
-      return _cachedTranslations[text]![
-      targetLang]!; // Return cached translation
-    }
-
-    // ✅ Fetch translation dynamically (but without `await`)
-    _fetchTranslation(text, targetLang); // Runs in background, no need to wait
-
-    return text; // Return original text while translation is being fetched
+  Future<void> loadLanguage() async {
+    String? language = await _secureStorage.read(key: 'selectedLanguage');
+    _selectedLanguage = language ?? 'en';
   }
 
-  /// ✅ Fetch translation dynamically and update cache
+  String translateText(String text) {
+    if (text.isEmpty) return "";
+    String targetLang = _selectedLanguage ?? 'en';
+
+    if (translations.containsKey(text) &&
+        translations[text]!.containsKey(targetLang)) {
+      return translations[text]![targetLang]!;
+    }
+
+    if (_cachedTranslations.containsKey(text) &&
+        _cachedTranslations[text]!.containsKey(targetLang)) {
+      return _cachedTranslations[text]![targetLang]!;
+    }
+
+    _fetchTranslation(text, targetLang);
+    return text;
+  }
+
   Future<void> _fetchTranslation(String text, String targetLang) async {
     try {
-      // ✅ Check if translation already exists in constants
       if (Constants.AppConstants.translations.containsKey(text) &&
           Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
-        return; // No need to fetch if it exists
+        return;
       }
-
-      // ✅ Fetch translation dynamically
       final translation = await _translator.translate(text, to: targetLang);
-
-      // ✅ Initialize default values if text is not in the map
       if (!translations.containsKey(text)) {
-        translations[text] = {
-          "en": text,
-          "hi": text
-        }; // Default to the same value
+        translations[text] = {"en": text, "hi": text};
       }
-
-      // ✅ Store the translation in the correct language
       translations[text]![targetLang] = translation.text;
-
-      // ✅ Store fetched translations in the cache
       _cachedTranslations = translations;
-
-      // ✅ Also store in the constants translations map
       if (!Constants.AppConstants.translations.containsKey(text)) {
         Constants.AppConstants.translations[text] = {};
       }
       Constants.AppConstants.translations[text]![targetLang] = translation.text;
-
-      // ✅ Check for missing translations and fetch dynamically
-      for (var key in translations.keys) {
-        if (!translations[key]!.containsKey("hi")) {
-          await _fetchTranslation(key, "hi");
-        }
-        if (!translations[key]!.containsKey("en")) {
-          await _fetchTranslation(key, "en");
-        }
-      }
-
-      // ✅ Store translation in cache
       _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
           translation.text;
       setState(() {});
@@ -5350,8 +5313,6 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Future<void> fetchProjects() async {
     final String apiUrl = '${Constants.AppConstants.apiUrl}farmer/getprojects';
-
-    // Get user ID from secure storage
     String? userId = await _secureStorage.read(key: 'id');
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -5360,11 +5321,7 @@ class _ProjectPageState extends State<ProjectPage> {
       return;
     }
 
-    final Map<String, dynamic> requestBody = {
-      'id': userId,
-    };
-
-    print(jsonEncode(requestBody));
+    final Map<String, dynamic> requestBody = {'id': userId};
 
     try {
       final response = await http.post(
@@ -5372,40 +5329,30 @@ class _ProjectPageState extends State<ProjectPage> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
-      print(json.decode(response.body)['data']);
       if (response.statusCode == 200) {
         setState(() {
           projects = json.decode(response.body)['data'];
-          filteredProjects =
-              projects; // Set the filtered list to all projects initially
+          filteredProjects = projects;
           isLoading = false;
         });
       } else {
-        setState(() {
-          // Set the filtered list to all projects initially
-          isLoading = false;
-        });
+        setState(() => isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No Projects Created Yet')),
+          const SnackBar(content: Text('No Projects Created Yet')),
         );
       }
     } catch (e) {
-      isLoading = false;
+      setState(() => isLoading = false);
     }
   }
 
   void filterProjects(String query) {
     setState(() {
       filteredProjects = projects.where((project) {
-        String title =
-            project['title'] ?? ''; // Default to empty string if null
-        String budget =
-            project['budget']?.toString() ?? ''; // Convert to string if null
-        String city = project['city'] ?? ''; // Default to empty string if null
-        String state =
-            project['state'] ?? ''; // Default to empty string if null
-
-        // Perform the filtering check
+        String title = project['title'] ?? '';
+        String budget = project['budget']?.toString() ?? '';
+        String city = project['city'] ?? '';
+        String state = project['state'] ?? '';
         return title.toLowerCase().contains(query.toLowerCase()) ||
             budget.toLowerCase().contains(query.toLowerCase()) ||
             city.toLowerCase().contains(query.toLowerCase()) ||
@@ -5418,22 +5365,12 @@ class _ProjectPageState extends State<ProjectPage> {
   String _searchText = '';
 
   void _startListening() async {
-    // Get selected language from the provider
     final language =
         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
-
-    // Set the locale based on the selected language
-    String localeId = language == 'en'
-        ? 'en_US'
-        : 'hi_IN'; // 'en' for English, 'hi' for Hindi
-
+    String localeId = language == 'en' ? 'en_US' : 'hi_IN';
     bool available = await _speech.initialize();
     if (available) {
-      setState(() {
-        _isListening = true;
-      });
-
-      // Start listening and use the localeId based on selected language
+      setState(() => _isListening = true);
       _speech.listen(
         localeId: localeId,
         onResult: (result) {
@@ -5444,21 +5381,77 @@ class _ProjectPageState extends State<ProjectPage> {
           });
         },
       );
-    } else {
-      // Handle speech recognition not available
-      print("Speech recognition is not available.");
     }
   }
 
   void _stopListening() {
-    setState(() {
-      _isListening = false;
-    });
+    setState(() => _isListening = false);
     _speech.stop();
+  }
+
+  String _formatDate(String dateString) {
+    if (dateString.isEmpty) return 'N/A';
+    try {
+      DateTime dateTime = DateTime.parse(dateString);
+      return DateFormat('dd MMM yyyy').format(dateTime);
+    } catch (e) {
+      return dateString;
+    }
+  }
+
+  // ── Premium Chip Widget ──
+  Widget _buildPremiumChip({
+    required IconData icon,
+    required String label,
+    required Color bgColor,
+    required Color iconColor,
+    required Color labelColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: bgColor.withOpacity(0.5), width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: iconColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: labelColor,
+              letterSpacing: 0.3,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Duration helper ──
+  String _getDurationLabel(dynamic days) {
+    if (days == null) return translateText('N/A');
+    String daysStr = days.toString();
+    int? daysInt = int.tryParse(daysStr);
+    if (daysInt != null && daysInt > 0) {
+      return '$daysInt ${translateText('days')}';
+    }
+    return translateText(daysStr);
   }
 
   @override
   Widget build(BuildContext context) {
+    final language =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+    String translate(String enText, String hiText) {
+      return language == 'en' ? enText : hiText;
+    }
+
     return WillPopScope(
       onWillPop: () async {
         SystemNavigator.pop();
@@ -5466,7 +5459,7 @@ class _ProjectPageState extends State<ProjectPage> {
       },
       child: Scaffold(
         body: Container(
-          decoration: const BoxDecoration(color: Colors.white),
+          color: Colors.white,
           child: SafeArea(
             child: Column(
               children: [
@@ -5475,14 +5468,10 @@ class _ProjectPageState extends State<ProjectPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: TextField(
                     controller: _searchController,
-                    onChanged: (value) {
-                      filterProjects(
-                          value); // Filter projects based on search input
-                    },
+                    onChanged: filterProjects,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.search, color: Colors.green),
-                      hintText: AppLocalizations.of(context)!
-                          .searchlabour, // Replace with AppLocalizations if needed
+                      hintText: AppLocalizations.of(context)!.searchlabour,
                       fillColor: Colors.white,
                       filled: true,
                       border: OutlineInputBorder(
@@ -5491,14 +5480,13 @@ class _ProjectPageState extends State<ProjectPage> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15.0),
-                        borderSide:
-                        const BorderSide(color: Colors.green, width: 2),
+                        borderSide: const BorderSide(color: Colors.green, width: 2),
                       ),
                       suffixIcon: MicIconButton(controller: _searchController),
                     ),
                   ),
                 ),
-                // Project List
+                // Project List – Premium Cards
                 Expanded(
                   child: isLoading
                       ? const Center(child: CircularProgressIndicator())
@@ -5506,7 +5494,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       ? Center(
                     child: Text(
                       AppLocalizations.of(context)!.noProjectsFound,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         color: Colors.brown,
@@ -5514,343 +5502,297 @@ class _ProjectPageState extends State<ProjectPage> {
                     ),
                   )
                       : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     itemCount: filteredProjects.length,
                     itemBuilder: (context, index) {
                       final project = filteredProjects[index];
+
+                      // Determine icon
+                      String iconEmoji = '📋';
+                      String projectType = project['project_type'] ?? '';
+                      if (projectType.contains('Crop')) iconEmoji = '🌾';
+                      else if (projectType.contains('Live')) iconEmoji = '🐄';
+                      else if (projectType.contains('Mach')) iconEmoji = '🚜';
+                      else if (projectType.contains('Post')) iconEmoji = '📦';
+                      else if (projectType.contains('Manage')) iconEmoji = '📊';
+
+                      String durationLabel = _getDurationLabel(project['days']);
+                      String budgetFormatted =
+                      NumberFormat('#,##0').format(project['budget'] ?? 0);
+
                       return Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 15),
+                        margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
-                          color: Colors
-                              .white, // Background color of the container
-                          borderRadius: BorderRadius.circular(
-                              8), // Rounds the corners
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white,
+                              Constants.AppColors.brandTint.withOpacity(0.08),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Constants.AppColors.brand.withOpacity(0.12),
+                            width: 1.2,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(
-                                  0.1), // Shadow color with transparency
-                              blurRadius: 8, // How soft the shadow is
-                              spreadRadius:
-                              3, // How much the shadow expands
-                              offset: Offset(0,
-                                  4), // Vertical and horizontal offset for the shadow
+                              color: Constants.AppColors.brand.withOpacity(0.06),
+                              blurRadius: 20,
+                              offset: const Offset(0, 6),
+                              spreadRadius: 2,
                             ),
                           ],
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                            children: [
-                              // Title with semi-bold
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 4.0),
-                                    child: Text(
-                                      translateText(
-                                          project['title'] ?? 'N/A'),
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight
-                                            .w600, // Semi-bold
-                                      ),
-                                      maxLines:
-                                      2, // Limit to two lines
-                                      overflow: TextOverflow
-                                          .ellipsis, // Show ellipsis after two lines
-                                      softWrap:
-                                      true, // Enable text wrapping
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                // Navigate to project details (same as before)
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProjectDetails(
+                                      projectId: project['id'].toString(),
                                     ),
                                   ),
-                                ],
-                              ),
-
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 4.0),
-                                    child: Text(
-                                      AppLocalizations.of(
-                                          context)!
-                                          .location +
-                                          " : ",
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight
-                                            .w600, // Semi-bold for title
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      "${translateText(project['city'] ?? 'N/A')} ${translateText(project['state'] ?? 'N/A')} ${project['pincode'] ?? 'N/A'}",
-                                      style: const TextStyle(
-                                          fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              // Project Type and Labours Required
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 4.0),
-                                    child: Row(
+                                );
+                              },
+                              splashColor: Constants.AppColors.brand.withOpacity(0.1),
+                              highlightColor: Constants.AppColors.brand.withOpacity(0.05),
+                              child: Padding(
+                                padding: const EdgeInsets.all(18.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // ── Top row ──
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          AppLocalizations.of(
-                                              context)!
-                                              .projectType +
-                                              " : ",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight
-                                                .w600, // Semi-bold for title
-                                          ),
-                                        ),
-                                        Text(
-                                          translateText('On ' +
-                                              (project[
-                                              'project_type'] ??
-                                                  'N/A')),
-                                          style: const TextStyle(
-                                              fontSize: 16),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 4.0),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          AppLocalizations.of(
-                                              context)!
-                                              .noOfLaboursRequired +
-                                              " : ",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight
-                                                .w600, // Semi-bold for title
-                                          ),
-                                        ),
-                                        Text(
-                                          (project['qty_labours'] ??
-                                              'N/A'),
-                                          style: const TextStyle(
-                                              fontSize: 16),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 4.0),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          AppLocalizations.of(
-                                              context)!
-                                              .requiredSkills +
-                                              " : ",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight
-                                                .w600, // Semi-bold for title
-                                          ),
-                                        ),
+                                        // Category Icon
                                         Container(
-                                          constraints: BoxConstraints(
-                                            maxWidth:
-                                            MediaQuery.of(context)
-                                                .size
-                                                .width -
-                                                170,
+                                          width: 48,
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                Constants.AppColors.brandTint,
+                                                Constants.AppColors.brandSoft.withOpacity(0.3),
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.circular(14),
                                           ),
+                                          child: Center(
+                                            child: Text(
+                                              iconEmoji,
+                                              style: const TextStyle(fontSize: 22),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 14),
+                                        // Title and Type
+                                        Expanded(
                                           child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment
-                                                .start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                (translateText(project[
-                                                'required_skills'] ??
-                                                    'N/A')),
-                                                style:
-                                                const TextStyle(
-                                                    fontSize: 16),
+                                                translateText(project['title']?.toString() ?? 'No Title'),
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Color(0xFF1A1A2E),
+                                                  height: 1.3,
+                                                ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  color: Constants.AppColors.brandTint.withOpacity(0.5),
+                                                  borderRadius: BorderRadius.circular(20),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    const Text('🌾', style: TextStyle(fontSize: 12)),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      translateText(project['project_type'] ?? 'N/A'),
+                                                      style: TextStyle(
+                                                        fontSize: 11,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Constants.AppColors.brandDeep,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        // Date Badge
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFF8FAFC),
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(color: const Color(0xFFE2E8F0), width: 0.8),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(Icons.calendar_today_outlined, size: 11, color: Color(0xFF64748B)),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                _formatDate(project['created_at']?.toString() ?? ''),
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xFF64748B),
+                                                ),
                                               ),
                                             ],
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 4.0),
-                                    child: Row(
+                                    const SizedBox(height: 14),
+
+                                    // ── Location ──
+                                    Row(
                                       children: [
-                                        Text(
-                                          AppLocalizations.of(
-                                              context)!
-                                              .budget +
-                                              " : ",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight
-                                                .w600, // Semi-bold for title
+                                        const Icon(Icons.location_on_outlined, size: 14, color: Color(0xFF64748B)),
+                                        const SizedBox(width: 6),
+                                        Expanded(
+                                          child: Text(
+                                            "${translateText(project['city'] ?? 'N/A')}, ${translateText(project['state'] ?? 'N/A')}",
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xFF475569),
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          (project['budget']
-                                              .toString() ??
-                                              'N/A') +
-                                              "  ",
-                                          style: const TextStyle(
-                                              fontSize: 16),
-                                        ),
-                                        Text(
-                                          AppLocalizations.of(
-                                              context)!
-                                              .duration +
-                                              " : ",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight
-                                                .w600, // Semi-bold for title
-                                          ),
-                                        ),
-                                        Text(
-                                          (project['days']
-                                              .toString() ??
-                                              'N/A'),
-                                          style: const TextStyle(
-                                              fontSize: 16),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
+                                    const SizedBox(height: 14),
 
-                              const SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  if (project['applicants']
-                                      .toString() ==
-                                      "1")
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ProjectApplicationsPage(
-                                                  projectId: project['id']
-                                                      .toString(),
+                                    // ── Stats Chips ──
+                                    Row(
+                                      children: [
+                                        _buildPremiumChip(
+                                          icon: Icons.people_outline,
+                                          label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
+                                          bgColor: const Color(0xFFF0FDF4),
+                                          iconColor: const Color(0xFF16A34A),
+                                          labelColor: const Color(0xFF166534),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        _buildPremiumChip(
+                                          icon: Icons.currency_rupee,
+                                          label: '₹$budgetFormatted',
+                                          bgColor: const Color(0xFFFFF7ED),
+                                          iconColor: const Color(0xFFEA580C),
+                                          labelColor: const Color(0xFF9A3412),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        _buildPremiumChip(
+                                          icon: Icons.access_time_outlined,
+                                          label: durationLabel,
+                                          bgColor: const Color(0xFFEFF6FF),
+                                          iconColor: const Color(0xFF2563EB),
+                                          labelColor: const Color(0xFF1E3A8A),
+                                        ),
+                                        if (project['applicants'] != null && int.tryParse(project['applicants'].toString())! > 0) ...[
+                                          const SizedBox(width: 8),
+                                          _buildPremiumChip(
+                                            icon: Icons.person_add_alt_1,
+                                            label: '${project['applicants']} ${translate('Applied', 'आवेदन')}',
+                                            bgColor: const Color(0xFFF3E8FF),
+                                            iconColor: const Color(0xFF7C3AED),
+                                            labelColor: const Color(0xFF4C1D95),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+
+                                    // ── Details Button ──
+                                    Container(
+                                      width: double.infinity,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        gradient: Constants.AppColors.brandGradient,
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Constants.AppColors.brand.withOpacity(0.3),
+                                            blurRadius: 12,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          // Navigate to project details
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ProjectDetails(
+                                                projectId: project['id'].toString(),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.transparent,
+                                          shadowColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: const Size(double.infinity, 48),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                translateText('View Details'),
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white,
+                                                  letterSpacing: 0.5,
+                                                  height: 1.2,
                                                 ),
-                                          ),
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                        const Color.fromARGB(
-                                            255, 19, 70, 27),
-                                        foregroundColor: Colors.green,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.all(
-                                            Radius.circular(
-                                                2.0), // Curves all corners
-                                          ),
+                                                overflow: TextOverflow.ellipsis,
+                                                softWrap: true,
+                                                maxLines: 1,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            const Icon(
+                                              Icons.arrow_forward_ios_rounded,
+                                              size: 14,
+                                              color: Colors.white,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      child: Text(
-                                        AppLocalizations.of(context)!
-                                            .viewApplications,
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      ),
                                     ),
-                                  if (project['applicants']
-                                      .toString() ==
-                                      "1")
-                                    const SizedBox(width: 10),
-                                  ElevatedButton(
-                                    onPressed:
-                                    project['applicants']
-                                        .toString() ==
-                                        "1"
-                                        ? () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ProjectDetails(
-                                                  projectId:
-                                                  project['id']
-                                                      .toString()),
-                                        ),
-                                      );
-                                    }
-                                        : () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              UpdateProject(
-                                                  projectId:
-                                                  project['id']
-                                                      .toString()),
-                                        ),
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                      const Color.fromARGB(
-                                          255, 19, 70, 27),
-                                      foregroundColor: Colors.green,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.all(
-                                            Radius.circular(2.0)),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      translateText('Details'),
-                                      style: const TextStyle(
-                                          color: Colors.white),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       );
@@ -5865,6 +5807,638 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 }
+
+// class ProjectPage extends StatefulWidget {
+//   @override
+//   _ProjectPageState createState() => _ProjectPageState();
+// }
+//
+// class _ProjectPageState extends State<ProjectPage> {
+//   final _secureStorage = const FlutterSecureStorage();
+//   List<dynamic> projects = [];
+//   List<dynamic> filteredProjects = []; // To store filtered results
+//   bool isLoading = true;
+//   TextEditingController _searchController = TextEditingController();
+//   String _selectedLanguage = 'en'; // Default language is English
+//
+//   Future<void> loadLanguage() async {
+//     // Read the selected language from FlutterSecureStorage
+//     String? language = await _secureStorage.read(key: 'selectedLanguage');
+//     _selectedLanguage = language ?? 'en';
+//     print(language); // Default to English if null
+//   }
+//
+//   Map<String, Map<String, String>> _cachedTranslations = {};
+//
+//   Map<String, Map<String, String>> translations =
+//       Constants.AppConstants.translations;
+//   final GoogleTranslator _translator = GoogleTranslator();
+//   late stt.SpeechToText _speech;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _speech = stt.SpeechToText();
+//
+//     fetchProjects();
+//     loadLanguage();
+//   }
+//
+//   String translateText(String text) {
+//     final language =
+//         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+//     if (text.isEmpty) return "";
+//
+//     // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
+//     String targetLang = language ?? 'en'; // Default to English if null
+//
+//     // ✅ Check manual translations first
+//     if (translations.containsKey(text) &&
+//         translations[text]!.containsKey(targetLang)) {
+//       return translations[text]![targetLang]!; // Return manual translation
+//     }
+//
+//     // ✅ Check cached translations
+//     if (_cachedTranslations.containsKey(text) &&
+//         _cachedTranslations[text]!.containsKey(targetLang)) {
+//       return _cachedTranslations[text]![
+//       targetLang]!; // Return cached translation
+//     }
+//
+//     // ✅ Fetch translation dynamically (but without `await`)
+//     _fetchTranslation(text, targetLang); // Runs in background, no need to wait
+//
+//     return text; // Return original text while translation is being fetched
+//   }
+//
+//   /// ✅ Fetch translation dynamically and update cache
+//   Future<void> _fetchTranslation(String text, String targetLang) async {
+//     try {
+//       // ✅ Check if translation already exists in constants
+//       if (Constants.AppConstants.translations.containsKey(text) &&
+//           Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
+//         return; // No need to fetch if it exists
+//       }
+//
+//       // ✅ Fetch translation dynamically
+//       final translation = await _translator.translate(text, to: targetLang);
+//
+//       // ✅ Initialize default values if text is not in the map
+//       if (!translations.containsKey(text)) {
+//         translations[text] = {
+//           "en": text,
+//           "hi": text
+//         }; // Default to the same value
+//       }
+//
+//       // ✅ Store the translation in the correct language
+//       translations[text]![targetLang] = translation.text;
+//
+//       // ✅ Store fetched translations in the cache
+//       _cachedTranslations = translations;
+//
+//       // ✅ Also store in the constants translations map
+//       if (!Constants.AppConstants.translations.containsKey(text)) {
+//         Constants.AppConstants.translations[text] = {};
+//       }
+//       Constants.AppConstants.translations[text]![targetLang] = translation.text;
+//
+//       // ✅ Check for missing translations and fetch dynamically
+//       for (var key in translations.keys) {
+//         if (!translations[key]!.containsKey("hi")) {
+//           await _fetchTranslation(key, "hi");
+//         }
+//         if (!translations[key]!.containsKey("en")) {
+//           await _fetchTranslation(key, "en");
+//         }
+//       }
+//
+//       // ✅ Store translation in cache
+//       _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
+//           translation.text;
+//       setState(() {});
+//     } catch (e) {
+//       print("Translation error: $e");
+//     }
+//   }
+//
+//   Future<void> fetchProjects() async {
+//     final String apiUrl = '${Constants.AppConstants.apiUrl}farmer/getprojects';
+//
+//     // Get user ID from secure storage
+//     String? userId = await _secureStorage.read(key: 'id');
+//     if (userId == null) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('User ID not found in secure storage')),
+//       );
+//       return;
+//     }
+//
+//     final Map<String, dynamic> requestBody = {
+//       'id': userId,
+//     };
+//
+//     print(jsonEncode(requestBody));
+//
+//     try {
+//       final response = await http.post(
+//         Uri.parse(apiUrl),
+//         headers: {'Content-Type': 'application/json'},
+//         body: jsonEncode(requestBody),
+//       );
+//       print(json.decode(response.body)['data']);
+//       if (response.statusCode == 200) {
+//         setState(() {
+//           projects = json.decode(response.body)['data'];
+//           filteredProjects =
+//               projects; // Set the filtered list to all projects initially
+//           isLoading = false;
+//         });
+//       } else {
+//         setState(() {
+//           // Set the filtered list to all projects initially
+//           isLoading = false;
+//         });
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('No Projects Created Yet')),
+//         );
+//       }
+//     } catch (e) {
+//       isLoading = false;
+//     }
+//   }
+//
+//   void filterProjects(String query) {
+//     setState(() {
+//       filteredProjects = projects.where((project) {
+//         String title =
+//             project['title'] ?? ''; // Default to empty string if null
+//         String budget =
+//             project['budget']?.toString() ?? ''; // Convert to string if null
+//         String city = project['city'] ?? ''; // Default to empty string if null
+//         String state =
+//             project['state'] ?? ''; // Default to empty string if null
+//
+//         // Perform the filtering check
+//         return title.toLowerCase().contains(query.toLowerCase()) ||
+//             budget.toLowerCase().contains(query.toLowerCase()) ||
+//             city.toLowerCase().contains(query.toLowerCase()) ||
+//             state.toLowerCase().contains(query.toLowerCase());
+//       }).toList();
+//     });
+//   }
+//
+//   bool _isListening = false;
+//   String _searchText = '';
+//
+//   void _startListening() async {
+//     // Get selected language from the provider
+//     final language =
+//         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+//
+//     // Set the locale based on the selected language
+//     String localeId = language == 'en'
+//         ? 'en_US'
+//         : 'hi_IN'; // 'en' for English, 'hi' for Hindi
+//
+//     bool available = await _speech.initialize();
+//     if (available) {
+//       setState(() {
+//         _isListening = true;
+//       });
+//
+//       // Start listening and use the localeId based on selected language
+//       _speech.listen(
+//         localeId: localeId,
+//         onResult: (result) {
+//           setState(() {
+//             _searchText = result.recognizedWords;
+//             _searchController.text = _searchText;
+//             filterProjects(_searchText);
+//           });
+//         },
+//       );
+//     } else {
+//       // Handle speech recognition not available
+//       print("Speech recognition is not available.");
+//     }
+//   }
+//
+//   void _stopListening() {
+//     setState(() {
+//       _isListening = false;
+//     });
+//     _speech.stop();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return WillPopScope(
+//       onWillPop: () async {
+//         SystemNavigator.pop();
+//         return false;
+//       },
+//       child: Scaffold(
+//         body: Container(
+//           decoration: const BoxDecoration(color: Colors.white),
+//           child: SafeArea(
+//             child: Column(
+//               children: [
+//                 // Search Bar
+//                 Padding(
+//                   padding: const EdgeInsets.all(16.0),
+//                   child: TextField(
+//                     controller: _searchController,
+//                     onChanged: (value) {
+//                       filterProjects(
+//                           value); // Filter projects based on search input
+//                     },
+//                     decoration: InputDecoration(
+//                       prefixIcon: const Icon(Icons.search, color: Colors.green),
+//                       hintText: AppLocalizations.of(context)!
+//                           .searchlabour, // Replace with AppLocalizations if needed
+//                       fillColor: Colors.white,
+//                       filled: true,
+//                       border: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(15.0),
+//                         borderSide: const BorderSide(color: Colors.green),
+//                       ),
+//                       focusedBorder: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(15.0),
+//                         borderSide:
+//                         const BorderSide(color: Colors.green, width: 2),
+//                       ),
+//                       suffixIcon: MicIconButton(controller: _searchController),
+//                     ),
+//                   ),
+//                 ),
+//                 // Project List
+//                 Expanded(
+//                   child: isLoading
+//                       ? const Center(child: CircularProgressIndicator())
+//                       : filteredProjects.isEmpty
+//                       ? Center(
+//                     child: Text(
+//                       AppLocalizations.of(context)!.noProjectsFound,
+//                       style: TextStyle(
+//                         fontSize: 18,
+//                         fontWeight: FontWeight.w500,
+//                         color: Colors.brown,
+//                       ),
+//                     ),
+//                   )
+//                       : ListView.builder(
+//                     itemCount: filteredProjects.length,
+//                     itemBuilder: (context, index) {
+//                       final project = filteredProjects[index];
+//                       return Container(
+//                         margin: const EdgeInsets.symmetric(
+//                             vertical: 10, horizontal: 15),
+//                         decoration: BoxDecoration(
+//                           color: Colors
+//                               .white, // Background color of the container
+//                           borderRadius: BorderRadius.circular(
+//                               8), // Rounds the corners
+//                           boxShadow: [
+//                             BoxShadow(
+//                               color: Colors.black.withOpacity(
+//                                   0.1), // Shadow color with transparency
+//                               blurRadius: 8, // How soft the shadow is
+//                               spreadRadius:
+//                               3, // How much the shadow expands
+//                               offset: Offset(0,
+//                                   4), // Vertical and horizontal offset for the shadow
+//                             ),
+//                           ],
+//                         ),
+//                         child: Padding(
+//                           padding: const EdgeInsets.all(15.0),
+//                           child: Column(
+//                             crossAxisAlignment:
+//                             CrossAxisAlignment.start,
+//                             children: [
+//                               // Title with semi-bold
+//                               Row(
+//                                 children: [
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(
+//                                         left: 4.0),
+//                                     child: Text(
+//                                       translateText(
+//                                           project['title'] ?? 'N/A'),
+//                                       style: const TextStyle(
+//                                         fontSize: 16,
+//                                         fontWeight: FontWeight
+//                                             .w600, // Semi-bold
+//                                       ),
+//                                       maxLines:
+//                                       2, // Limit to two lines
+//                                       overflow: TextOverflow
+//                                           .ellipsis, // Show ellipsis after two lines
+//                                       softWrap:
+//                                       true, // Enable text wrapping
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//
+//                               Row(
+//                                 children: [
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(
+//                                         left: 4.0),
+//                                     child: Text(
+//                                       AppLocalizations.of(
+//                                           context)!
+//                                           .location +
+//                                           " : ",
+//                                       style: const TextStyle(
+//                                         fontSize: 14,
+//                                         fontWeight: FontWeight
+//                                             .w600, // Semi-bold for title
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   Expanded(
+//                                     child: Text(
+//                                       "${translateText(project['city'] ?? 'N/A')} ${translateText(project['state'] ?? 'N/A')} ${project['pincode'] ?? 'N/A'}",
+//                                       style: const TextStyle(
+//                                           fontSize: 16),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               // Project Type and Labours Required
+//                               Row(
+//                                 children: [
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(
+//                                         left: 4.0),
+//                                     child: Row(
+//                                       children: [
+//                                         Text(
+//                                           AppLocalizations.of(
+//                                               context)!
+//                                               .projectType +
+//                                               " : ",
+//                                           style: const TextStyle(
+//                                             fontSize: 14,
+//                                             fontWeight: FontWeight
+//                                                 .w600, // Semi-bold for title
+//                                           ),
+//                                         ),
+//                                         Text(
+//                                           translateText('On ' +
+//                                               (project[
+//                                               'project_type'] ??
+//                                                   'N/A')),
+//                                           style: const TextStyle(
+//                                               fontSize: 16),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               Row(
+//                                 children: [
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(
+//                                         left: 4.0),
+//                                     child: Row(
+//                                       children: [
+//                                         Text(
+//                                           AppLocalizations.of(
+//                                               context)!
+//                                               .noOfLaboursRequired +
+//                                               " : ",
+//                                           style: const TextStyle(
+//                                             fontSize: 14,
+//                                             fontWeight: FontWeight
+//                                                 .w600, // Semi-bold for title
+//                                           ),
+//                                         ),
+//                                         Text(
+//                                           (project['qty_labours'] ??
+//                                               'N/A'),
+//                                           style: const TextStyle(
+//                                               fontSize: 16),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               Row(
+//                                 crossAxisAlignment:
+//                                 CrossAxisAlignment.start,
+//                                 children: [
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(
+//                                         left: 4.0),
+//                                     child: Row(
+//                                       crossAxisAlignment:
+//                                       CrossAxisAlignment.start,
+//                                       children: [
+//                                         Text(
+//                                           AppLocalizations.of(
+//                                               context)!
+//                                               .requiredSkills +
+//                                               " : ",
+//                                           style: const TextStyle(
+//                                             fontSize: 14,
+//                                             fontWeight: FontWeight
+//                                                 .w600, // Semi-bold for title
+//                                           ),
+//                                         ),
+//                                         Container(
+//                                           constraints: BoxConstraints(
+//                                             maxWidth:
+//                                             MediaQuery.of(context)
+//                                                 .size
+//                                                 .width -
+//                                                 170,
+//                                           ),
+//                                           child: Column(
+//                                             mainAxisAlignment:
+//                                             MainAxisAlignment
+//                                                 .start,
+//                                             crossAxisAlignment:
+//                                             CrossAxisAlignment
+//                                                 .start,
+//                                             children: [
+//                                               Text(
+//                                                 (translateText(project[
+//                                                 'required_skills'] ??
+//                                                     'N/A')),
+//                                                 style:
+//                                                 const TextStyle(
+//                                                     fontSize: 16),
+//                                               ),
+//                                             ],
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               Row(
+//                                 children: [
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(
+//                                         left: 4.0),
+//                                     child: Row(
+//                                       children: [
+//                                         Text(
+//                                           AppLocalizations.of(
+//                                               context)!
+//                                               .budget +
+//                                               " : ",
+//                                           style: const TextStyle(
+//                                             fontSize: 14,
+//                                             fontWeight: FontWeight
+//                                                 .w600, // Semi-bold for title
+//                                           ),
+//                                         ),
+//                                         Text(
+//                                           (project['budget']
+//                                               .toString() ??
+//                                               'N/A') +
+//                                               "  ",
+//                                           style: const TextStyle(
+//                                               fontSize: 16),
+//                                         ),
+//                                         Text(
+//                                           AppLocalizations.of(
+//                                               context)!
+//                                               .duration +
+//                                               " : ",
+//                                           style: const TextStyle(
+//                                             fontSize: 14,
+//                                             fontWeight: FontWeight
+//                                                 .w600, // Semi-bold for title
+//                                           ),
+//                                         ),
+//                                         Text(
+//                                           (project['days']
+//                                               .toString() ??
+//                                               'N/A'),
+//                                           style: const TextStyle(
+//                                               fontSize: 16),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//
+//                               const SizedBox(height: 10),
+//                               Row(
+//                                 children: [
+//                                   if (project['applicants']
+//                                       .toString() ==
+//                                       "1")
+//                                     ElevatedButton(
+//                                       onPressed: () {
+//                                         Navigator.push(
+//                                           context,
+//                                           MaterialPageRoute(
+//                                             builder: (context) =>
+//                                                 ProjectApplicationsPage(
+//                                                   projectId: project['id']
+//                                                       .toString(),
+//                                                 ),
+//                                           ),
+//                                         );
+//                                       },
+//                                       style: ElevatedButton.styleFrom(
+//                                         backgroundColor:
+//                                         const Color.fromARGB(
+//                                             255, 19, 70, 27),
+//                                         foregroundColor: Colors.green,
+//                                         shape: RoundedRectangleBorder(
+//                                           borderRadius:
+//                                           BorderRadius.all(
+//                                             Radius.circular(
+//                                                 2.0), // Curves all corners
+//                                           ),
+//                                         ),
+//                                       ),
+//                                       child: Text(
+//                                         AppLocalizations.of(context)!
+//                                             .viewApplications,
+//                                         style: const TextStyle(
+//                                             color: Colors.white),
+//                                       ),
+//                                     ),
+//                                   if (project['applicants']
+//                                       .toString() ==
+//                                       "1")
+//                                     const SizedBox(width: 10),
+//                                   ElevatedButton(
+//                                     onPressed:
+//                                     project['applicants']
+//                                         .toString() ==
+//                                         "1"
+//                                         ? () {
+//                                       Navigator.push(
+//                                         context,
+//                                         MaterialPageRoute(
+//                                           builder: (context) =>
+//                                               ProjectDetails(
+//                                                   projectId:
+//                                                   project['id']
+//                                                       .toString()),
+//                                         ),
+//                                       );
+//                                     }
+//                                         : () {
+//                                       Navigator.push(
+//                                         context,
+//                                         MaterialPageRoute(
+//                                           builder: (context) =>
+//                                               UpdateProject(
+//                                                   projectId:
+//                                                   project['id']
+//                                                       .toString()),
+//                                         ),
+//                                       );
+//                                     },
+//                                     style: ElevatedButton.styleFrom(
+//                                       backgroundColor:
+//                                       const Color.fromARGB(
+//                                           255, 19, 70, 27),
+//                                       foregroundColor: Colors.green,
+//                                       shape: RoundedRectangleBorder(
+//                                         borderRadius:
+//                                         BorderRadius.all(
+//                                             Radius.circular(2.0)),
+//                                       ),
+//                                     ),
+//                                     child: Text(
+//                                       translateText('Details'),
+//                                       style: const TextStyle(
+//                                           color: Colors.white),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class ProfilePage extends StatelessWidget {
   @override

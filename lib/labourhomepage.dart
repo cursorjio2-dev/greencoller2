@@ -4738,11 +4738,11 @@ class _LabourhomepageState extends State<Labourhomepage> {
                         future: translateText('Wallet'),
                         builder: (context, snapshot) {
                           final walletTitle = snapshot.data ?? 'Wallet';
-                          final coinsText = _selectedLanguage == 'en'
-                              ? '($_walletCoins coins)'
-                              : '($_walletCoins सिक्के)';
+                          // final coinsText = _selectedLanguage == 'en'
+                          //     ? '($_walletCoins coins)'
+                          //     : '($_walletCoins सिक्के)';
                           return Text(
-                            '$walletTitle $coinsText',
+                            '$walletTitle-------------------------------------------',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           );
                         },
