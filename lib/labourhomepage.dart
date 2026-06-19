@@ -5872,8 +5872,8 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ProjectDetails(
-                                        projectId: project['id'].toString(),
+                                      builder: (context) => ProjectDetailsPage(
+                                        projectId: int.parse(project['id'].toString()),
                                       ),
                                     ),
                                   );
@@ -6106,10 +6106,9 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ProjectDetails(
-                                                      projectId: project['id'].toString(),
-                                                    ),
+                                                builder: (context) => ProjectDetailsPage(
+                                                   projectId: int.parse(project['id'].toString()),
+                                                 ),
                                               ),
                                             );
                                           },

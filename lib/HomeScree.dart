@@ -5722,70 +5722,98 @@ class _ProjectPageState extends State<ProjectPage> {
                                     ),
                                     const SizedBox(height: 16),
 
-                                    // ── Details Button ──
-                                    Container(
-                                      width: double.infinity,
-                                      height: 48,
-                                      decoration: BoxDecoration(
-                                        gradient: Constants.AppColors.brandGradient,
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Constants.AppColors.brand.withOpacity(0.3),
-                                            blurRadius: 12,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          // Navigate to project details
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => ProjectDetails(
-                                                projectId: project['id'].toString(),
+                                    // ── Action Buttons ──
+                                    Row(
+                                      children: [
+                                        // View Details Button
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 48,
+                                            child: OutlinedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => ProjectDetails(
+                                                      projectId: project['id'].toString(),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              style: OutlinedButton.styleFrom(
+                                                side: BorderSide(
+                                                  color: Constants.AppColors.brand,
+                                                  width: 1.5,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                              ),
+                                              child: Text(
+                                                AppLocalizations.of(context)!.viewDetails,
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Constants.AppColors.brand,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.transparent,
-                                          shadowColor: Colors.transparent,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
                                           ),
-                                          padding: EdgeInsets.zero,
-                                          minimumSize: const Size(double.infinity, 48),
                                         ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Flexible(
+                                        const SizedBox(width: 12),
+                                        // View Applications Button
+                                        Expanded(
+                                          child: Container(
+                                            height: 48,
+                                            decoration: BoxDecoration(
+                                              gradient: Constants.AppColors.brandGradient,
+                                              borderRadius: BorderRadius.circular(12),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Constants.AppColors.brand.withOpacity(0.3),
+                                                  blurRadius: 8,
+                                                  offset: const Offset(0, 3),
+                                                ),
+                                              ],
+                                            ),
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => ProjectApplicationsPage(
+                                                      projectId: project['id'].toString(),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.transparent,
+                                                shadowColor: Colors.transparent,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                              ),
                                               child: Text(
-                                                translateText('View Details'),
+                                                AppLocalizations.of(context)!.viewApplications,
                                                 style: const TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 13,
                                                   fontWeight: FontWeight.w700,
                                                   color: Colors.white,
-                                                  letterSpacing: 0.5,
-                                                  height: 1.2,
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
-                                                softWrap: true,
-                                                maxLines: 1,
                                                 textAlign: TextAlign.center,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                            const SizedBox(width: 8),
-                                            const Icon(
-                                              Icons.arrow_forward_ios_rounded,
-                                              size: 14,
-                                              color: Colors.white,
-                                            ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -6450,6 +6478,14 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// ProjectApplicationsPage – Premium UI for farmer’s project applications
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ProjectApplicationsPage – with confirmation for Assign & Unassign
+// ─────────────────────────────────────────────────────────────────────────────
+
 class ProjectApplicationsPage extends StatefulWidget {
   final String projectId;
 
@@ -6463,19 +6499,73 @@ class ProjectApplicationsPage extends StatefulWidget {
 class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
   bool isLoading = true;
   List<dynamic> applications = [];
-
   final _secureStorage = const FlutterSecureStorage();
   bool _isProcessing = false;
-  late stt.SpeechToText _speech;
 
+  // ─── Translation ──────────────────────────────────────────────────────
+  String _selectedLanguage = 'en';
+  Map<String, Map<String, String>> _cachedTranslations = {};
+  Map<String, Map<String, String>> translations =
+      Constants.AppConstants.translations;
+  final GoogleTranslator _translator = GoogleTranslator();
+
+  Future<void> loadLanguage() async {
+    String? language = await _secureStorage.read(key: 'selectedLanguage');
+    _selectedLanguage = language ?? 'en';
+  }
+
+  String translateText(String text) {
+    if (text.isEmpty) return "";
+    String targetLang = _selectedLanguage ?? 'en';
+    if (translations.containsKey(text) &&
+        translations[text]!.containsKey(targetLang)) {
+      return translations[text]![targetLang]!;
+    }
+    if (_cachedTranslations.containsKey(text) &&
+        _cachedTranslations[text]!.containsKey(targetLang)) {
+      return _cachedTranslations[text]![targetLang]!;
+    }
+    _fetchTranslation(text, targetLang);
+    return text;
+  }
+
+  Future<void> _fetchTranslation(String text, String targetLang) async {
+    try {
+      if (Constants.AppConstants.translations.containsKey(text) &&
+          Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
+        return;
+      }
+      final translation = await _translator.translate(text, to: targetLang);
+      if (!translations.containsKey(text)) {
+        translations[text] = {"en": text, "hi": text};
+      }
+      translations[text]![targetLang] = translation.text;
+      _cachedTranslations = translations;
+      if (!Constants.AppConstants.translations.containsKey(text)) {
+        Constants.AppConstants.translations[text] = {};
+      }
+      Constants.AppConstants.translations[text]![targetLang] = translation.text;
+      _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
+          translation.text;
+      setState(() {});
+    } catch (e) {
+      print("Translation error: $e");
+    }
+  }
+
+  String translate(String enText, String hiText) {
+    return _selectedLanguage == 'en' ? enText : hiText;
+  }
+
+  // ─── Lifecycle ──────────────────────────────────────────────────────
   @override
   void initState() {
     super.initState();
-    _speech = stt.SpeechToText();
     loadLanguage();
     fetchProjectApplications();
   }
 
+  // ─── API calls ──────────────────────────────────────────────────────
   Future<void> fetchProjectApplications() async {
     final String apiUrl =
         '${Constants.AppConstants.apiUrl}farmer/farmerProjectDetails';
@@ -6487,14 +6577,11 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
       return;
     }
 
-    // Prepare the request body
     final Map<String, dynamic> requestBody = {
       'id': userId,
       'project_id': widget.projectId,
     };
-    print(
-      jsonEncode(requestBody),
-    );
+
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -6507,31 +6594,29 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
         if (responseData['success'] == true) {
           setState(() {
             applications = responseData['data']['applications'];
-            print(applications);
             isLoading = false;
           });
         } else {
+          setState(() => isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to fetch project details')),
+            const SnackBar(content: Text('Failed to fetch project details')),
           );
         }
       } else {
+        setState(() => isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to fetch project details')),
+          const SnackBar(content: Text('Failed to fetch project details')),
         );
       }
-    } catch (e) {}
+    } catch (e) {
+      setState(() => isLoading = false);
+    }
   }
 
+  // ─── Action methods ─────────────────────────────────────────────────
   Future<void> unassignProject(String labourId, String projectId) async {
-    setState(() {
-      _isProcessing = true; // Show loading indicator
-    });
-
-    // API URL
+    setState(() => _isProcessing = true);
     String url = '${Constants.AppConstants.apiUrl}farmer/unassignProject';
-
-    // Sending POST request
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -6541,47 +6626,26 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
           'projectids': projectId,
         }),
       );
-
       if (response.statusCode == 200) {
-        // Success, show message and update UI
         final data = json.decode(response.body);
         if (data['status'] == '1') {
           await fetchProjectApplications();
-          setState(() {
-            _isProcessing = false; // Hide loading indicator
-          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(data['message'])),
           );
         }
-      } else {
-        setState(() {
-          _isProcessing = false; // Hide loading indicator
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to unassign job')),
-        );
       }
     } catch (e) {
-      setState(() {
-        _isProcessing = false; // Hide loading indicator
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      // ignore
+    } finally {
+      setState(() => _isProcessing = false);
     }
   }
 
   Future<void> cancelConfirm(
       String projectId, String labourId, String cancelRemark) async {
-    setState(() {
-      _isProcessing = true; // Show loading indicator
-    });
-
-    // API URL
+    setState(() => _isProcessing = true);
     String url = '${Constants.AppConstants.apiUrl}farmer/cancelConfirm';
-
-    // Sending POST request
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -6592,53 +6656,36 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
           'cancelremark': cancelRemark,
         }),
       );
-
       if (response.statusCode == 200) {
-        // Success, show message and update UI
         final data = json.decode(response.body);
         if (data['status'] == '1') {
           await fetchProjectApplications();
-          setState(() {
-            _isProcessing = false; // Hide loading indicator
-          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(data['message'])),
           );
         }
-      } else {
-        setState(() {
-          _isProcessing = false; // Hide loading indicator
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send cancel request')),
-        );
       }
     } catch (e) {
-      setState(() {
-        _isProcessing = false; // Hide loading indicator
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      // ignore
+    } finally {
+      setState(() => _isProcessing = false);
     }
   }
 
-  // Function to show the dialog for cancel remarks
   void showCancelDialog(BuildContext context, String labourId) {
     TextEditingController _cancelRemarkController = TextEditingController();
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Cancel Remark'),
+          title: Text(translate('Cancel Remark', 'रद्द करने का कारण')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: _cancelRemarkController,
                 decoration: InputDecoration(
-                  labelText: 'Enter Cancel Remark',
+                  labelText: translate('Enter Cancel Remark', 'रद्द करने का कारण दर्ज करें'),
                   border: OutlineInputBorder(),
                   suffixIcon: MicIconButton(controller: _cancelRemarkController),
                 ),
@@ -6648,10 +6695,8 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(translate('Cancel', 'रद्द करें')),
             ),
             TextButton(
               onPressed: () {
@@ -6661,14 +6706,14 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                     labourId,
                     _cancelRemarkController.text,
                   );
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Remark cannot be empty')),
                   );
                 }
               },
-              child: const Text('Submit'),
+              child: Text(translate('Submit', 'सबमिट करें')),
             ),
           ],
         );
@@ -6677,14 +6722,8 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
   }
 
   Future<void> confirmComplete(String projectId, String labourId) async {
-    setState(() {
-      _isProcessing = true; // Show loading indicator
-    });
-
-    // API URL
+    setState(() => _isProcessing = true);
     String url = '${Constants.AppConstants.apiUrl}farmer/confirmComplete';
-
-    // Sending POST request
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -6694,36 +6733,50 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
           'labourid': labourId,
         }),
       );
-
       if (response.statusCode == 200) {
-        // Success, show message and update UI
         final data = json.decode(response.body);
         if (data['status'] == '1') {
           await fetchProjectApplications();
-          setState(() {
-            _isProcessing = false; // Hide loading indicator
-          });
-
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(data['message'])),
           );
         }
-      } else {
-        setState(() {
-          _isProcessing = false; // Hide loading indicator
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to confirm completion')),
-        );
       }
     } catch (e) {
-      setState(() {
-        _isProcessing = false; // Hide loading indicator
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      // ignore
+    } finally {
+      setState(() => _isProcessing = false);
     }
+  }
+
+  // ─── Assign with confirmation ──────────────────────────────────────
+  Future<void> _assignWithConfirmation(String labourId) async {
+    bool? confirm = await _showAssignConfirmationDialog();
+    if (confirm == true) {
+      await assignProject(labourId);
+    }
+  }
+
+  Future<bool?> _showAssignConfirmationDialog() {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(translate('Assign Project', 'परियोजना असाइन करें')),
+        content: Text(translate(
+            'Are you sure you want to assign this project to the selected worker?',
+            'क्या आप सुनिश्चित हैं कि आप इस परियोजना को चयनित कार्यकर्ता को असाइन करना चाहते हैं?')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(translate('Cancel', 'रद्द करें')),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(translate('Yes', 'हाँ')),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> assignProject(String labourId) async {
@@ -6737,7 +6790,6 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
       return;
     }
 
-    // Prepare the request body
     final Map<String, dynamic> requestBody = {
       'labourid': labourId,
       'projectid': widget.projectId,
@@ -6749,21 +6801,17 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
-
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         if (responseData['status'] == 1) {
           await fetchProjectApplications();
-          setState(() {});
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Project assigned successfully')),
           );
-          Future.delayed(Duration(seconds: 1), () {
+          Future.delayed(const Duration(seconds: 1), () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
           });
         } else {
@@ -6773,117 +6821,43 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                     'Failed to assign project: ${responseData['message']}')),
           );
         }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to assign project')),
-        );
       }
-    } catch (e) {}
-  }
-
-  String _selectedLanguage = 'en'; // Default language is English
-
-  Future<void> loadLanguage() async {
-    // Read the selected language from FlutterSecureStorage
-    String? language = await _secureStorage.read(key: 'selectedLanguage');
-    _selectedLanguage = language ?? 'en';
-    print(language); // Default to English if null
-  }
-
-  Map<String, Map<String, String>> _cachedTranslations = {};
-
-  Map<String, Map<String, String>> translations =
-      Constants.AppConstants.translations;
-  final GoogleTranslator _translator = GoogleTranslator();
-
-  String translateText(String text) {
-    if (text.isEmpty) return "";
-
-    // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
-    String targetLang = _selectedLanguage ?? 'en'; // Default to English if null
-
-    // ✅ Check manual translations first
-    if (translations.containsKey(text) &&
-        translations[text]!.containsKey(targetLang)) {
-      return translations[text]![targetLang]!; // Return manual translation
-    }
-
-    // ✅ Check cached translations
-    if (_cachedTranslations.containsKey(text) &&
-        _cachedTranslations[text]!.containsKey(targetLang)) {
-      return _cachedTranslations[text]![
-      targetLang]!; // Return cached translation
-    }
-
-    // ✅ Fetch translation dynamically (but without `await`)
-    _fetchTranslation(text, targetLang); // Runs in background, no need to wait
-
-    return text; // Return original text while translation is being fetched
-  }
-
-  /// ✅ Fetch translation dynamically and update cache
-  Future<void> _fetchTranslation(String text, String targetLang) async {
-    try {
-      // ✅ Check if translation already exists in constants
-      if (Constants.AppConstants.translations.containsKey(text) &&
-          Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
-        return; // No need to fetch if it exists
-      }
-
-      // ✅ Fetch translation dynamically
-      final translation = await _translator.translate(text, to: targetLang);
-
-      // ✅ Initialize default values if text is not in the map
-      if (!translations.containsKey(text)) {
-        translations[text] = {
-          "en": text,
-          "hi": text
-        }; // Default to the same value
-      }
-
-      // ✅ Store the translation in the correct language
-      translations[text]![targetLang] = translation.text;
-
-      // ✅ Store fetched translations in the cache
-      _cachedTranslations = translations;
-
-      // ✅ Also store in the constants translations map
-      if (!Constants.AppConstants.translations.containsKey(text)) {
-        Constants.AppConstants.translations[text] = {};
-      }
-      Constants.AppConstants.translations[text]![targetLang] = translation.text;
-
-      // ✅ Check for missing translations and fetch dynamically
-      for (var key in translations.keys) {
-        if (!translations[key]!.containsKey("hi")) {
-          await _fetchTranslation(key, "hi");
-        }
-        if (!translations[key]!.containsKey("en")) {
-          await _fetchTranslation(key, "en");
-        }
-      }
-
-      // ✅ Store translation in cache
-      _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
-          translation.text;
-      setState(() {});
     } catch (e) {
-      print("Translation error: $e");
+      // ignore
     }
   }
 
-  String _formatDate(String dateString) {
-    try {
-      // Parse the date string to DateTime object
-      DateTime dateTime = DateTime.parse(dateString);
-      // Format the DateTime object to "dd-MM-yyyy"
-      return DateFormat('dd-MM-yyyy').format(dateTime);
-    } catch (e) {
-      // In case of any error, return the original date string
-      return dateString;
+  // ─── Unassign with confirmation ────────────────────────────────────
+  Future<void> _unassignWithConfirmation(String labourId) async {
+    bool? confirm = await _showUnassignConfirmationDialog();
+    if (confirm == true) {
+      await unassignProject(labourId, widget.projectId);
     }
   }
 
+  Future<bool?> _showUnassignConfirmationDialog() {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(translate('Unassign Project', 'परियोजना अनअसाइन करें')),
+        content: Text(translate(
+            'Are you sure you want to unassign this project from the worker?',
+            'क्या आप सुनिश्चित हैं कि आप इस परियोजना को कार्यकर्ता से अनअसाइन करना चाहते हैं?')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(translate('Cancel', 'रद्द करें')),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(translate('Yes', 'हाँ')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Helper: Status text ───────────────────────────────────────────
   String getStatusText(String status) {
     switch (status) {
       case '0':
@@ -6899,6 +6873,7 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
     }
   }
 
+  // ─── Build ──────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     final language =
@@ -6909,11 +6884,11 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
     }
 
     return Scaffold(
+      backgroundColor: Constants.AppColors.surface,
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!
-              .projectApplications, // Corrected to use localization key
-          style: const TextStyle(color: Colors.white),
+          AppLocalizations.of(context)!.projectApplications,
+          style: Constants.AppTypography.h2.copyWith(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         flexibleSpace: Container(
@@ -6922,114 +6897,987 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back), // Default back arrow icon
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
-            ); // This will pop the current page and go back to the previous screen
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
           },
         ),
+        elevation: 0,
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : applications.isEmpty
-          ? Center(
-          child: Text(AppLocalizations.of(context)!
-              .noApplicationsFound)) // Localized "No applications found"
-          : ListView.builder(
-        itemCount: applications.length,
-        itemBuilder: (context, index) {
-          final application = applications[index];
-          return Card(
-            margin:
-            EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            elevation: 4.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    contentPadding: EdgeInsets.all(16.0),
-                    title: Column(
+      body: RefreshIndicator(
+        onRefresh: fetchProjectApplications,
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : applications.isEmpty
+            ? Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.person_off_outlined,
+                size: 72,
+                color: Constants.AppColors.inkSoft,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                translateText('No applications found'),
+                style: Constants.AppTypography.h3.copyWith(
+                  color: Constants.AppColors.inkSoft,
+                ),
+              ),
+            ],
+          ),
+        )
+            : ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          itemCount: applications.length,
+          itemBuilder: (context, index) {
+            final application = applications[index];
+
+            // Determine status badge color
+            String status = application['status']?.toString() ?? '0';
+            Color statusColor;
+            Color statusBg;
+            switch (status) {
+              case '0':
+                statusColor = const Color(0xFF64748B);
+                statusBg = const Color(0xFFF1F5F9);
+                break;
+              case '1':
+                statusColor = const Color(0xFF0E6805);
+                statusBg = const Color(0xFFEAF4E8);
+                break;
+              case '2':
+                statusColor = const Color(0xFFC2410C);
+                statusBg = const Color(0xFFFFF7ED);
+                break;
+              case '3':
+                statusColor = const Color(0xFF15803D);
+                statusBg = const Color(0xFFF0FDF4);
+                break;
+              default:
+                statusColor = const Color(0xFF991B1B);
+                statusBg = const Color(0xFFFEF2F2);
+            }
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Constants.AppColors.border,
+                  width: 1.0,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ─── Top row: Avatar + Name + Status ──
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "${translate('Worker Name', 'श्रमिक का नाम')}: ${translateText(application['labour_name'] ?? 'N/A')}",
-                          style:
-                          TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        // Comment
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "${AppLocalizations.of(context)!.comment}: ${translateText(application['comment'] ?? 'N/A')}",
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFEAF4E8),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              (application['labour_name'] ?? 'W')[0]
+                                  .toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Constants.AppColors.brand,
                               ),
                             ),
-                            SpeakerIconButton(
-                              text: translateText(application['comment'] ?? 'N/A') ?? 'N/A',
-                            ),
-                          ],
+                          ),
                         ),
-                        // Date
-                        Text(
-                          "${translateText('Date')}: ${_formatDate(application['created_at'])}",
-                        ),
-                        // Location
-                        Text(
-                          "${AppLocalizations.of(context)!.location}: ${translateText('${application['labour_address']}, ${application['labour_city']}, ${application['labour_state']}')}",
-                        ),
-                        // Status
-                        Text(
-                          "${translateText('Status')}: ${getStatusText(application['status'])}",
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                translateText(
+                                    application['labour_name'] ?? 'Unknown'),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF1A1A2E),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: statusBg,
+                                      borderRadius:
+                                      BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: statusColor
+                                            .withOpacity(0.3),
+                                        width: 0.5,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      translateText(
+                                          getStatusText(status)),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: statusColor,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    Icons.calendar_today_outlined,
+                                    size: 12,
+                                    color: Colors.grey[500],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    _formatDate(
+                                        application['created_at'] ??
+                                            ''),
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 8.0,
-                  right: 8.0,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Navigate to the ApplicationDetailPage when clicking on 'View Details'
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ApplicationDetailPage(
-                            application: application,
+                    const SizedBox(height: 12),
+                    const Divider(color: Color(0xFFF1F5EE), height: 1),
+                    const SizedBox(height: 10),
+
+                    // ─── Comment ──────────────────────────────
+                    Row(
+                      children: [
+                        Icon(Icons.chat_bubble_outline,
+                            size: 16, color: Colors.grey[500]),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            translateText(
+                                application['comment'] ?? 'N/A'),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFF475569),
+                            ),
                           ),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(8.0)),
-                      ),
-                      disabledBackgroundColor: Colors.red,
-                      backgroundColor:
-                      const Color.fromARGB(255, 19, 70, 27),
-                      foregroundColor: Colors.white,
+                        SpeakerIconButton(
+                          text: translateText(
+                              application['comment'] ?? 'N/A'),
+                          size: 16,
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      AppLocalizations.of(context)!.viewDetails,
-                      style: TextStyle(color: Colors.white),
+                    const SizedBox(height: 8),
+
+                    // ─── Location ──────────────────────────────
+                    Row(
+                      children: [
+                        Icon(Icons.location_on_outlined,
+                            size: 16, color: Colors.grey[500]),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            translateText(
+                                '${application['labour_address'] ?? ''}, ${application['labour_city'] ?? ''}, ${application['labour_state'] ?? ''}'),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFF475569),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                    const SizedBox(height: 12),
+
+                    // ─── Action Buttons ──────────────────────────
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // View Details
+                        Expanded(
+                          child: SizedBox(
+                            height: 40,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ApplicationDetailPage(
+                                          application: application,
+                                        ),
+                                  ),
+                                );
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                    color: Constants.AppColors.brand,
+                                    width: 1.2),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                              ),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  AppLocalizations.of(context)!
+                                      .viewDetails,
+                                  style: TextStyle(
+                                    color: Constants.AppColors.brand,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+
+                        // Action button based on status
+                        if (status == "0")
+                          Expanded(
+                            child: SizedBox(
+                              height: 40,
+                              child: ElevatedButton(
+                                onPressed: _isProcessing
+                                    ? null
+                                    : () => _assignWithConfirmation(
+                                    application['labour_id']
+                                        .toString()),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                  Constants.AppColors.brand,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                ),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    translateText('Assign'),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        else if (status == "1")
+                          Expanded(
+                            child: SizedBox(
+                              height: 40,
+                              child: ElevatedButton(
+                                onPressed: _isProcessing
+                                    ? null
+                                    : () => _unassignWithConfirmation(
+                                    application['labour_id']
+                                        .toString()),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                ),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    translateText('Unassign'),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        else if (status == "2")
+                            Expanded(
+                              child: SizedBox(
+                                height: 40,
+                                child: ElevatedButton(
+                                  onPressed: _isProcessing
+                                      ? null
+                                      : () => confirmComplete(
+                                      widget.projectId,
+                                      application['labour_id']
+                                          .toString()),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      translateText('Complete'),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          else
+                          // For status 3 or 4, show nothing
+                            const SizedBox.shrink(),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
+
+  String _formatDate(String dateString) {
+    if (dateString.isEmpty) return 'N/A';
+    try {
+      DateTime dateTime = DateTime.parse(dateString);
+      return DateFormat('dd MMM yyyy').format(dateTime);
+    } catch (e) {
+      return dateString;
+    }
+  }
 }
+
+
+// class ProjectApplicationsPage extends StatefulWidget {
+//   final String projectId;
+//
+//   ProjectApplicationsPage({required this.projectId});
+//
+//   @override
+//   _ProjectApplicationsPageState createState() =>
+//       _ProjectApplicationsPageState();
+// }
+//
+// class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
+//   bool isLoading = true;
+//   List<dynamic> applications = [];
+//
+//   final _secureStorage = const FlutterSecureStorage();
+//   bool _isProcessing = false;
+//   late stt.SpeechToText _speech;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _speech = stt.SpeechToText();
+//     loadLanguage();
+//     fetchProjectApplications();
+//   }
+//
+//   Future<void> fetchProjectApplications() async {
+//     final String apiUrl =
+//         '${Constants.AppConstants.apiUrl}farmer/farmerProjectDetails';
+//     String? userId = await _secureStorage.read(key: 'id');
+//     if (userId == null) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('User ID not found in secure storage')),
+//       );
+//       return;
+//     }
+//
+//     // Prepare the request body
+//     final Map<String, dynamic> requestBody = {
+//       'id': userId,
+//       'project_id': widget.projectId,
+//     };
+//     print(
+//       jsonEncode(requestBody),
+//     );
+//     try {
+//       final response = await http.post(
+//         Uri.parse(apiUrl),
+//         headers: {'Content-Type': 'application/json'},
+//         body: jsonEncode(requestBody),
+//       );
+//
+//       if (response.statusCode == 200) {
+//         final responseData = json.decode(response.body);
+//         if (responseData['success'] == true) {
+//           setState(() {
+//             applications = responseData['data']['applications'];
+//             print(applications);
+//             isLoading = false;
+//           });
+//         } else {
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             SnackBar(content: Text('Failed to fetch project details')),
+//           );
+//         }
+//       } else {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Failed to fetch project details')),
+//         );
+//       }
+//     } catch (e) {}
+//   }
+//
+//   Future<void> unassignProject(String labourId, String projectId) async {
+//     setState(() {
+//       _isProcessing = true; // Show loading indicator
+//     });
+//
+//     // API URL
+//     String url = '${Constants.AppConstants.apiUrl}farmer/unassignProject';
+//
+//     // Sending POST request
+//     try {
+//       final response = await http.post(
+//         Uri.parse(url),
+//         headers: {'Content-Type': 'application/json'},
+//         body: json.encode({
+//           'labourids': labourId,
+//           'projectids': projectId,
+//         }),
+//       );
+//
+//       if (response.statusCode == 200) {
+//         // Success, show message and update UI
+//         final data = json.decode(response.body);
+//         if (data['status'] == '1') {
+//           await fetchProjectApplications();
+//           setState(() {
+//             _isProcessing = false; // Hide loading indicator
+//           });
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             SnackBar(content: Text(data['message'])),
+//           );
+//         }
+//       } else {
+//         setState(() {
+//           _isProcessing = false; // Hide loading indicator
+//         });
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Failed to unassign job')),
+//         );
+//       }
+//     } catch (e) {
+//       setState(() {
+//         _isProcessing = false; // Hide loading indicator
+//       });
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Error: $e')),
+//       );
+//     }
+//   }
+//
+//   Future<void> cancelConfirm(
+//       String projectId, String labourId, String cancelRemark) async {
+//     setState(() {
+//       _isProcessing = true; // Show loading indicator
+//     });
+//
+//     // API URL
+//     String url = '${Constants.AppConstants.apiUrl}farmer/cancelConfirm';
+//
+//     // Sending POST request
+//     try {
+//       final response = await http.post(
+//         Uri.parse(url),
+//         headers: {'Content-Type': 'application/json'},
+//         body: json.encode({
+//           'projectid': projectId,
+//           'labourid': labourId,
+//           'cancelremark': cancelRemark,
+//         }),
+//       );
+//
+//       if (response.statusCode == 200) {
+//         // Success, show message and update UI
+//         final data = json.decode(response.body);
+//         if (data['status'] == '1') {
+//           await fetchProjectApplications();
+//           setState(() {
+//             _isProcessing = false; // Hide loading indicator
+//           });
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             SnackBar(content: Text(data['message'])),
+//           );
+//         }
+//       } else {
+//         setState(() {
+//           _isProcessing = false; // Hide loading indicator
+//         });
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Failed to send cancel request')),
+//         );
+//       }
+//     } catch (e) {
+//       setState(() {
+//         _isProcessing = false; // Hide loading indicator
+//       });
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Error: $e')),
+//       );
+//     }
+//   }
+//
+//   // Function to show the dialog for cancel remarks
+//   void showCancelDialog(BuildContext context, String labourId) {
+//     TextEditingController _cancelRemarkController = TextEditingController();
+//
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return AlertDialog(
+//           title: const Text('Cancel Remark'),
+//           content: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               TextField(
+//                 controller: _cancelRemarkController,
+//                 decoration: InputDecoration(
+//                   labelText: 'Enter Cancel Remark',
+//                   border: OutlineInputBorder(),
+//                   suffixIcon: MicIconButton(controller: _cancelRemarkController),
+//                 ),
+//                 maxLines: 3,
+//               ),
+//             ],
+//           ),
+//           actions: <Widget>[
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.of(context).pop();
+//               },
+//               child: const Text('Cancel'),
+//             ),
+//             TextButton(
+//               onPressed: () {
+//                 if (_cancelRemarkController.text.isNotEmpty) {
+//                   cancelConfirm(
+//                     widget.projectId,
+//                     labourId,
+//                     _cancelRemarkController.text,
+//                   );
+//                   Navigator.of(context).pop(); // Close the dialog
+//                 } else {
+//                   ScaffoldMessenger.of(context).showSnackBar(
+//                     const SnackBar(content: Text('Remark cannot be empty')),
+//                   );
+//                 }
+//               },
+//               child: const Text('Submit'),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+//
+//   Future<void> confirmComplete(String projectId, String labourId) async {
+//     setState(() {
+//       _isProcessing = true; // Show loading indicator
+//     });
+//
+//     // API URL
+//     String url = '${Constants.AppConstants.apiUrl}farmer/confirmComplete';
+//
+//     // Sending POST request
+//     try {
+//       final response = await http.post(
+//         Uri.parse(url),
+//         headers: {'Content-Type': 'application/json'},
+//         body: json.encode({
+//           'projectid': projectId,
+//           'labourid': labourId,
+//         }),
+//       );
+//
+//       if (response.statusCode == 200) {
+//         // Success, show message and update UI
+//         final data = json.decode(response.body);
+//         if (data['status'] == '1') {
+//           await fetchProjectApplications();
+//           setState(() {
+//             _isProcessing = false; // Hide loading indicator
+//           });
+//
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             SnackBar(content: Text(data['message'])),
+//           );
+//         }
+//       } else {
+//         setState(() {
+//           _isProcessing = false; // Hide loading indicator
+//         });
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Failed to confirm completion')),
+//         );
+//       }
+//     } catch (e) {
+//       setState(() {
+//         _isProcessing = false; // Hide loading indicator
+//       });
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Error: $e')),
+//       );
+//     }
+//   }
+//
+//   Future<void> assignProject(String labourId) async {
+//     final String apiUrl =
+//         '${Constants.AppConstants.apiUrl}farmer/projectAssigned';
+//     String? userId = await _secureStorage.read(key: 'id');
+//     if (userId == null) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('User ID not found in secure storage')),
+//       );
+//       return;
+//     }
+//
+//     // Prepare the request body
+//     final Map<String, dynamic> requestBody = {
+//       'labourid': labourId,
+//       'projectid': widget.projectId,
+//     };
+//
+//     try {
+//       final response = await http.post(
+//         Uri.parse(apiUrl),
+//         headers: {'Content-Type': 'application/json'},
+//         body: jsonEncode(requestBody),
+//       );
+//
+//       if (response.statusCode == 200) {
+//         final responseData = json.decode(response.body);
+//         if (responseData['status'] == 1) {
+//           await fetchProjectApplications();
+//           setState(() {});
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(content: Text('Project assigned successfully')),
+//           );
+//           Future.delayed(Duration(seconds: 1), () {
+//             Navigator.pushReplacement(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => HomePage(),
+//               ),
+//             );
+//           });
+//         } else {
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             SnackBar(
+//                 content: Text(
+//                     'Failed to assign project: ${responseData['message']}')),
+//           );
+//         }
+//       } else {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Failed to assign project')),
+//         );
+//       }
+//     } catch (e) {}
+//   }
+//
+//   String _selectedLanguage = 'en'; // Default language is English
+//
+//   Future<void> loadLanguage() async {
+//     // Read the selected language from FlutterSecureStorage
+//     String? language = await _secureStorage.read(key: 'selectedLanguage');
+//     _selectedLanguage = language ?? 'en';
+//     print(language); // Default to English if null
+//   }
+//
+//   Map<String, Map<String, String>> _cachedTranslations = {};
+//
+//   Map<String, Map<String, String>> translations =
+//       Constants.AppConstants.translations;
+//   final GoogleTranslator _translator = GoogleTranslator();
+//
+//   String translateText(String text) {
+//     if (text.isEmpty) return "";
+//
+//     // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
+//     String targetLang = _selectedLanguage ?? 'en'; // Default to English if null
+//
+//     // ✅ Check manual translations first
+//     if (translations.containsKey(text) &&
+//         translations[text]!.containsKey(targetLang)) {
+//       return translations[text]![targetLang]!; // Return manual translation
+//     }
+//
+//     // ✅ Check cached translations
+//     if (_cachedTranslations.containsKey(text) &&
+//         _cachedTranslations[text]!.containsKey(targetLang)) {
+//       return _cachedTranslations[text]![
+//       targetLang]!; // Return cached translation
+//     }
+//
+//     // ✅ Fetch translation dynamically (but without `await`)
+//     _fetchTranslation(text, targetLang); // Runs in background, no need to wait
+//
+//     return text; // Return original text while translation is being fetched
+//   }
+//
+//   /// ✅ Fetch translation dynamically and update cache
+//   Future<void> _fetchTranslation(String text, String targetLang) async {
+//     try {
+//       // ✅ Check if translation already exists in constants
+//       if (Constants.AppConstants.translations.containsKey(text) &&
+//           Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
+//         return; // No need to fetch if it exists
+//       }
+//
+//       // ✅ Fetch translation dynamically
+//       final translation = await _translator.translate(text, to: targetLang);
+//
+//       // ✅ Initialize default values if text is not in the map
+//       if (!translations.containsKey(text)) {
+//         translations[text] = {
+//           "en": text,
+//           "hi": text
+//         }; // Default to the same value
+//       }
+//
+//       // ✅ Store the translation in the correct language
+//       translations[text]![targetLang] = translation.text;
+//
+//       // ✅ Store fetched translations in the cache
+//       _cachedTranslations = translations;
+//
+//       // ✅ Also store in the constants translations map
+//       if (!Constants.AppConstants.translations.containsKey(text)) {
+//         Constants.AppConstants.translations[text] = {};
+//       }
+//       Constants.AppConstants.translations[text]![targetLang] = translation.text;
+//
+//       // ✅ Check for missing translations and fetch dynamically
+//       for (var key in translations.keys) {
+//         if (!translations[key]!.containsKey("hi")) {
+//           await _fetchTranslation(key, "hi");
+//         }
+//         if (!translations[key]!.containsKey("en")) {
+//           await _fetchTranslation(key, "en");
+//         }
+//       }
+//
+//       // ✅ Store translation in cache
+//       _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
+//           translation.text;
+//       setState(() {});
+//     } catch (e) {
+//       print("Translation error: $e");
+//     }
+//   }
+//
+//   String _formatDate(String dateString) {
+//     try {
+//       // Parse the date string to DateTime object
+//       DateTime dateTime = DateTime.parse(dateString);
+//       // Format the DateTime object to "dd-MM-yyyy"
+//       return DateFormat('dd-MM-yyyy').format(dateTime);
+//     } catch (e) {
+//       // In case of any error, return the original date string
+//       return dateString;
+//     }
+//   }
+//
+//   String getStatusText(String status) {
+//     switch (status) {
+//       case '0':
+//         return AppLocalizations.of(context)!.notAssigned;
+//       case '1':
+//         return AppLocalizations.of(context)!.assigned;
+//       case '2':
+//         return AppLocalizations.of(context)!.workStarted;
+//       case '3':
+//         return AppLocalizations.of(context)!.completed;
+//       default:
+//         return AppLocalizations.of(context)!.cancelled;
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final language =
+//         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+//
+//     String translate(String enText, String hiText) {
+//       return language == 'en' ? enText : hiText;
+//     }
+//
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(
+//           AppLocalizations.of(context)!
+//               .projectApplications, // Corrected to use localization key
+//           style: const TextStyle(color: Colors.white),
+//         ),
+//         iconTheme: const IconThemeData(color: Colors.white),
+//         flexibleSpace: Container(
+//           decoration: const BoxDecoration(
+//             gradient: Constants.AppColors.brandGradient,
+//           ),
+//         ),
+//         leading: IconButton(
+//           icon: const Icon(Icons.arrow_back), // Default back arrow icon
+//           onPressed: () {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => HomePage(),
+//               ),
+//             ); // This will pop the current page and go back to the previous screen
+//           },
+//         ),
+//       ),
+//       body: isLoading
+//           ? const Center(child: CircularProgressIndicator())
+//           : applications.isEmpty
+//           ? Center(
+//           child: Text(AppLocalizations.of(context)!
+//               .noApplicationsFound)) // Localized "No applications found"
+//           : ListView.builder(
+//         itemCount: applications.length,
+//         itemBuilder: (context, index) {
+//           final application = applications[index];
+//           return Card(
+//             margin:
+//             EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+//             elevation: 4.0,
+//             shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(8.0),
+//             ),
+//             child: Stack(
+//               children: [
+//                 Padding(
+//                   padding: const EdgeInsets.all(8.0),
+//                   child: ListTile(
+//                     contentPadding: EdgeInsets.all(16.0),
+//                     title: Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: [
+//                         Text(
+//                           "${translate('Worker Name', 'श्रमिक का नाम')}: ${translateText(application['labour_name'] ?? 'N/A')}",
+//                           style:
+//                           TextStyle(fontWeight: FontWeight.bold),
+//                         ),
+//                         // Comment
+//                         Row(
+//                           crossAxisAlignment: CrossAxisAlignment.center,
+//                           children: [
+//                             Expanded(
+//                               child: Text(
+//                                 "${AppLocalizations.of(context)!.comment}: ${translateText(application['comment'] ?? 'N/A')}",
+//                               ),
+//                             ),
+//                             SpeakerIconButton(
+//                               text: translateText(application['comment'] ?? 'N/A') ?? 'N/A',
+//                             ),
+//                           ],
+//                         ),
+//                         // Date
+//                         Text(
+//                           "${translateText('Date')}: ${_formatDate(application['created_at'])}",
+//                         ),
+//                         // Location
+//                         Text(
+//                           "${AppLocalizations.of(context)!.location}: ${translateText('${application['labour_address']}, ${application['labour_city']}, ${application['labour_state']}')}",
+//                         ),
+//                         // Status
+//                         Text(
+//                           "${translateText('Status')}: ${getStatusText(application['status'])}",
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//                 Positioned(
+//                   bottom: 8.0,
+//                   right: 8.0,
+//                   child: ElevatedButton(
+//                     onPressed: () {
+//                       // Navigate to the ApplicationDetailPage when clicking on 'View Details'
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => ApplicationDetailPage(
+//                             application: application,
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                     style: ElevatedButton.styleFrom(
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius:
+//                         BorderRadius.all(Radius.circular(8.0)),
+//                       ),
+//                       disabledBackgroundColor: Colors.red,
+//                       backgroundColor:
+//                       const Color.fromARGB(255, 19, 70, 27),
+//                       foregroundColor: Colors.white,
+//                     ),
+//                     child: Text(
+//                       AppLocalizations.of(context)!.viewDetails,
+//                       style: TextStyle(color: Colors.white),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
