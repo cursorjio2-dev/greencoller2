@@ -3460,96 +3460,96 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: _currentIndex == 0
               ? Consumer<LocationProvider>(
-                  builder: (context, locationProvider, child) {
-                    Widget locationWidget;
-                    if (locationProvider.isLoading) {
-                      locationWidget = Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(
-                            width: 12,
-                            height: 12,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.5,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            _selectedLanguage == 'en' ? 'Finding location...' : 'स्थान खोज रहे हैं...',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white.withOpacity(0.8),
-                            ),
-                          ),
-                        ],
-                      );
-                    } else if (locationProvider.error.isNotEmpty || (locationProvider.city.isEmpty && locationProvider.state.isEmpty)) {
-                      locationWidget = Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.location_off, size: 14, color: Colors.white70),
-                          const SizedBox(width: 4),
-                          Text(
-                            _selectedLanguage == 'en' ? 'Location unavailable' : 'स्थान अनुपलब्ध',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white.withOpacity(0.8),
-                            ),
-                          ),
-                        ],
-                      );
-                    } else {
-                      locationWidget = Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.location_on, size: 14, color: Colors.white),
-                          const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              '${locationProvider.city}, ${locationProvider.state}',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.20),
-                                borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                                border: Border.all(color: Colors.white30, width: 0.5),
-                              ),
-                              child: Text(
-                                _selectedLanguage == 'en' ? 'Farmer' : 'किसान',
-                                style: Constants.AppTypography.micro.copyWith(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
+            builder: (context, locationProvider, child) {
+              Widget locationWidget;
+              if (locationProvider.isLoading) {
+                locationWidget = Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      _selectedLanguage == 'en' ? 'Finding location...' : 'स्थान खोज रहे हैं...',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                );
+              } else if (locationProvider.error.isNotEmpty || (locationProvider.city.isEmpty && locationProvider.state.isEmpty)) {
+                locationWidget = Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.location_off, size: 14, color: Colors.white70),
+                    const SizedBox(width: 4),
+                    Text(
+                      _selectedLanguage == 'en' ? 'Location unavailable' : 'स्थान अनुपलब्ध',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                locationWidget = Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.location_on, size: 14, color: Colors.white),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        '${locationProvider.city}, ${locationProvider.state}',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
                         ),
-                        const SizedBox(height: 4),
-                        locationWidget,
-                      ],
-                    );
-                  },
-                )
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.20),
+                          borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                          border: Border.all(color: Colors.white30, width: 0.5),
+                        ),
+                        child: Text(
+                          _selectedLanguage == 'en' ? 'Farmer' : 'किसान',
+                          style: Constants.AppTypography.micro.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  locationWidget,
+                ],
+              );
+            },
+          )
               : Text(
             _currentIndex == 1
                 ? AppLocalizations.of(context)!.nearbylabours
