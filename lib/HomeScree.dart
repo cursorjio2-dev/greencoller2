@@ -4385,6 +4385,7 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
     });
 
     String? userId = await _secureStorage.read(key: 'id');
+    if (!mounted) return;
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('User ID not found in secure storage')),
@@ -4414,6 +4415,7 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
@@ -4433,13 +4435,16 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -4470,6 +4475,7 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
     final String apiUrl = '${Constants.AppConstants.apiUrl}farmer/getprojects';
 
     String? userId = await _secureStorage.read(key: 'id');
+    if (!mounted) return;
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('User ID not found in secure storage')),
@@ -4485,6 +4491,7 @@ class _CombinedPageState extends State<CombinedPage> with WidgetsBindingObserver
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);

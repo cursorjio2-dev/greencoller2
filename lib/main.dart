@@ -27,6 +27,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:translator/translator.dart';
 import 'package:greencollar/api_logger.dart';
+import 'package:pinput/pinput.dart';
 
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
@@ -619,6 +620,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   }
 }
 
+
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -629,180 +632,251 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   String selectedOption = 'farmer';
-  bool _isButtonDisabled =
-      false; // Flag to control button's enabled/disabled state
+  bool _isButtonDisabled = false;
 
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _isPasswordVisible = false; // To toggle password visibility
-  Future<void> _submitForm() async {
-    if (_isButtonDisabled) return;
-    final language =
-        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
 
+  bool _isOtpSent = false;
+  bool _isLoadingOtp = false;
+  bool _isVerifying = false;
+
+  final FocusNode _pinFocusNode = FocusNode();
+
+  // ─── TEST MODE CONSTANTS ──────────────────────────────────────────────
+  static const String TEST_PHONE = '8888888888';
+  static const String TEST_OTP = '111111';
+
+  // ─── HELPER: POST request ─────────────────────────────────────────────
+  Future<Map<String, dynamic>> _postRequest(String url, Map<String, dynamic> body) async {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      // Throw an exception with status and response body
+      throw Exception('HTTP ${response.statusCode}: ${response.body}');
+    }
+  }
+
+  // ─── SEND OTP ──────────────────────────────────────────────────────────
+  Future<void> _sendOtp() async {
+    if (_isLoadingOtp) return;
     if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState?.save();
-
-      // Determine the endpoint based on user type
-      final String apiUrl = selectedOption == "farmer"
-          ? '${Constants.AppConstants.apiUrl}farmer/login'
-          : '${Constants.AppConstants.apiUrl}labour/login';
-      print(apiUrl);
-
-      final Map<String, dynamic> requestBody = {
-        'phone': phoneNumberController.text,
-        'password': passwordController.text,
-      };
-      print(jsonEncode(requestBody));
-
-      // Disable the button before submitting the form
       setState(() {
+        _isLoadingOtp = true;
         _isButtonDisabled = true;
       });
 
-      try {
-        // Make API call
-        final response = await http.post(
-          Uri.parse(apiUrl),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(requestBody),
-        );
-        print(response.statusCode);
-        print(response.body);
+      final phone = phoneNumberController.text.trim();
 
-        if (response.statusCode == 200) {
-          // Success: Parse the response
-          final responseData = jsonDecode(response.body);
-          print(responseData);
-
-          Fluttertoast.showToast(
-            msg: translate(
-              responseData['message'] ?? 'Login successful!',
-              'लॉगिन सफल!',
-            ),
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.green.shade700,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-
-          // Storing data in secure storage
-          await _secureStorage.write(
-              key: 'id', value: responseData['user']['id'].toString());
-          await _secureStorage.write(
-              key: 'name', value: responseData['user']['name']);
-          await _secureStorage.write(
-              key: 'phone', value: responseData['user']['phone']);
-
-          if (responseData['token'] != null) {
-            String token = responseData['token'].toString();
-            if (token.toLowerCase().startsWith('bearer ')) {
-              token = token.substring(7).trim();
-            }
-            await _secureStorage.write(
-                key: 'token', value: token);
-          }
-
-          // Store the user type (farmer or labour)
-          await _secureStorage.write(key: 'userType', value: selectedOption);
-
-          // Navigate to the appropriate homepage based on user type
-          await Future.delayed(const Duration(seconds: 2));
-
-          if (selectedOption == 'farmer') {
-            // Navigate to Farmer Home Page
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      HomePage()), // Adjust the target page as needed
-            );
-          } else {
-            // Navigate to Labour Home Page
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      Labourhomepage()), // Adjust the target page as needed
-            );
-          }
-        } else if (response.statusCode == 401) {
-          // Unauthorized: Invalid credentials
-          final responseData = jsonDecode(response.body);
-          Fluttertoast.showToast(
-            msg: translate(
-              responseData['message'] ?? 'Invalid credentials.',
-              'अमान्य क्रेडेंशियल्स।',
-            ),
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.red.shade700,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-        } else if (response.statusCode == 422) {
-          // Validation errors
-          final responseData = jsonDecode(response.body);
-          final errors = responseData['errors'] as Map<String, dynamic>?;
-          errors?.forEach((field, messages) {
-            for (var message in messages) {
-              Fluttertoast.showToast(
-                msg: message,
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                backgroundColor: Colors.red.shade700,
-                textColor: Colors.white,
-                fontSize: 16.0,
-              );
-            }
-          });
-        } else {
-          // Generic error
-          Fluttertoast.showToast(
-            msg: translate(
-              'Login failed. Try again.',
-              'लॉगिन विफल। पुनः प्रयास करें।',
-            ),
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.red.shade700,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-        }
-      } catch (e) {
-        // Network or unexpected error
-        Fluttertoast.showToast(
-          msg: translate(
-            'An error occurred.',
-            'एक त्रुटि हुई।',
-          ),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.orange.shade700,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-        debugPrint('Error: $e');
-      } finally {
-        // Re-enable the button after a delay or when the response is received
+      // ─── TEST MODE: skip API call ──────────────────────────────────────
+      if (phone == TEST_PHONE) {
+        await Future.delayed(const Duration(milliseconds: 500));
         setState(() {
-          _isButtonDisabled = false; // Re-enable the button
+          _isOtpSent = true;
+          _isLoadingOtp = false;
+          _isButtonDisabled = false;
+        });
+        _showToast('OTP sent successfully! (Test Mode)', isSuccess: true);
+        _pinFocusNode.requestFocus();
+        return;
+      }
+
+      // ─── REAL API CALL: /api/loginotp ─────────────────────────────────
+      final String apiUrl = '${Constants.AppConstants.apiUrl}loginotp';
+
+      try {
+        final data = await _postRequest(apiUrl, {'phone': phone});
+        // data should have "success" and "message"
+        if (data['success'] == true) {
+          setState(() {
+            _isOtpSent = true;
+            _isLoadingOtp = false;
+            _isButtonDisabled = false;
+          });
+          _showToast(data['message'] ?? 'OTP sent successfully!', isSuccess: true);
+          _pinFocusNode.requestFocus();
+        } else {
+          _showToast(data['message'] ?? 'Failed to send OTP', isSuccess: false);
+          setState(() {
+            _isLoadingOtp = false;
+            _isButtonDisabled = false;
+          });
+        }
+      } on Exception catch (e) {
+        final msg = e.toString();
+        String? extractedMsg;
+        if (msg.contains('HTTP')) {
+          final parts = msg.split(':');
+          if (parts.length > 2) {
+            try {
+              final bodyJson = jsonDecode(parts.sublist(2).join(':').trim());
+              if (bodyJson is Map<String, dynamic>) {
+                if (bodyJson.containsKey('message')) extractedMsg = bodyJson['message'];
+                else if (bodyJson.containsKey('errors')) {
+                  final errors = bodyJson['errors'] as Map<String, dynamic>;
+                  extractedMsg = errors.values.map((e) => e is List ? e.join(', ') : e.toString()).join(', ');
+                }
+              }
+            } catch (_) {}
+          }
+        }
+        _showToast(extractedMsg ?? 'Server error. Please try again.', isSuccess: false);
+        setState(() {
+          _isLoadingOtp = false;
+          _isButtonDisabled = false;
+        });
+      } catch (e) {
+        _showToast('An error occurred. Please try again.', isSuccess: false);
+        setState(() {
+          _isLoadingOtp = false;
+          _isButtonDisabled = false;
         });
       }
     }
   }
 
+  // ─── VERIFY OTP (calls existing login API) ───────────────────────────
+  Future<void> _verifyOtp() async {
+    if (_isVerifying) return;
+    if (otpController.text.length != 6) {
+      _showToast('Please enter a valid 6‑digit OTP', isSuccess: false);
+      return;
+    }
+
+    setState(() {
+      _isVerifying = true;
+      _isButtonDisabled = true;
+    });
+
+    final phone = phoneNumberController.text.trim();
+    final otp = otpController.text.trim();
+
+    // ─── TEST MODE: bypass API ──────────────────────────────────────────
+    if (phone == TEST_PHONE && otp == TEST_OTP) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      final dummyResponse = {
+        'user': {
+          'id': '999',
+          'name': 'Test User',
+          'phone': TEST_PHONE,
+        },
+        'token': 'dummy_token_12345',
+      };
+      await _handleSuccessfulLogin(dummyResponse);
+      return;
+    }
+
+    // ─── REAL API CALL: existing login endpoint ─────────────────────────
+    final String apiUrl = selectedOption == "farmer"
+        ? '${Constants.AppConstants.apiUrl}farmer/login'
+        : '${Constants.AppConstants.apiUrl}labour/login';
+
+    try {
+      final data = await _postRequest(apiUrl, {'phone': phone, 'otp': otp});
+      // data should contain 'user' and 'token' as before
+      if (data['user'] != null) {
+        await _handleSuccessfulLogin(data);
+      } else {
+        _showToast(data['message'] ?? 'Login failed.', isSuccess: false);
+        setState(() {
+          _isVerifying = false;
+          _isButtonDisabled = false;
+        });
+      }
+    } on Exception catch (e) {
+      final msg = e.toString();
+      String? extractedMsg;
+      if (msg.contains('HTTP')) {
+        final parts = msg.split(':');
+        if (parts.length > 2) {
+          try {
+            final bodyJson = jsonDecode(parts.sublist(2).join(':').trim());
+            if (bodyJson is Map<String, dynamic>) {
+              if (bodyJson.containsKey('message')) extractedMsg = bodyJson['message'];
+              else if (bodyJson.containsKey('errors')) {
+                final errors = bodyJson['errors'] as Map<String, dynamic>;
+                extractedMsg = errors.values.map((e) => e is List ? e.join(', ') : e.toString()).join(', ');
+              }
+            }
+          } catch (_) {}
+        }
+      }
+      _showToast(extractedMsg ?? 'Login failed. Please try again.', isSuccess: false);
+      setState(() {
+        _isVerifying = false;
+        _isButtonDisabled = false;
+      });
+    } catch (e) {
+      _showToast('An error occurred. Please try again.', isSuccess: false);
+      setState(() {
+        _isVerifying = false;
+        _isButtonDisabled = false;
+      });
+    }
+  }
+
+  // ─── HANDLE SUCCESSFUL LOGIN ─────────────────────────────────────────
+  Future<void> _handleSuccessfulLogin(Map<String, dynamic> responseData) async {
+    // Store user data
+    await _secureStorage.write(
+        key: 'id', value: responseData['user']['id'].toString());
+    await _secureStorage.write(
+        key: 'name', value: responseData['user']['name']);
+    await _secureStorage.write(
+        key: 'phone', value: responseData['user']['phone']);
+
+    if (responseData['token'] != null) {
+      String token = responseData['token'].toString();
+      if (token.toLowerCase().startsWith('bearer ')) {
+        token = token.substring(7).trim();
+      }
+      await _secureStorage.write(key: 'token', value: token);
+    }
+
+    await _secureStorage.write(key: 'userType', value: selectedOption);
+
+    final successMsg = responseData['message'] ?? 'Login successful!';
+    _showToast(successMsg, isSuccess: true);
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (selectedOption == 'farmer') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Labourhomepage()),
+      );
+    }
+  }
+
+  void _showToast(String msg, {bool isSuccess = true}) {
+    Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: isSuccess ? Colors.green.shade700 : Colors.red.shade700,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
   String translate(String enText, String hiText) {
-    // Get the selected language from the provider
     final language =
         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
-
-    // Return the appropriate text based on the selected language
     return language == 'en' ? enText : hiText;
   }
+
+  // ─── Build ──────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -832,7 +906,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   const SizedBox(height: 40),
-                  // App Logo with soft shadow
+                  // Logo
                   Center(
                     child: Container(
                       padding: const EdgeInsets.all(8),
@@ -844,7 +918,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  // Title Header
                   Text(
                     AppLocalizations.of(context)!.pleaseLogin,
                     style: Constants.AppTypography.display.copyWith(
@@ -856,7 +929,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Main Interactive Form Card
+                  // ─── Main Card ──────────────────────────────────────────
                   Container(
                     padding: const EdgeInsets.all(20.0),
                     decoration: BoxDecoration(
@@ -871,18 +944,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Row for Farmer and Labour selection
+                        // ─── Farmer / Labour Toggle ──────────────────────
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            // Farmer Option
                             Expanded(
                               child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedOption = 'farmer';
-                                  });
-                                },
+                                onTap: () => setState(() => selectedOption = 'farmer'),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: selectedOption == 'farmer'
@@ -913,14 +981,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            // Labour Option
                             Expanded(
                               child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedOption = 'labour';
-                                  });
-                                },
+                                onTap: () => setState(() => selectedOption = 'labour'),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: selectedOption == 'labour'
@@ -952,15 +1015,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 24),
 
-                        // Form Fields
+                        // ─── Form ──────────────────────────────────────────
                         Form(
                           key: _formKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Phone number
                               Text(
                                 AppLocalizations.of(context)!.phone,
                                 style: Constants.AppTypography.label.copyWith(
@@ -969,10 +1032,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              // Phone Number Input with +91
                               Row(
                                 children: [
-                                  // Static +91
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 14),
                                     height: 50,
@@ -993,7 +1054,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  // TextField for phone number
                                   Expanded(
                                     child: TextFormField(
                                       controller: phoneNumberController,
@@ -1041,96 +1101,174 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ],
                               ),
                               const SizedBox(height: 18),
-                              // Password Label
-                              Text(
-                                AppLocalizations.of(context)!.passwordHintText,
-                                style: Constants.AppTypography.label.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Constants.AppColors.ink,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              // Password Input
-                              TextFormField(
-                                controller: passwordController,
-                                obscureText: !_isPasswordVisible,
-                                style: Constants.AppTypography.body.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                decoration: InputDecoration(
-                                  hintText: AppLocalizations.of(context)!.passwordHintText,
-                                  hintStyle: Constants.AppTypography.body.copyWith(
-                                    color: Constants.AppColors.inkSoft,
-                                  ),
-                                  filled: true,
-                                  fillColor: Constants.AppColors.surface,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                                    borderSide: const BorderSide(color: Constants.AppColors.border),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                                    borderSide: const BorderSide(color: Constants.AppColors.brand, width: 1.5),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 0,
-                                    horizontal: 14,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                                      color: Constants.AppColors.brand,
+
+                              // ─── OTP Section ────────────────────────────
+                              if (!_isOtpSent) ...[
+                                // Send OTP button
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 48,
+                                  child: ElevatedButton(
+                                    onPressed: _isButtonDisabled ? null : _sendOtp,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Constants.AppColors.brand,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                      ),
+                                      elevation: 0,
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isPasswordVisible = !_isPasswordVisible;
-                                      });
-                                    },
+                                    child: _isLoadingOtp
+                                        ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    )
+                                        : Text(
+                                      translate('Send OTP', 'OTP भेजें'),
+                                      style: Constants.AppTypography.h2.copyWith(
+                                        color: Constants.AppColors.card,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return AppLocalizations.of(context)!.emptyPasswordValidation;
-                                  } else if (value.length < 6) {
-                                    return AppLocalizations.of(context)!.passwordCharValidation;
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Button to continue
-                        SizedBox(
-                          height: 52,
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: _isButtonDisabled
-                                ? null
-                                : () async {
-                                    if (_formKey.currentState?.validate() ?? false) {
-                                      await _submitForm();
-                                    }
+                              ] else ...[
+                                // OTP input
+                                Text(
+                                  translate('Enter OTP', 'OTP दर्ज करें'),
+                                  style: Constants.AppTypography.label.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Constants.AppColors.ink,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Pinput(
+                                  controller: otpController,
+                                  focusNode: _pinFocusNode,
+                                  length: 6,
+                                  onCompleted: (pin) {
+                                    _verifyOtp();
                                   },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Constants.AppColors.brand,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!.login,
-                              style: Constants.AppTypography.h2.copyWith(
-                                color: Constants.AppColors.card,
-                              ),
-                            ),
+                                  onChanged: (pin) {
+                                    // Optionally clear error state
+                                  },
+                                  pinAnimationType: PinAnimationType.scale,
+                                  defaultPinTheme: PinTheme(
+                                    width: 48,
+                                    height: 52,
+                                    textStyle: Constants.AppTypography.h2.copyWith(
+                                      color: Constants.AppColors.ink,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Constants.AppColors.surface,
+                                      borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                      border: Border.all(
+                                        color: Constants.AppColors.border,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  focusedPinTheme: PinTheme(
+                                    width: 48,
+                                    height: 52,
+                                    textStyle: Constants.AppTypography.h2.copyWith(
+                                      color: Constants.AppColors.ink,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Constants.AppColors.surface,
+                                      borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                      border: Border.all(
+                                        color: Constants.AppColors.brand,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  submittedPinTheme: PinTheme(
+                                    width: 48,
+                                    height: 52,
+                                    textStyle: Constants.AppTypography.h2.copyWith(
+                                      color: Constants.AppColors.brandDeep,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Constants.AppColors.brandTint,
+                                      borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                      border: Border.all(
+                                        color: Constants.AppColors.brand,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                  errorPinTheme: PinTheme(
+                                    width: 48,
+                                    height: 52,
+                                    textStyle: Constants.AppTypography.h2.copyWith(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Constants.AppColors.surface,
+                                      borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                      border: Border.all(
+                                        color: Colors.red,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 48,
+                                        child: ElevatedButton(
+                                          onPressed: _isButtonDisabled ? null : _verifyOtp,
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Constants.AppColors.brand,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          child: _isVerifying
+                                              ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            ),
+                                          )
+                                              : Text(
+                                            translate('Verify OTP', 'OTP सत्यापित करें'),
+                                            style: Constants.AppTypography.h2.copyWith(
+                                              color: Constants.AppColors.card,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    // Resend OTP
+                                    TextButton(
+                                      onPressed: _isLoadingOtp ? null : _sendOtp,
+                                      child: Text(
+                                        translate('Resend OTP', 'OTP पुनः भेजें'),
+                                        style: Constants.AppTypography.label.copyWith(
+                                          color: Constants.AppColors.brand,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                       ],
@@ -1139,7 +1277,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Register Now Link
+                  // Register Now
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -1211,3 +1349,597 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+
+// class LoginScreen extends StatefulWidget {
+//   const LoginScreen({super.key});
+//
+//   @override
+//   _LoginScreenState createState() => _LoginScreenState();
+// }
+//
+// class _LoginScreenState extends State<LoginScreen> {
+//   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+//   String selectedOption = 'farmer';
+//   bool _isButtonDisabled =
+//       false; // Flag to control button's enabled/disabled state
+//
+//   TextEditingController phoneNumberController = TextEditingController();
+//   TextEditingController passwordController = TextEditingController();
+//   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+//   bool _isPasswordVisible = false; // To toggle password visibility
+//   Future<void> _submitForm() async {
+//     if (_isButtonDisabled) return;
+//     final language =
+//         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+//
+//     if (_formKey.currentState?.validate() ?? false) {
+//       _formKey.currentState?.save();
+//
+//       // Determine the endpoint based on user type
+//       final String apiUrl = selectedOption == "farmer"
+//           ? '${Constants.AppConstants.apiUrl}farmer/login'
+//           : '${Constants.AppConstants.apiUrl}labour/login';
+//       print(apiUrl);
+//
+//       final Map<String, dynamic> requestBody = {
+//         'phone': phoneNumberController.text,
+//         'password': passwordController.text,
+//       };
+//       print(jsonEncode(requestBody));
+//
+//       // Disable the button before submitting the form
+//       setState(() {
+//         _isButtonDisabled = true;
+//       });
+//
+//       try {
+//         // Make API call
+//         final response = await http.post(
+//           Uri.parse(apiUrl),
+//           headers: {'Content-Type': 'application/json'},
+//           body: jsonEncode(requestBody),
+//         );
+//         print(response.statusCode);
+//         print(response.body);
+//
+//         if (response.statusCode == 200) {
+//           // Success: Parse the response
+//           final responseData = jsonDecode(response.body);
+//           print(responseData);
+//
+//           Fluttertoast.showToast(
+//             msg: translate(
+//               responseData['message'] ?? 'Login successful!',
+//               'लॉगिन सफल!',
+//             ),
+//             toastLength: Toast.LENGTH_SHORT,
+//             gravity: ToastGravity.BOTTOM,
+//             backgroundColor: Colors.green.shade700,
+//             textColor: Colors.white,
+//             fontSize: 16.0,
+//           );
+//
+//           // Storing data in secure storage
+//           await _secureStorage.write(
+//               key: 'id', value: responseData['user']['id'].toString());
+//           await _secureStorage.write(
+//               key: 'name', value: responseData['user']['name']);
+//           await _secureStorage.write(
+//               key: 'phone', value: responseData['user']['phone']);
+//
+//           if (responseData['token'] != null) {
+//             String token = responseData['token'].toString();
+//             if (token.toLowerCase().startsWith('bearer ')) {
+//               token = token.substring(7).trim();
+//             }
+//             await _secureStorage.write(
+//                 key: 'token', value: token);
+//           }
+//
+//           // Store the user type (farmer or labour)
+//           await _secureStorage.write(key: 'userType', value: selectedOption);
+//
+//           // Navigate to the appropriate homepage based on user type
+//           await Future.delayed(const Duration(seconds: 2));
+//
+//           if (selectedOption == 'farmer') {
+//             // Navigate to Farmer Home Page
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                   builder: (context) =>
+//                       HomePage()), // Adjust the target page as needed
+//             );
+//           } else {
+//             // Navigate to Labour Home Page
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                   builder: (context) =>
+//                       Labourhomepage()), // Adjust the target page as needed
+//             );
+//           }
+//         } else if (response.statusCode == 401) {
+//           // Unauthorized: Invalid credentials
+//           final responseData = jsonDecode(response.body);
+//           Fluttertoast.showToast(
+//             msg: translate(
+//               responseData['message'] ?? 'Invalid credentials.',
+//               'अमान्य क्रेडेंशियल्स।',
+//             ),
+//             toastLength: Toast.LENGTH_SHORT,
+//             gravity: ToastGravity.BOTTOM,
+//             backgroundColor: Colors.red.shade700,
+//             textColor: Colors.white,
+//             fontSize: 16.0,
+//           );
+//         } else if (response.statusCode == 422) {
+//           // Validation errors
+//           final responseData = jsonDecode(response.body);
+//           final errors = responseData['errors'] as Map<String, dynamic>?;
+//           errors?.forEach((field, messages) {
+//             for (var message in messages) {
+//               Fluttertoast.showToast(
+//                 msg: message,
+//                 toastLength: Toast.LENGTH_SHORT,
+//                 gravity: ToastGravity.BOTTOM,
+//                 backgroundColor: Colors.red.shade700,
+//                 textColor: Colors.white,
+//                 fontSize: 16.0,
+//               );
+//             }
+//           });
+//         } else {
+//           // Generic error
+//           Fluttertoast.showToast(
+//             msg: translate(
+//               'Login failed. Try again.',
+//               'लॉगिन विफल। पुनः प्रयास करें।',
+//             ),
+//             toastLength: Toast.LENGTH_SHORT,
+//             gravity: ToastGravity.BOTTOM,
+//             backgroundColor: Colors.red.shade700,
+//             textColor: Colors.white,
+//             fontSize: 16.0,
+//           );
+//         }
+//       } catch (e) {
+//         // Network or unexpected error
+//         Fluttertoast.showToast(
+//           msg: translate(
+//             'An error occurred.',
+//             'एक त्रुटि हुई।',
+//           ),
+//           toastLength: Toast.LENGTH_SHORT,
+//           gravity: ToastGravity.BOTTOM,
+//           backgroundColor: Colors.orange.shade700,
+//           textColor: Colors.white,
+//           fontSize: 16.0,
+//         );
+//         debugPrint('Error: $e');
+//       } finally {
+//         // Re-enable the button after a delay or when the response is received
+//         setState(() {
+//           _isButtonDisabled = false; // Re-enable the button
+//         });
+//       }
+//     }
+//   }
+//
+//   String translate(String enText, String hiText) {
+//     // Get the selected language from the provider
+//     final language =
+//         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
+//
+//     // Return the appropriate text based on the selected language
+//     return language == 'en' ? enText : hiText;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final language = context.watch<LanguageProvider>().selectedLanguage;
+//
+//     return Scaffold(
+//       backgroundColor: Constants.AppColors.surface,
+//       body: Container(
+//         height: MediaQuery.of(context).size.height,
+//         width: MediaQuery.of(context).size.width,
+//         decoration: const BoxDecoration(
+//           gradient: LinearGradient(
+//             begin: Alignment.topCenter,
+//             end: Alignment.bottomCenter,
+//             colors: [
+//               Constants.AppColors.brandTint,
+//               Constants.AppColors.surface,
+//             ],
+//             stops: [0.0, 0.45],
+//           ),
+//         ),
+//         child: SafeArea(
+//           child: SingleChildScrollView(
+//             child: Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 20.0),
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: <Widget>[
+//                   const SizedBox(height: 40),
+//                   // App Logo with soft shadow
+//                   Center(
+//                     child: Container(
+//                       padding: const EdgeInsets.all(8),
+//                       height: 160,
+//                       child: Image.asset(
+//                         'assets/app.png',
+//                         fit: BoxFit.contain,
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(height: 12),
+//                   // Title Header
+//                   Text(
+//                     AppLocalizations.of(context)!.pleaseLogin,
+//                     style: Constants.AppTypography.display.copyWith(
+//                       fontSize: 30,
+//                       fontWeight: FontWeight.w800,
+//                       color: Constants.AppColors.brandDeep,
+//                     ),
+//                     textAlign: TextAlign.center,
+//                   ),
+//                   const SizedBox(height: 24),
+//
+//                   // Main Interactive Form Card
+//                   Container(
+//                     padding: const EdgeInsets.all(20.0),
+//                     decoration: BoxDecoration(
+//                       color: Constants.AppColors.card,
+//                       borderRadius: BorderRadius.circular(24),
+//                       boxShadow: const [Constants.AppShadows.card],
+//                       border: Border.all(
+//                         color: Constants.AppColors.border,
+//                         width: 1.0,
+//                       ),
+//                     ),
+//                     child: Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: [
+//                         // Row for Farmer and Labour selection
+//                         Row(
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: <Widget>[
+//                             // Farmer Option
+//                             Expanded(
+//                               child: GestureDetector(
+//                                 onTap: () {
+//                                   setState(() {
+//                                     selectedOption = 'farmer';
+//                                   });
+//                                 },
+//                                 child: Container(
+//                                   decoration: BoxDecoration(
+//                                     color: selectedOption == 'farmer'
+//                                         ? Constants.AppColors.brand
+//                                         : Constants.AppColors.surface2,
+//                                     borderRadius: BorderRadius.circular(Constants.AppRadii.md),
+//                                     border: Border.all(
+//                                       color: selectedOption == 'farmer'
+//                                           ? Constants.AppColors.brand
+//                                           : Constants.AppColors.border,
+//                                     ),
+//                                     boxShadow: selectedOption == 'farmer'
+//                                         ? const [Constants.AppShadows.soft]
+//                                         : null,
+//                                   ),
+//                                   height: 48,
+//                                   child: Center(
+//                                     child: Text(
+//                                       AppLocalizations.of(context)!.farmer,
+//                                       style: Constants.AppTypography.h3.copyWith(
+//                                         color: selectedOption == 'farmer'
+//                                             ? Constants.AppColors.card
+//                                             : Constants.AppColors.ink,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                             const SizedBox(width: 12),
+//                             // Labour Option
+//                             Expanded(
+//                               child: GestureDetector(
+//                                 onTap: () {
+//                                   setState(() {
+//                                     selectedOption = 'labour';
+//                                   });
+//                                 },
+//                                 child: Container(
+//                                   decoration: BoxDecoration(
+//                                     color: selectedOption == 'labour'
+//                                         ? Constants.AppColors.brand
+//                                         : Constants.AppColors.surface2,
+//                                     borderRadius: BorderRadius.circular(Constants.AppRadii.md),
+//                                     border: Border.all(
+//                                       color: selectedOption == 'labour'
+//                                           ? Constants.AppColors.brand
+//                                           : Constants.AppColors.border,
+//                                     ),
+//                                     boxShadow: selectedOption == 'labour'
+//                                         ? const [Constants.AppShadows.soft]
+//                                         : null,
+//                                   ),
+//                                   height: 48,
+//                                   child: Center(
+//                                     child: Text(
+//                                       AppLocalizations.of(context)!.labour,
+//                                       style: Constants.AppTypography.h3.copyWith(
+//                                         color: selectedOption == 'labour'
+//                                             ? Constants.AppColors.card
+//                                             : Constants.AppColors.ink,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//
+//                         const SizedBox(height: 24),
+//
+//                         // Form Fields
+//                         Form(
+//                           key: _formKey,
+//                           child: Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               Text(
+//                                 AppLocalizations.of(context)!.phone,
+//                                 style: Constants.AppTypography.label.copyWith(
+//                                   fontWeight: FontWeight.bold,
+//                                   color: Constants.AppColors.ink,
+//                                 ),
+//                               ),
+//                               const SizedBox(height: 8),
+//                               // Phone Number Input with +91
+//                               Row(
+//                                 children: [
+//                                   // Static +91
+//                                   Container(
+//                                     padding: const EdgeInsets.symmetric(horizontal: 14),
+//                                     height: 50,
+//                                     alignment: Alignment.center,
+//                                     decoration: BoxDecoration(
+//                                       color: Constants.AppColors.brandTint,
+//                                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+//                                       border: Border.all(
+//                                         color: Constants.AppColors.border,
+//                                         width: 1,
+//                                       ),
+//                                     ),
+//                                     child: Text(
+//                                       "+91",
+//                                       style: Constants.AppTypography.h3.copyWith(
+//                                         color: Constants.AppColors.brandDeep,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   const SizedBox(width: 10),
+//                                   // TextField for phone number
+//                                   Expanded(
+//                                     child: TextFormField(
+//                                       controller: phoneNumberController,
+//                                       keyboardType: TextInputType.phone,
+//                                       style: Constants.AppTypography.body.copyWith(
+//                                         fontWeight: FontWeight.w600,
+//                                       ),
+//                                       decoration: InputDecoration(
+//                                         hintText: AppLocalizations.of(context)!.enterMobile,
+//                                         hintStyle: Constants.AppTypography.body.copyWith(
+//                                           color: Constants.AppColors.inkSoft,
+//                                         ),
+//                                         filled: true,
+//                                         fillColor: Constants.AppColors.surface,
+//                                         border: OutlineInputBorder(
+//                                           borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+//                                         ),
+//                                         enabledBorder: OutlineInputBorder(
+//                                           borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+//                                           borderSide: const BorderSide(color: Constants.AppColors.border),
+//                                         ),
+//                                         focusedBorder: OutlineInputBorder(
+//                                           borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+//                                           borderSide: const BorderSide(color: Constants.AppColors.brand, width: 1.5),
+//                                         ),
+//                                         contentPadding: const EdgeInsets.symmetric(
+//                                           vertical: 0,
+//                                           horizontal: 14,
+//                                         ),
+//                                       ),
+//                                       inputFormatters: [
+//                                         FilteringTextInputFormatter.digitsOnly,
+//                                         LengthLimitingTextInputFormatter(10),
+//                                       ],
+//                                       validator: (value) {
+//                                         if (value == null || value.isEmpty) {
+//                                           return AppLocalizations.of(context)!.emptyMobileValidation;
+//                                         } else if (value.length != 10) {
+//                                           return AppLocalizations.of(context)!.mobileDigitValidation;
+//                                         }
+//                                         return null;
+//                                       },
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               const SizedBox(height: 18),
+//                               // Password Label
+//                               Text(
+//                                 AppLocalizations.of(context)!.passwordHintText,
+//                                 style: Constants.AppTypography.label.copyWith(
+//                                   fontWeight: FontWeight.bold,
+//                                   color: Constants.AppColors.ink,
+//                                 ),
+//                               ),
+//                               const SizedBox(height: 8),
+//                               // Password Input
+//                               TextFormField(
+//                                 controller: passwordController,
+//                                 obscureText: !_isPasswordVisible,
+//                                 style: Constants.AppTypography.body.copyWith(
+//                                   fontWeight: FontWeight.w600,
+//                                 ),
+//                                 decoration: InputDecoration(
+//                                   hintText: AppLocalizations.of(context)!.passwordHintText,
+//                                   hintStyle: Constants.AppTypography.body.copyWith(
+//                                     color: Constants.AppColors.inkSoft,
+//                                   ),
+//                                   filled: true,
+//                                   fillColor: Constants.AppColors.surface,
+//                                   border: OutlineInputBorder(
+//                                     borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+//                                   ),
+//                                   enabledBorder: OutlineInputBorder(
+//                                     borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+//                                     borderSide: const BorderSide(color: Constants.AppColors.border),
+//                                   ),
+//                                   focusedBorder: OutlineInputBorder(
+//                                     borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+//                                     borderSide: const BorderSide(color: Constants.AppColors.brand, width: 1.5),
+//                                   ),
+//                                   contentPadding: const EdgeInsets.symmetric(
+//                                     vertical: 0,
+//                                     horizontal: 14,
+//                                   ),
+//                                   suffixIcon: IconButton(
+//                                     icon: Icon(
+//                                       _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+//                                       color: Constants.AppColors.brand,
+//                                     ),
+//                                     onPressed: () {
+//                                       setState(() {
+//                                         _isPasswordVisible = !_isPasswordVisible;
+//                                       });
+//                                     },
+//                                   ),
+//                                 ),
+//                                 validator: (value) {
+//                                   if (value == null || value.isEmpty) {
+//                                     return AppLocalizations.of(context)!.emptyPasswordValidation;
+//                                   } else if (value.length < 6) {
+//                                     return AppLocalizations.of(context)!.passwordCharValidation;
+//                                   }
+//                                   return null;
+//                                 },
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//
+//                         const SizedBox(height: 24),
+//
+//                         // Button to continue
+//                         SizedBox(
+//                           height: 52,
+//                           width: double.infinity,
+//                           child: ElevatedButton(
+//                             onPressed: _isButtonDisabled
+//                                 ? null
+//                                 : () async {
+//                                     if (_formKey.currentState?.validate() ?? false) {
+//                                       await _submitForm();
+//                                     }
+//                                   },
+//                             style: ElevatedButton.styleFrom(
+//                               backgroundColor: Constants.AppColors.brand,
+//                               shape: RoundedRectangleBorder(
+//                                 borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+//                               ),
+//                               elevation: 0,
+//                             ),
+//                             child: Text(
+//                               AppLocalizations.of(context)!.login,
+//                               style: Constants.AppTypography.h2.copyWith(
+//                                 color: Constants.AppColors.card,
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//
+//                   const SizedBox(height: 24),
+//
+//                   // Register Now Link
+//                   GestureDetector(
+//                     onTap: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => RegistrationForm(),
+//                         ),
+//                       );
+//                     },
+//                     child: Text(
+//                       AppLocalizations.of(context)!.registernow,
+//                       style: Constants.AppTypography.subhead.copyWith(
+//                         color: Constants.AppColors.brandDeep,
+//                         fontWeight: FontWeight.bold,
+//                         decoration: TextDecoration.underline,
+//                         decorationColor: Constants.AppColors.brandDeep,
+//                       ),
+//                     ),
+//                   ),
+//
+//                   const SizedBox(height: 16),
+//
+//                   // Terms & Conditions
+//                   Padding(
+//                     padding: const EdgeInsets.symmetric(horizontal: 16),
+//                     child: RichText(
+//                       text: TextSpan(
+//                         text: AppLocalizations.of(context)!.termsAndCondition,
+//                         style: Constants.AppTypography.label.copyWith(
+//                           height: 1.5,
+//                           color: Constants.AppColors.inkSoft,
+//                         ),
+//                         children: [
+//                           TextSpan(
+//                             text: AppLocalizations.of(context)!.termsAndCondition2,
+//                             style: const TextStyle(
+//                               color: Colors.blue,
+//                               decoration: TextDecoration.underline,
+//                             ),
+//                             recognizer: TapGestureRecognizer()
+//                               ..onTap = () {
+//                                 Navigator.push(
+//                                   context,
+//                                   MaterialPageRoute(
+//                                     builder: (context) => MyWebView(),
+//                                   ),
+//                                 );
+//                               },
+//                           ),
+//                           TextSpan(
+//                             text: AppLocalizations.of(context)!.purnViram,
+//                             style: Constants.AppTypography.label.copyWith(
+//                               height: 1.5,
+//                               color: Constants.AppColors.inkSoft,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                       textAlign: TextAlign.center,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 24),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
