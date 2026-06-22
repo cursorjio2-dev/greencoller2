@@ -637,6 +637,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false; // To toggle password visibility
   Future<void> _submitForm() async {
+    if (_isButtonDisabled) return;
     final language =
         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
 
@@ -694,6 +695,15 @@ class _LoginScreenState extends State<LoginScreen> {
               key: 'name', value: responseData['user']['name']);
           await _secureStorage.write(
               key: 'phone', value: responseData['user']['phone']);
+
+          if (responseData['token'] != null) {
+            String token = responseData['token'].toString();
+            if (token.toLowerCase().startsWith('bearer ')) {
+              token = token.substring(7).trim();
+            }
+            await _secureStorage.write(
+                key: 'token', value: token);
+          }
 
           // Store the user type (farmer or labour)
           await _secureStorage.write(key: 'userType', value: selectedOption);

@@ -3402,6 +3402,10 @@ class _HomePageState extends State<HomePage> {
   ];
   Future<void> _logout(BuildContext context) async {
     await _secureStorage.delete(key: 'id'); // Clear the user ID from storage
+    await _secureStorage.delete(key: 'token'); // Clear the token from storage
+    await _secureStorage.delete(key: 'name');
+    await _secureStorage.delete(key: 'phone');
+    await _secureStorage.delete(key: 'userType');
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),

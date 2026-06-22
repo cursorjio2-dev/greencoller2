@@ -1490,6 +1490,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
   }
 
   Future<void> _submitForm() async {
+    if (_isButtonDisabled) return;
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         _isButtonDisabled = true;

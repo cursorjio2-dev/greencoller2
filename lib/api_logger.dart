@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Helper class to format and log API calls.
 class ApiLogger {
@@ -122,6 +123,19 @@ class LoggingHttpClient extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final startTime = DateTime.now();
+
+    // Read and inject Bearer token if not already present
+    if (!request.headers.containsKey('Authorization')) {
+      const secureStorage = FlutterSecureStorage();
+      final token = await secureStorage.read(key: 'token');
+      if (token != null && token.isNotEmpty) {
+        String tokenVal = token;
+        if (tokenVal.toLowerCase().startsWith('bearer ')) {
+          tokenVal = tokenVal.substring(7).trim();
+        }
+        request.headers['Authorization'] = 'Bearer $tokenVal';
+      }
+    }
 
     // Extract request body/parameters
     String requestBody = '';
