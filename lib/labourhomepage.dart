@@ -6039,7 +6039,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                           _buildPremiumChip(
                                             icon: Icons.currency_rupee,
                                             label:
-                                            '₹${NumberFormat('#,##0').format(project['budget'] ?? 0)}',
+                                            '${NumberFormat('#,##0').format(project['budget'] ?? 0)}',
                                             bgColor: const Color(0xFFFFF7ED),
                                             iconColor: const Color(0xFFEA580C),
                                             labelColor: const Color(0xFF9A3412),

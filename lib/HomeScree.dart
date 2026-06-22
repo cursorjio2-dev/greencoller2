@@ -5779,7 +5779,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                         const SizedBox(width: 8),
                                         _buildPremiumChip(
                                           icon: Icons.currency_rupee,
-                                          label: '₹$budgetFormatted',
+                                          label: '$budgetFormatted',
                                           bgColor: const Color(0xFFFFF7ED),
                                           iconColor: const Color(0xFFEA580C),
                                           labelColor: const Color(0xFF9A3412),

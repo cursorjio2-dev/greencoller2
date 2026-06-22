@@ -170,17 +170,13 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {
-        gender = [
-          AppLocalizations.of(context)!.male,
-          AppLocalizations.of(context)!.female,
-          AppLocalizations.of(context)!.other,
-        ];
+        gender = ['Male', 'Female', 'Other'];
       });
       _loadSkillsData();
-      _fetchStates();
-      fetchLabourDetails();
+      await _fetchStates();
+      await fetchLabourDetails();
       _focusNode.addListener(() {
         setState(() {
           // If focus is lost, hide the skills dropdown
@@ -309,21 +305,13 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
             selectedState = responseData['data']['state'];
           }
 
-          if (responseData['data']['skills'] != "null") {
-            if (responseData['data']['skills'] is String) {
-              selectedSkills = responseData['data']['skills']!
-                  .split(','); // Split if it's comma-separated
-            } else {
-              selectedSkills = [responseData['data']['skills']];
-            }
+          if (responseData['data']['skills'] != null && responseData['data']['skills'] != "null" && responseData['data']['skills'].toString().isNotEmpty) {
+            selectedSkills = responseData['data']['skills'].toString()
+                .split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
           }
-          if (responseData['data']['certifications'] != "null") {
-            if (responseData['data']['qualification'] is String) {
-              selectedcertifications = responseData['data']['certifications']!
-                  .split(','); // Split if it's comma-separated
-            } else {
-              selectedcertifications = [responseData['data']['certifications']];
-            }
+          if (responseData['data']['certifications'] != null && responseData['data']['certifications'] != "null" && responseData['data']['certifications'].toString().isNotEmpty) {
+            selectedcertifications = responseData['data']['certifications'].toString()
+                .split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
           }
           print(responseData['data']['education']);
           selectedExperience = (responseData['data']['education'] != null &&
@@ -361,8 +349,6 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
       List<dynamic> states = data['data'];
 
       setState(() {
-        selectedCity = null;
-
         statesEn = [];
         statesHi = [];
         stateCodes = {}; // Reset previous data
@@ -1264,7 +1250,9 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
 
                 // Display selected skills
                 if (selectedSkills.isNotEmpty)
-                  Row(
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
                     children: selectedSkills.map((skill) {
                       return Card(
                         elevation: 4, // Adds a shadow effect
