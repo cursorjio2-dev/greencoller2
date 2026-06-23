@@ -244,7 +244,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
           },
         ),
       ),
-      body: isLoading
+      body: SafeArea(
+        child: isLoading
           ? const Center(child: CircularProgressIndicator(color: Constants.AppColors.brand))
           : notifications.isEmpty
               ? Center(
@@ -293,6 +294,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     );
                   },
                 ),
+      ),
     );
   }
 }

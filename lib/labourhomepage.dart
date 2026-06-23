@@ -6708,24 +6708,25 @@ class _LabourhomepageState extends State<Labourhomepage> {
             ],
           ),
         ),
-        body: _pages[_currentIndex],
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 12.0),
-          child: Container(
-            decoration: const BoxDecoration(
-              gradient: Constants.AppColors.brandGradient,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(28),
-                topRight: Radius.circular(28),
-                bottomLeft: Radius.circular(28),
-                bottomRight: Radius.circular(28),
-              ),
-              boxShadow: [Constants.AppShadows.fab],
+        body: SafeArea(
+          child: _pages[_currentIndex],
+        ),
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            gradient: Constants.AppColors.brandGradient,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(28),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(28),
-              child: BottomNavigationBar(
-                backgroundColor: Colors.transparent,
+            boxShadow: [Constants.AppShadows.fab],
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(28),
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: Colors.transparent,
                 currentIndex: _currentIndex,
                 selectedItemColor: Colors.white,
                 unselectedItemColor: Colors.white70,
@@ -6763,7 +6764,6 @@ class _LabourhomepageState extends State<Labourhomepage> {
               ),
             ),
           ),
-        ),
       ),
     );
   }

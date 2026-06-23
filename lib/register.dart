@@ -3011,7 +3011,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
         ),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+        child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -3311,6 +3312,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

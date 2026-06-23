@@ -900,8 +900,9 @@ class _AddProjectFormState extends State<AddProjectForm> {
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -1541,6 +1542,7 @@ class _AddProjectFormState extends State<AddProjectForm> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

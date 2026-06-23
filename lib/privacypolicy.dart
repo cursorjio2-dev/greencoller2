@@ -71,27 +71,29 @@ class _MyWebViewState extends State<MyWebView> {
             },
           ),
         ),
-        body: InAppWebView(
-          initialUrlRequest: URLRequest(
+        body: SafeArea(
+          child: InAppWebView(
+            initialUrlRequest: URLRequest(
               url: WebUri(
-                  'https://greencollar.in/terms-and-service')), // Fix: Use WebUri.parse()
-          initialOptions: InAppWebViewGroupOptions(
-            crossPlatform: InAppWebViewOptions(
-              javaScriptEnabled: true,
-              useOnDownloadStart: true,
+                  'https://greencollar.in/terms-and-service')),
+            initialOptions: InAppWebViewGroupOptions(
+              crossPlatform: InAppWebViewOptions(
+                javaScriptEnabled: true,
+                useOnDownloadStart: true,
+              ),
             ),
+            pullToRefreshController: _pullToRefreshController,
+            onWebViewCreated: (InAppWebViewController controller) {
+              _webViewController = controller;
+            },
+            onLoadStart: (controller, url) {
+              // Handle load start (optional)
+            },
+            onLoadStop: (controller, url) async {
+              // Handle load stop (optional)
+              _pullToRefreshController.endRefreshing();
+            },
           ),
-          pullToRefreshController: _pullToRefreshController,
-          onWebViewCreated: (InAppWebViewController controller) {
-            _webViewController = controller;
-          },
-          onLoadStart: (controller, url) {
-            // Handle load start (optional)
-          },
-          onLoadStop: (controller, url) async {
-            // Handle load stop (optional)
-            _pullToRefreshController.endRefreshing();
-          },
         ),
       ),
     );

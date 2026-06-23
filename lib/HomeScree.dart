@@ -686,19 +686,25 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        body: _pages[_currentIndex],
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 12.0),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: Constants.AppColors.brandGradient,
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: const [Constants.AppShadows.fab],
+        body: SafeArea(
+          child: _pages[_currentIndex],
+        ),
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            gradient: Constants.AppColors.brandGradient,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(28),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(28),
-              child: BottomNavigationBar(
-                backgroundColor: Colors.transparent,
+            boxShadow: const [Constants.AppShadows.fab],
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(28),
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: Colors.transparent,
                 currentIndex: _currentIndex,
                 selectedItemColor: Colors.white,
                 unselectedItemColor: Colors.white70,
@@ -735,7 +741,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        ),
         floatingActionButton: Container(
           decoration: BoxDecoration(
             gradient: Constants.AppColors.brandGradient,
@@ -2597,7 +2602,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                           icon:
                                           Icons.currency_rupee,
                                           label:
-                                          '₹$budgetFormatted',
+                                          '$budgetFormatted',
                                           bgColor: const Color(
                                               0xFFFFF7ED),
                                           iconColor: const Color(

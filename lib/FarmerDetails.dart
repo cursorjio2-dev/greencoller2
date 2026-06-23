@@ -738,7 +738,8 @@ class _FarmerDetailsPageState extends State<FarmerDetailsPage> {
         ),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+        child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
           child: Column(
@@ -875,6 +876,7 @@ class _FarmerDetailsPageState extends State<FarmerDetailsPage> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

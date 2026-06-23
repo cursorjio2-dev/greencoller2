@@ -751,7 +751,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+        child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -1614,6 +1615,7 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

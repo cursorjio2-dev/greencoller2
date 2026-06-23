@@ -246,7 +246,8 @@ class _LabourNotificationState extends State<LabourNotification> {
           },
         ),
       ),
-      body: isLoading
+      body: SafeArea(
+        child: isLoading
           ? const Center(child: CircularProgressIndicator(color: Constants.AppColors.brand))
           : notifications.isEmpty
               ? Center(
@@ -295,6 +296,7 @@ class _LabourNotificationState extends State<LabourNotification> {
                     );
                   },
                 ),
+      ),
     );
   }
 }
