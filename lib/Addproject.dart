@@ -846,9 +846,11 @@ class _AddProjectFormState extends State<AddProjectForm> {
     _speech.stop();
   }
 
-  InputDecoration _buildInputDecoration(String labelText, {Widget? suffixIcon, TextEditingController? controller}) {
+  InputDecoration _buildInputDecoration(String labelText, {Widget? suffixIcon, TextEditingController? controller, String? hintText}) {
     return InputDecoration(
       labelText: labelText,
+      hintText: hintText,
+      hintStyle: Constants.AppTypography.label.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
       labelStyle: Constants.AppTypography.label.copyWith(color: Constants.AppColors.inkSoft),
       floatingLabelStyle: Constants.AppTypography.micro.copyWith(color: Constants.AppColors.brand),
       suffixIcon: suffixIcon ?? (controller != null ? MicIconButton(controller: controller) : null),
@@ -954,6 +956,7 @@ class _AddProjectFormState extends State<AddProjectForm> {
                     decoration: _buildInputDecoration(
                       AppLocalizations.of(context)!.workTitle,
                       controller: titleController,
+                      hintText: translate('Enter project/work title', 'प्रोजेक्ट/कार्य शीर्षक दर्ज करें'),
                     ),
                     style: Constants.AppTypography.body,
                     validator: (value) {
@@ -1004,6 +1007,7 @@ class _AddProjectFormState extends State<AddProjectForm> {
                     decoration: _buildInputDecoration(
                       translate('Number of Required Workers', 'आवश्यक श्रमिकों की संख्या'),
                       controller: requiredLaboursController,
+                      hintText: translate('Enter number of workers needed', 'आवश्यक श्रमिकों की संख्या दर्ज करें'),
                     ),
                     style: Constants.AppTypography.body,
                     validator: (value) {
@@ -1098,6 +1102,7 @@ class _AddProjectFormState extends State<AddProjectForm> {
                   TextFormField(
                     decoration: _buildInputDecoration(
                       translate('Enter Required skills', 'अपना कौशल दर्ज करें'),
+                      hintText: translate('Tap to select required skills', 'आवश्यक कौशल चुनने के लिए टैप करें'),
                     ),
                     style: Constants.AppTypography.body,
                     onTap: () {
@@ -1172,6 +1177,7 @@ class _AddProjectFormState extends State<AddProjectForm> {
                   TextFormField(
                     decoration: _buildInputDecoration(
                       translate('Enter Required Qualification', 'आवश्यक योग्यता दर्ज करें'),
+                      hintText: translate('Tap to select qualifications', 'योग्यता चुनने के लिए टैप करें'),
                     ),
                     style: Constants.AppTypography.body,
                     onTap: () {
@@ -1320,6 +1326,7 @@ class _AddProjectFormState extends State<AddProjectForm> {
                     decoration: _buildInputDecoration(
                       language == 'en' ? 'Pin Code' : 'पिन कोड',
                       controller: pinCodeController,
+                      hintText: translate('Enter 6-digit pin code', '6 अंकों का पिन कोड दर्ज करें'),
                     ),
                     style: Constants.AppTypography.body,
                     validator: (value) {
@@ -1344,6 +1351,7 @@ class _AddProjectFormState extends State<AddProjectForm> {
                     decoration: _buildInputDecoration(
                       translate('Location', 'स्थान'),
                       controller: addressController,
+                      hintText: translate('Enter project location', 'प्रोजेक्ट का स्थान दर्ज करें'),
                     ),
                     style: Constants.AppTypography.body,
                     validator: (value) {
@@ -1360,6 +1368,7 @@ class _AddProjectFormState extends State<AddProjectForm> {
                     decoration: _buildInputDecoration(
                       translate('Description about Project', 'प्रोजेक्ट के बारे में विवरण'),
                       controller: descriptionController,
+                      hintText: translate('Describe the project details', 'प्रोजेक्ट का विवरण लिखें'),
                     ),
                     style: Constants.AppTypography.body,
                     maxLines: 3,
@@ -1478,6 +1487,7 @@ class _AddProjectFormState extends State<AddProjectForm> {
                     decoration: _buildInputDecoration(
                       AppLocalizations.of(context)!.budget + " (₹)",
                       controller: budgetController,
+                      hintText: translate('Enter budget amount', 'बजट राशि दर्ज करें'),
                     ),
                     style: Constants.AppTypography.body,
                     validator: (value) {

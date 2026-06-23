@@ -795,6 +795,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   style: Constants.AppTypography.body.copyWith(color: Constants.AppColors.ink),
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.name,
+                    hintText: translate('Enter your full name', 'अपना पूरा नाम दर्ज करें'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     labelStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
                     fillColor: Constants.AppColors.card,
                     filled: true,
@@ -853,6 +855,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   style: Constants.AppTypography.body.copyWith(color: Constants.AppColors.ink),
                   decoration: InputDecoration(
                     labelText: translate("About You", "आपके बारे में"),
+                    hintText: translate('Tell us about yourself', 'अपने बारे में बताएं'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     labelStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
                     fillColor: Constants.AppColors.card,
                     filled: true,
@@ -906,6 +910,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     decoration: InputDecoration(
                       labelText: translate(
                           "Daily Wages In Rs", "दैनिक वेतन रुपये में"),
+                      hintText: translate('Enter daily wage amount', 'दैनिक वेतन राशि दर्ज करें'),
+                      hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                       labelStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
                       fillColor: Constants.AppColors.card,
                       filled: true,
@@ -957,6 +963,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   style: Constants.AppTypography.body.copyWith(color: Constants.AppColors.ink),
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.age,
+                    hintText: translate('Enter your age', 'अपनी उम्र दर्ज करें'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     labelStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
                     fillColor: Constants.AppColors.card,
                     filled: true,
@@ -1018,6 +1026,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   style: Constants.AppTypography.body.copyWith(color: Constants.AppColors.ink),
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.email,
+                    hintText: translate('Enter your email address', 'अपना ईमेल पता दर्ज करें'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     labelStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
                     fillColor: Constants.AppColors.card,
                     filled: true,
@@ -1077,6 +1087,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   style: Constants.AppTypography.body.copyWith(color: Constants.AppColors.ink),
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.aadhar,
+                    hintText: translate('Enter 12-digit Aadhaar number', '12 अंकों का आधार नंबर दर्ज करें'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     labelStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
                     fillColor: Constants.AppColors.card,
                     filled: true,
@@ -1140,6 +1152,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   style: Constants.AppTypography.body.copyWith(color: Constants.AppColors.ink),
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.phone,
+                    hintText: translate('Enter 10-digit mobile number', '10 अंकों का मोबाइल नंबर दर्ज करें'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     labelStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
                     fillColor: Constants.AppColors.card,
                     filled: true,
@@ -1196,6 +1210,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   decoration: InputDecoration(
                     labelText: translate(
                         'Select your skills', 'अपने कौशल का चयन करें'),
+                    hintText: translate('Tap to select your skills', 'अपने कौशल चुनने के लिए टैप करें'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.green, // Default border color
@@ -1276,6 +1292,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   decoration: InputDecoration(
                     labelText: translate(
                         'Select your certifications', 'अपने प्रमाणपत्र चुनें'),
+                    hintText: translate('Tap to select certifications', 'प्रमाणपत्र चुनने के लिए टैप करें'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.green, // Default border color
@@ -1393,6 +1411,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   maxLines: 3,
                   decoration: InputDecoration(
                     labelText: "House No. /VPO / Village",
+                    hintText: translate('Enter house no., village, area', 'मकान नं., गांव, क्षेत्र दर्ज करें'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     suffixIcon: MicIconButton(controller: addressController),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -1525,6 +1545,8 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.pincode,
+                    hintText: translate('Enter 6-digit pin code', '6 अंकों का पिन कोड दर्ज करें'),
+                    hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.green, // Default border color

@@ -826,9 +826,11 @@ class _UpdateProjectState extends State<UpdateProject> {
     });
   }
 
-  InputDecoration _buildInputDecoration(String labelText, {Widget? suffixIcon, TextEditingController? controller}) {
+  InputDecoration _buildInputDecoration(String labelText, {Widget? suffixIcon, TextEditingController? controller, String? hintText}) {
     return InputDecoration(
       labelText: labelText,
+      hintText: hintText,
+      hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
       labelStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft),
       fillColor: Constants.AppColors.card,
       filled: true,
@@ -942,7 +944,7 @@ class _UpdateProjectState extends State<UpdateProject> {
 
                   TextFormField(
                     controller: titleController,
-                    decoration: _buildInputDecoration(AppLocalizations.of(context)!.workTitle, controller: titleController),
+                    decoration: _buildInputDecoration(AppLocalizations.of(context)!.workTitle, controller: titleController, hintText: translate('Enter project/work title', 'प्रोजेक्ट/कार्य शीर्षक दर्ज करें')),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return translate('Please enter a project title.',
@@ -985,7 +987,7 @@ class _UpdateProjectState extends State<UpdateProject> {
                   TextFormField(
                     controller: requiredLaboursController,
                     keyboardType: TextInputType.number,
-                    decoration: _buildInputDecoration(translate('Number of Required Labours', 'आवश्यक श्रमिकों की संख्या'), controller: requiredLaboursController),
+                    decoration: _buildInputDecoration(translate('Number of Required Labours', 'आवश्यक श्रमिकों की संख्या'), controller: requiredLaboursController, hintText: translate('Enter number of workers needed', 'आवश्यक श्रमिकों की संख्या दर्ज करें')),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return translate(
@@ -1058,6 +1060,7 @@ class _UpdateProjectState extends State<UpdateProject> {
                     decoration: _buildInputDecoration(
                       translate('Enter Required skills', 'अपना कौशल दर्ज करें'),
                       suffixIcon: Icon(Icons.arrow_drop_down, color: Constants.AppColors.brand),
+                      hintText: translate('Tap to select required skills', 'आवश्यक कौशल चुनने के लिए टैप करें'),
                     ),
                     readOnly: true,
                     onTap: () {
@@ -1132,6 +1135,7 @@ class _UpdateProjectState extends State<UpdateProject> {
                     decoration: _buildInputDecoration(
                       translate('Enter Required Qualification', 'आवश्यक योग्यता दर्ज करें'),
                       suffixIcon: Icon(Icons.arrow_drop_down, color: Constants.AppColors.brand),
+                      hintText: translate('Tap to select qualifications', 'योग्यता चुनने के लिए टैप करें'),
                     ),
                     readOnly: true,
                     onTap: () {
@@ -1267,7 +1271,7 @@ class _UpdateProjectState extends State<UpdateProject> {
                   TextFormField(
                     controller: pinCodeController,
                     keyboardType: TextInputType.number,
-                    decoration: _buildInputDecoration(language == 'en' ? 'Pin Code' : 'पिन कोड', controller: pinCodeController),
+                    decoration: _buildInputDecoration(language == 'en' ? 'Pin Code' : 'पिन कोड', controller: pinCodeController, hintText: translate('Enter 6-digit pin code', '6 अंकों का पिन कोड दर्ज करें')),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return language == 'en'
@@ -1287,7 +1291,7 @@ class _UpdateProjectState extends State<UpdateProject> {
                   // Address
                   TextFormField(
                     controller: addressController,
-                    decoration: _buildInputDecoration(translate('Enter Location', 'स्थान दर्ज करें'), controller: addressController),
+                    decoration: _buildInputDecoration(translate('Enter Location', 'स्थान दर्ज करें'), controller: addressController, hintText: translate('Enter project location', 'प्रोजेक्ट का स्थान दर्ज करें')),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return translate(
@@ -1299,7 +1303,7 @@ class _UpdateProjectState extends State<UpdateProject> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: descriptionController,
-                    decoration: _buildInputDecoration(translate('Description about Project', 'प्रोजेक्ट के बारे में विवरण'), controller: descriptionController),
+                    decoration: _buildInputDecoration(translate('Description about Project', 'प्रोजेक्ट के बारे में विवरण'), controller: descriptionController, hintText: translate('Describe the project details', 'प्रोजेक्ट का विवरण लिखें')),
                     maxLines: 3,
                   ),
                   const SizedBox(height: 16),
@@ -1388,7 +1392,7 @@ class _UpdateProjectState extends State<UpdateProject> {
                   TextFormField(
                     controller: budgetController,
                     keyboardType: TextInputType.number,
-                    decoration: _buildInputDecoration(AppLocalizations.of(context)!.budget, controller: budgetController),
+                    decoration: _buildInputDecoration(AppLocalizations.of(context)!.budget, controller: budgetController, hintText: translate('Enter budget amount', 'बजट राशि दर्ज करें')),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return translate(

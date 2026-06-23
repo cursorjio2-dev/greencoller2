@@ -6289,7 +6289,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     if (sVal == '6 months-1 year') return '6 months-1 year';
     if (sVal == '>1 year') return '>1 year';
 
-    // If it's a number, map it to the range
     int? daysInt = int.tryParse(sVal);
     if (daysInt != null) {
       if (daysInt == 1) return '1 day';
@@ -6329,11 +6328,40 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     super.dispose();
   }
 
+  // ------- Helper: Build stat chip for total/completed projects -------
+  Widget _buildStatChip({
+    required IconData icon,
+    required String label,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5EE),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: Constants.AppColors.inkSoft),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: Constants.AppColors.ink,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------- Existing methods (unchanged) ----------
   Future<void> confirmcancel(BuildContext context, int projectId) async {
     final String apiUrl =
         '${Constants.AppConstants.apiUrl}labour/confirmcancel';
 
-    // Get user ID from secure storage
     String? userId = await widget._secureStorage.read(key: 'id');
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -6387,7 +6415,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   }
 
   void handleMilestoneCompletion(BuildContext context, String milestone) async {
-    // Retrieve user ID from secure storage
     String? userId = await widget._secureStorage.read(key: 'id');
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -6400,20 +6427,16 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       return;
     }
 
-    // Prepare parameters
     int projectId = widget.projectId;
-    String milestoneSno =
-        milestone; // Convert milestone to int, default to 1 if invalid
+    String milestoneSno = milestone;
     int labourId = int.parse(userId);
 
-    // Call the milestone completion API
     final result = await MilestoneService.completeMilestone(
       projectId: projectId,
       milestoneSno: milestoneSno,
       labourId: labourId,
     );
 
-    // Show the result in a SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(result['message'] ??
@@ -6426,12 +6449,10 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 
   Future<void> startWork(
       BuildContext context, int projectId, Map<String, dynamic> project) async {
-    // Determine the correct endpoint based on payment type
     final String apiUrl = '${Constants.AppConstants.apiUrl}labour/'
         '${project['payment_type'] == "1" ? "milestoneprojectworkstart" : "projectworkstart"}';
     print(apiUrl);
 
-    // Get user ID from secure storage
     String? userId = await widget._secureStorage.read(key: 'id');
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -6442,10 +6463,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       return;
     }
 
-    // Prepare request body with corrected parameter names
     final Map<String, dynamic> requestBody = {
       'projectid': projectId,
-      'labourid': userId, // Corrected from 'labourid' to 'id'
+      'labourid': userId,
     };
 
     try {
@@ -6457,7 +6477,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         body: jsonEncode(requestBody),
       );
 
-      // Handle the response
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
         Fluttertoast.showToast(
@@ -6472,7 +6491,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 
         bool isSuccess = responseBody['status'] == '1';
 
-        // Navigate to homepage if successful
         if (isSuccess) {
           await Future.delayed(const Duration(seconds: 1));
           Navigator.pushReplacement(
@@ -6481,7 +6499,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           );
         }
       } else {
-        // Handle HTTP errors
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
@@ -6494,11 +6511,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   }
 
   String translate(String enText, String hiText) {
-    // Get the selected language from the provider
     final language =
         Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
-
-    // Return the appropriate text based on the selected language
     return language == 'en' ? enText : hiText;
   }
 
@@ -6510,7 +6524,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         '${Constants.AppConstants.apiUrl}labour/projectDetailByLabour';
 
     try {
-      // Retrieve user ID from secure storage
       String? userId = await widget._secureStorage.read(key: 'id');
       if (userId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -6519,22 +6532,19 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         throw Exception('User ID not found.');
       }
 
-      // Create the request body
       final Map<String, dynamic> requestBody = {
         'id': userId,
         'project_id': projectId,
       };
 
-      print(jsonEncode(requestBody)); // Debugging output
+      print(jsonEncode(requestBody));
 
-      // Send the POST request
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
 
-      // Parse the response
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
 
@@ -6545,7 +6555,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             final project = data[0];
 
             _commentController.text =
-                project['comment'] ?? ''; // Set project description as comment
+                project['comment'] ?? '';
             selectedEstimateDays = _normalizeEstimateDays(project['wpay'] ?? project['days']);
             _payController.text = project['praposal_amount'] ?? '';
             setState(() {
@@ -6560,9 +6570,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                     ? List<Map<String, dynamic>>.from(
                     jsonDecode(project['milestones']))
                     : [];
-              } // Get the first project
+              }
               _commentController.text = project['comment'] ?? '';
-
               selectedEstimateDays = _normalizeEstimateDays(project['wpay'] ?? project['days']);
               print(selectedEstimateDays);
               _payController.text = project['praposal_amount'] ?? '';
@@ -6582,15 +6591,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     }
   }
 
-  bool _isButtonDisabled =
-  false; // Flag to control button's enabled/disabled state
+  bool _isButtonDisabled = false;
 
   Future<void> applyToProject(BuildContext context, int projectId) async {
     final String apiUrl = '${Constants.AppConstants.apiUrl}labour/projectApply';
 
-    // Validate if all milestones have the necessary data
     for (var milestone in milestones) {
-      // Check if 'amount' is missing or invalid
       if (milestone['proposalamount'] == null ||
           milestone['proposalamount'] <= 0) {
         Fluttertoast.showToast(
@@ -6602,10 +6608,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-        return; // Exit early if validation fails
+        return;
       }
 
-      // Check if 'duration' is missing or invalid
       if (milestone['duration'] == null || milestone['duration'] <= 0) {
         Fluttertoast.showToast(
           msg: translate('Please fill in the duration for all milestones.',
@@ -6616,11 +6621,10 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-        return; // Exit early if validation fails
+        return;
       }
     }
 
-    // Get user ID from secure storage
     String? userId = await widget._secureStorage.read(key: 'id');
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -6641,7 +6645,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       'milestones': milestones,
     };
 
-    // Disable the button before submitting the form
     setState(() {
       _isButtonDisabled = true;
     });
@@ -6729,7 +6732,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
       );
     } finally {
-      // Re-enable the button after the response is received
       setState(() {
         _isButtonDisabled = false;
       });
@@ -6740,7 +6742,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     final String apiUrl =
         '${Constants.AppConstants.apiUrl}labour/projectcomplete';
 
-    // Get user ID from secure storage
     String? userId = await widget._secureStorage.read(key: 'id');
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -6751,7 +6752,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       return;
     }
 
-    // Show a dialog to input remark
     TextEditingController _dialogRemarkController = TextEditingController();
     await showDialog(
       context: context,
@@ -6765,7 +6765,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               hintText: translate('Remark', 'टिप्पणी'),
               suffixIcon: MicIconButton(controller: _dialogRemarkController),
             ),
-            maxLines: 3, // Allow multiple lines
+            maxLines: 3,
           ),
           actions: <Widget>[
             TextButton(
@@ -6787,7 +6787,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   );
                   return;
                 }
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
                 await _sendCompleteRequest(context, projectId, userId, remark);
               },
             ),
@@ -6802,7 +6802,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     final Map<String, dynamic> requestBody = {
       'projectid': projectId,
       'labourid': userId,
-      'completeremark': remark, // Include remark in the request
+      'completeremark': remark,
     };
 
     try {
@@ -6861,7 +6861,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 
   Map<String, Map<String, String>> translations =
       Constants.AppConstants.translations;
-  String _selectedLanguage = 'en'; // Default language is English
+  String _selectedLanguage = 'en';
 
   Future<void> downloadTranslations() async {
     try {
@@ -6870,36 +6870,25 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         await Permission.storage.request();
       }
 
-      // Specify the destination path
       final destinationPath = '/storage/emulated/0/Download/Invoice';
       final destinationDir = Directory(destinationPath);
-
-      // Ensure the destination directory exists
       await destinationDir.create(recursive: true);
 
-      // ✅ Define the folder inside the directory
       final folderPath = '${destinationDir.path}/Appointment_Details';
       final folder = Directory(folderPath);
-
-      // ✅ Create folder if it doesn't exist
       if (!await folder.exists()) {
         await folder.create(recursive: true);
       }
 
-      // ✅ Define file path
       final filePath = '$folderPath/translations.txt';
       final file = File(filePath);
 
-      // ✅ Convert translations Map to readable text format
       StringBuffer buffer = StringBuffer();
       translations.forEach((key, value) {
         buffer.writeln("$key: ${value.toString()}");
       });
 
-      // ✅ Write to file
       await file.writeAsString(buffer.toString());
-
-      // ✅ Print full file path
       print("✅ Translations saved at: ${file.absolute.path}");
     } catch (e) {
       print("❌ Error saving translations: $e");
@@ -6907,10 +6896,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   }
 
   Future<void> loadLanguage() async {
-    // Read the selected language from FlutterSecureStorage
     String? language = await _secureStorage.read(key: 'selectedLanguage');
     _selectedLanguage = language ?? 'en';
-    print(language); // Default to English if null
+    print(language);
   }
 
   Future<Map<String, Map<String, String>>> fetchTranslations() async {
@@ -6929,22 +6917,17 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             String lang = item['lang'];
             String translation = item['translation'];
 
-            // ✅ Initialize default values if text is not in the map
             if (!translations.containsKey(text)) {
               translations[text] = {
                 "en": text,
                 "hi": text
-              }; // Default both to the same value
+              };
             }
-
-            // ✅ Store the translation in the correct language
             translations[text]![lang] = translation;
           }
 
-          // ✅ Store fetched translations in the cache
           _cachedTranslations = translations;
 
-          // ✅ Check for missing translations and fetch dynamically
           for (var text in translations.keys) {
             if (!translations[text]!.containsKey("hi")) {
               _fetchTranslation(text, "hi");
@@ -6968,65 +6951,48 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     }
   }
 
-  /// ✅ Main function to translate text
   String translateText(String text) {
     if (text.isEmpty) return "";
+    String targetLang = _selectedLanguage ?? 'en';
 
-    // ✅ Ensure `_selectedLanguage` is set before calling `translateText()`
-    String targetLang = _selectedLanguage ?? 'en'; // Default to English if null
-
-    // ✅ Check manual translations first
     if (translations.containsKey(text) &&
         translations[text]!.containsKey(targetLang)) {
-      return translations[text]![targetLang]!; // Return manual translation
+      return translations[text]![targetLang]!;
     }
 
-    // ✅ Check cached translations
     if (_cachedTranslations.containsKey(text) &&
         _cachedTranslations[text]!.containsKey(targetLang)) {
-      return _cachedTranslations[text]![
-      targetLang]!; // Return cached translation
+      return _cachedTranslations[text]![targetLang]!;
     }
 
-    // ✅ Fetch translation dynamically (but without `await`)
-    _fetchTranslation(text, targetLang); // Runs in background, no need to wait
-
-    return text; // Return original text while translation is being fetched
+    _fetchTranslation(text, targetLang);
+    return text;
   }
 
-  /// ✅ Fetch translation dynamically and update cache
   Future<void> _fetchTranslation(String text, String targetLang) async {
     try {
-      // ✅ Check if translation already exists in constants
       if (Constants.AppConstants.translations.containsKey(text) &&
           Constants.AppConstants.translations[text]!.containsKey(targetLang)) {
-        return; // No need to fetch if it exists
+        return;
       }
 
-      // ✅ Fetch translation dynamically
       final translation = await _translator.translate(text, to: targetLang);
 
-      // ✅ Initialize default values if text is not in the map
       if (!translations.containsKey(text)) {
         translations[text] = {
           "en": text,
           "hi": text
-        }; // Default to the same value
+        };
       }
-
-      // ✅ Store the translation in the correct language
       translations[text]![targetLang] = translation.text;
 
-      // ✅ Store fetched translations in the cache
       _cachedTranslations = translations;
 
-      // ✅ Also store in the constants translations map
       if (!Constants.AppConstants.translations.containsKey(text)) {
         Constants.AppConstants.translations[text] = {};
       }
       Constants.AppConstants.translations[text]![targetLang] = translation.text;
 
-      // ✅ Check for missing translations and fetch dynamically
       for (var key in translations.keys) {
         if (!translations[key]!.containsKey("hi")) {
           await _fetchTranslation(key, "hi");
@@ -7036,7 +7002,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         }
       }
 
-      // ✅ Store translation in cache
       _cachedTranslations.putIfAbsent(text, () => {})[targetLang] =
           translation.text;
       setState(() {});
@@ -7049,10 +7014,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   TextEditingController _remarksController = TextEditingController();
   Future<void> _submitReview() async {
     const String _baseUrl =
-        '${Constants.AppConstants.apiUrl}farmer/reviewForFarmer'; // Update with your actual API URL
+        '${Constants.AppConstants.apiUrl}farmer/reviewForFarmer';
     print(_baseUrl);
     print(project);
-    // Prepare the request body
     final Map<String, dynamic> requestBody = {
       'projectid': project['id'].toString(),
       'labourid': project['labourId'].toString(),
@@ -7066,7 +7030,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 
     try {
       final response = await http.post(
-        Uri.parse(_baseUrl), // Replace with your API URL
+        Uri.parse(_baseUrl),
         body: jsonEncode(requestBody),
         headers: {
           'Content-Type': 'application/json',
@@ -7074,7 +7038,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       );
 
       if (response.statusCode == 200) {
-        // Handle the response
         final responseData = jsonDecode(response.body);
         if (responseData['status'] == "1") {
           Fluttertoast.showToast(
@@ -7087,12 +7050,11 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             fontSize: 16.0,
           );
         } else {
-          // Show failure message in the appropriate language
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text(
                   translate('Failed to submit review.',
-                      'समीक्षा प्रस्तुत करने में विफल।'), // Use custom translate function
+                      'समीक्षा प्रस्तुत करने में विफल।'),
                 )),
           );
         }
@@ -7112,11 +7074,10 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           builder: (BuildContext context, setState) {
             return AlertDialog(
               title:
-              Text(translate('Review', 'समीक्षा')), // Title of the dialog
+              Text(translate('Review', 'समीक्षा')),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Star rating input using Row (star buttons)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(5, (index) {
@@ -7127,19 +7088,18 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         ),
                         onPressed: () {
                           setState(() {
-                            _rating = index + 1.0; // Update the rating value
+                            _rating = index + 1.0;
                           });
                         },
                       );
                     }),
                   ),
-                  // Remarks input (text field)
                   TextField(
                     controller: _remarksController,
                     maxLines: 3,
                     decoration: InputDecoration(
                       hintText: translate('Write a Review For Worker',
-                          'मजदूर के लिए समीक्षा लिखें'), // Hint text for the review input
+                          'मजदूर के लिए समीक्षा लिखें'),
                       border: OutlineInputBorder(),
                       suffixIcon: MicIconButton(controller: _remarksController),
                     ),
@@ -7149,18 +7109,18 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop();
                   },
                   child: Text(
-                      translate('Cancel', 'रद्द करें')), // Cancel button text
+                      translate('Cancel', 'रद्द करें')),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    _submitReview(); // Call submit review after dialog is closed
+                    _submitReview();
                   },
                   child: Text(
-                      translate('Submit', 'सबमिट करें')), // Submit button text
+                      translate('Submit', 'सबमिट करें')),
                 ),
               ],
             );
@@ -7178,7 +7138,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     final completeConfirm = project['complete_confirm']?.toString();
 
     if (applyStatus == "1") {
-      // Show Start Work button if project is assigned and not started
       return ElevatedButton(
         onPressed: () => startWork(context, project['id'], project),
         style: ElevatedButton.styleFrom(
@@ -7199,7 +7158,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
       );
     } else if (applyStatus == "0") {
-      // Applied but not started / assigned
       return ElevatedButton(
         onPressed: null,
         style: ElevatedButton.styleFrom(
@@ -7220,16 +7178,14 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
       );
     } else if (applyStatus == "2") {
-      // In progress
       if (cancelConfirm == "1") {
-        // Farmer sent cancel request and it is confirmed
         return ElevatedButton(
           onPressed: () => confirmcancel(context, project['id']),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            backgroundColor: const Color(0xFFDC2626), // Premium red
+            backgroundColor: const Color(0xFFDC2626),
             foregroundColor: Colors.white,
             elevation: 0,
           ),
@@ -7243,7 +7199,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           ),
         );
       } else if (completeConfirm == "1") {
-        // Complete request has been confirmed
         return ElevatedButton(
           onPressed: null,
           style: ElevatedButton.styleFrom(
@@ -7264,7 +7219,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           ),
         );
       } else {
-        // Project is in progress, but complete request is not confirmed
         return ElevatedButton(
           onPressed: () => completework(context, project['id']),
           style: ElevatedButton.styleFrom(
@@ -7286,7 +7240,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         );
       }
     } else if (applyStatus == "3") {
-      // Completed, worker can review or see completed status
       final language = Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
       String translate(String enText, String hiText) {
         return language == 'en' ? enText : hiText;
@@ -7343,7 +7296,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ],
       );
     } else if (applyStatus == "4") {
-      // Cancelled
       return ElevatedButton(
         onPressed: null,
         style: ElevatedButton.styleFrom(
@@ -7364,7 +7316,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
       );
     } else if (applyStatus == null) {
-      // Applied but not assigned yet (Form submit action)
       return ElevatedButton(
         onPressed: _isButtonDisabled
             ? null
@@ -7393,7 +7344,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
       );
     } else {
-      // Fallback Cancelled
       return ElevatedButton(
         onPressed: null,
         style: ElevatedButton.styleFrom(
@@ -7597,7 +7547,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             : '',
       );
 
-      // Fetch the current language setting
       final language = Provider.of<LanguageProvider>(context, listen: false)
           .selectedLanguage;
 
@@ -7799,6 +7748,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                       ),
                                     ),
                                     const SizedBox(height: 6),
+                                    // Farmer name + time elapsed
                                     Row(
                                       children: [
                                         Icon(Icons.person_outline,
@@ -7834,10 +7784,55 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                         ),
                                       ],
                                     ),
+                                    const SizedBox(height: 4),
+                                    // ⭐ Farmer rating & review count
+                                    Row(
+                                      children: [
+                                        Row(
+                                          children: List.generate(5, (i) {
+                                            final rating = (project['farmer_rating'] ?? 0).toDouble();
+                                            return Icon(
+                                              i < rating.floor()
+                                                  ? Icons.star
+                                                  : (i < rating.ceil() && rating % 1 != 0
+                                                  ? Icons.star_half
+                                                  : Icons.star_border),
+                                              size: 14,
+                                              color: Colors.amber,
+                                            );
+                                          }),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          '(${project['review_count'] ?? 0} ${translate('reviews', 'समीक्षाएँ')})',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    // 📊 Total & Completed projects
+                                    Row(
+                                      children: [
+                                        _buildStatChip(
+                                          icon: Icons.work_outline,
+                                          label: '${translate('Total', 'कुल')}: ${project['total_projects'] ?? 0}',
+                                        ),
+                                        const SizedBox(width: 8),
+                                        _buildStatChip(
+                                          icon: Icons.check_circle_outline,
+                                          label: '${translate('Completed', 'पूर्ण')}: ${project['completed_projects'] ?? 0}',
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
                               const SizedBox(width: 4),
+                              // Status badge
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
@@ -7867,8 +7862,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 20),
-
+                          const SizedBox(height: 16),
                           // 3x2 stats grid
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -7890,7 +7884,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -8313,7 +8307,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 
                     // Proposal Summary / Form Input depending on applyStatus
                     if (project['applyStatus'] != null) ...[
-                      // Applied: show proposal details in a premium card
                       Container(
                         decoration: BoxDecoration(
                           color: const Color(0xFFF1F9F1),
@@ -8476,7 +8469,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         ),
                       ),
                     ] else ...[
-                      // Not applied: show Proposal inputs inside a card
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -8514,6 +8506,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: translate("Proposal Amount", "प्रस्ताव राशि"),
+                                hintText: translate('Enter proposal amount', 'प्रस्ताव राशि दर्ज करें'),
+                                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
                                 labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -8584,6 +8578,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               controller: _commentController,
                               decoration: InputDecoration(
                                 labelText: translate("Enter your Comment", "अपनी टिप्पणी दर्ज करें"),
+                                hintText: translate('Write your comment here', 'अपनी टिप्पणी यहाँ लिखें'),
+                                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
                                 labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
                                 suffixIcon: MicIconButton(controller: _commentController),
                                 border: OutlineInputBorder(
