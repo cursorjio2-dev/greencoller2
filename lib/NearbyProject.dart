@@ -5983,7 +5983,9 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                                   ),
                                   const SizedBox(height: 12),
                                   // ── ROW 1: Workers · Amount · Duration ──
-                                  Row(
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
                                     children: [
                                       _buildChip(
                                         icon: Icons.people_outline,
@@ -5992,7 +5994,6 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                                         textColor: const Color(0xFF0E6805),
                                         iconColor: const Color(0xFF0E6805),
                                       ),
-                                      const SizedBox(width: 8),
                                       _buildChip(
                                         icon: Icons.currency_rupee,
                                         label: '₹${project['budget'] ?? '0'}',
@@ -6000,7 +6001,6 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                                         textColor: const Color(0xFFE65100),
                                         iconColor: const Color(0xFFE65100),
                                       ),
-                                      const SizedBox(width: 8),
                                       _buildChip(
                                         icon: Icons.access_time,
                                         label: translateText(project['days']?.toString() ?? '') ?? '',

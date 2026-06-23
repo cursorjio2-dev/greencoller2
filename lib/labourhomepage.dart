@@ -6167,6 +6167,7 @@ import 'package:greencollar/Addproject.dart';
 import 'package:greencollar/HomeScree.dart';
 import 'package:greencollar/NearbyFarmers.dart';
 import 'package:greencollar/NearbyProject.dart';
+import 'package:greencollar/MyProjects.dart';
 import 'package:greencollar/Nearbylabours.dart';
 import 'package:greencollar/main.dart';
 import 'package:greencollar/updateprofile.dart';
@@ -6664,7 +6665,7 @@ class _LabourhomepageState extends State<Labourhomepage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => NearbyProjectPage()),
+                          MaterialPageRoute(builder: (context) => MyProjectsPage()),
                         );
                       },
                     ),
