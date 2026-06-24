@@ -2,20 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppConstants {
-  // static const String apiUrl = 'https://completewomencares.com/api/';
+
   // static const String apiUrl = 'https://gc.internal.apstia.com/api/';
   // static const String folderUrl = 'https://gc.internal.apstia.com/';
-  // static const String apiUrl = 'https://greencollar.in/api/';
-  static const String apiUrl = 'http://10.200.170.10:8000/api/';
-  // static const String folderUrl = 'https://greencollar.in/';
-  // static const String apiUrl = 'http://10.200.150.6:8000/api/';
-  static const String folderUrl = 'http://10.200.170.10:8000/';
-  // static const String apiUrl = 'https://achs.apstia.com/api/';
-  // static const String apiUrl = 'http://10.200.170.8:8001/api/';
+  static const String apiUrl = 'https://greencollar.in/api/';
+  static const String folderUrl = 'https://greencollar.in/';
 
-  // static const String apiUrl = 'http://10.200.151.11:8001/api/';
-
-  // static const String apiUrl = 'http://10.200.151.11:8001/api/';
 
   static String? uuidToken; // Make it static
   static Map<String, Map<String, String>> translations = {
@@ -43,10 +35,25 @@ class AppColors {
   static const Color amberNotice = Color(0xFFF2B441);
   static const Color star = Color(0xFFFBBF24);
 
+  // Button colors (app icon color)
+  // static const Color button = Color(0xFF865E2A);
+  // static const Color buttonBg = Color(0xFFF5EDE0);
+  // static const Color buttonBorder = Color(0xFFD4B896);
+
+  static const Color button = Color.fromRGBO(203, 157, 35, 1);
+  static const Color buttonBg = Color(0xFFF5EDE0);
+  static const Color buttonBorder = Color(0xFFD4B896);
+
   static const Gradient brandGradient = LinearGradient(
     begin: Alignment(-0.8, -0.6),
     end: Alignment(0.8, 0.6),
     colors: [Color(0xFF0E6805), Color(0xFF18843D)],
+  );
+
+  static const Gradient buttonGradient = LinearGradient(
+    begin: Alignment(-0.8, -0.6),
+    end: Alignment(0.8, 0.6),
+    colors: [Color(0xFF865E2A), Color(0xFFA67C4E)],
   );
 }
 
@@ -77,6 +84,27 @@ class AppShadows {
 
   static const BoxShadow fab = BoxShadow(
     color: Color(0x8C0E6805), // rgba(14,104,5,0.55)
+    offset: Offset(0, 18),
+    blurRadius: 40,
+    spreadRadius: -14,
+  );
+
+  static const BoxShadow buttonSoft = BoxShadow(
+    color: Color(0x40865E2A), // rgba(134,94,42,0.25)
+    offset: Offset(0, 8),
+    blurRadius: 28,
+    spreadRadius: -18,
+  );
+
+  static const BoxShadow buttonCard = BoxShadow(
+    color: Color(0x4D865E2A), // rgba(134,94,42,0.30)
+    offset: Offset(0, 10),
+    blurRadius: 30,
+    spreadRadius: -20,
+  );
+
+  static const BoxShadow buttonFab = BoxShadow(
+    color: Color(0x8C865E2A), // rgba(134,94,42,0.55)
     offset: Offset(0, 18),
     blurRadius: 40,
     spreadRadius: -14,
@@ -145,4 +173,6 @@ class AppTypography {
         color: AppColors.inkSoft,
       );
 }
+
+
 

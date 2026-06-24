@@ -266,3 +266,5 @@ class ScreenObserver extends NavigatorObserver {
     ApiLogger.logScreenOpened(screenName, action: action);
   }
 }
+
+

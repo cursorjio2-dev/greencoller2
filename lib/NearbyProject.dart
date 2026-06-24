@@ -103,8 +103,8 @@
 // //             begin: Alignment.topLeft,
 // //             end: Alignment.bottomRight,
 // //             colors: [
-// //               Color(0xFFA8D5BA), // Light green
-// //               Color(0xFF68A691), // Darker green
+// //               AppColors.brandSoft, // Light green
+// //               AppColors.brandSoft, // Darker green
 // //             ],
 // //           ),
 // //         ),
@@ -385,7 +385,7 @@
 //                 'Applied successfully!', 'सफलतापूर्वक लागू किया गया!'),
 //             toastLength: Toast.LENGTH_SHORT,
 //             gravity: ToastGravity.BOTTOM,
-//             backgroundColor: Colors.green.shade700,
+//             backgroundColor: AppColors.brand,
 //             textColor: Colors.white,
 //             fontSize: 16.0,
 //           );
@@ -910,8 +910,8 @@
 //             //     begin: Alignment.topLeft,
 //             //     end: Alignment.bottomRight,
 //             //     colors: [
-//             //       Color(0xFFA8D5BA), // Light green
-//             //       Color(0xFF68A691), // Darker green
+//             //       AppColors.brandSoft, // Light green
+//             //       AppColors.brandSoft, // Darker green
 //             //     ],
 //             //   ),
 //             // ),
@@ -960,7 +960,7 @@
 //                                          color: Constants.AppColors.card,
 //                                          borderRadius: BorderRadius.circular(16),
 //                                          border: Border.all(
-//                                            color: const Color(0xFFF1F5EE),
+//                                            color: AppColors.surface2,
 //                                            width: 1.0,
 //                                          ),
 //                                          boxShadow: [
@@ -985,7 +985,7 @@
 //                                                    width: 50,
 //                                                    height: 50,
 //                                                    decoration: const BoxDecoration(
-//                                                      color: Color(0xFFF1F5EE),
+//                                                      color: AppColors.surface2,
 //                                                      shape: BoxShape.circle,
 //                                                    ),
 //                                                    alignment: Alignment.center,
@@ -1070,7 +1070,7 @@
 //                                                ],
 //                                              ),
 //                                              const SizedBox(height: 12),
-//                                              const Divider(color: Color(0xFFF1F5EE), height: 1),
+//                                              const Divider(color: AppColors.surface2, height: 1),
 //                                              const SizedBox(height: 10),
 //                                              // ── Location ──
 //                                              Row(
@@ -1096,25 +1096,25 @@
 //                                                  _buildChip(
 //                                                    icon: Icons.people_outline,
 //                                                    label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
-//                                                    bgColor: const Color(0xFFEAF4E8),
-//                                                    textColor: const Color(0xFF0E6805),
-//                                                    iconColor: const Color(0xFF0E6805),
+//                                                    bgColor: AppColors.brandTint,
+//                                                    textColor: AppColors.brand,
+//                                                    iconColor: AppColors.brand,
 //                                                  ),
 //                                                  const SizedBox(width: 8),
 //                                                  _buildChip(
 //                                                    icon: Icons.currency_rupee,
 //                                                    label: '₹${project['budget'] ?? '0'}',
-//                                                    bgColor: const Color(0xFFFFF3E0),
-//                                                    textColor: const Color(0xFFE65100),
-//                                                    iconColor: const Color(0xFFE65100),
+//                                                    bgColor: AppColors.buttonBg,
+//                                                    textColor: AppColors.button,
+//                                                    iconColor: AppColors.button,
 //                                                  ),
 //                                                  const SizedBox(width: 8),
 //                                                  _buildChip(
 //                                                    icon: Icons.access_time,
 //                                                    label: translateText(project['days']?.toString() ?? '') ?? '',
-//                                                    bgColor: const Color(0xFFE3F2FD),
-//                                                    textColor: const Color(0xFF0D47A1),
-//                                                    iconColor: const Color(0xFF0D47A1),
+//                                                    bgColor: AppColors.brandTint,
+//                                                    textColor: AppColors.brandDeep,
+//                                                    iconColor: AppColors.brandDeep,
 //                                                  ),
 //                                                ],
 //                                              ),
@@ -1182,22 +1182,22 @@
 //     }
 //
 //     String text = '';
-//     Color bgColor = const Color(0xFFEAF4E8);
-//     Color textColor = const Color(0xFF0E6805);
-//     Color borderColor = const Color(0xFFC8E6C9);
+//     Color bgColor = AppColors.brandTint;
+//     Color textColor = AppColors.brand;
+//     Color borderColor = AppColors.brandSoft;
 //     IconData statusIcon = Icons.check;
 //
 //     if (appliedStatus == "0") {
 //       text = translate('Applied', 'आवेदन किया');
-//       bgColor = const Color(0xFFEAF4E8);
-//       textColor = const Color(0xFF0E6805);
-//       borderColor = const Color(0xFFC8E6C9);
+//       bgColor = AppColors.brandTint;
+//       textColor = AppColors.brand;
+//       borderColor = AppColors.brandSoft;
 //       statusIcon = Icons.check;
 //     } else if (appliedStatus == "1") {
 //       text = translate('Assigned', 'आवंटित');
-//       bgColor = const Color(0xFFEFF6FF);
-//       textColor = const Color(0xFF1E40AF);
-//       borderColor = const Color(0xFFBFDBFE);
+//       bgColor = AppColors.brandTint;
+//       textColor = AppColors.brandDeep;
+//       borderColor = AppColors.brand.shade200;
 //       statusIcon = Icons.assignment_ind_outlined;
 //     } else if (appliedStatus == "2") {
 //       text = translate('Work Started', 'कार्य शुरू हुआ');
@@ -1206,21 +1206,21 @@
 //       } else if (project['cancel_confirm']?.toString() == "1") {
 //         text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
 //       }
-//       bgColor = const Color(0xFFFFF7ED);
-//       textColor = const Color(0xFFC2410C);
-//       borderColor = const Color(0xFFFED7AA);
+//       bgColor = AppColors.buttonBg;
+//       textColor = AppColors.button;
+//       borderColor = AppColors.buttonBorder;
 //       statusIcon = Icons.hourglass_top_outlined;
 //     } else if (appliedStatus == "3") {
 //       text = translate('Work Completed', 'कार्य पूर्ण');
-//       bgColor = const Color(0xFFF0FDF4);
-//       textColor = const Color(0xFF15803D);
-//       borderColor = const Color(0xFFBBF7D0);
+//       bgColor = AppColors.brandTint;
+//       textColor = AppColors.brandDeep;
+//       borderColor = AppColors.brandSoft;
 //       statusIcon = Icons.check_circle_outline;
 //     } else if (appliedStatus == "4") {
 //       text = translate('Work Cancelled', 'रद्द किया गया');
-//       bgColor = const Color(0xFFFEF2F2);
-//       textColor = const Color(0xFF991B1B);
-//       borderColor = const Color(0xFFFCA5A5);
+//       bgColor = AppColors.buttonBg;
+//       textColor = AppColors.button;
+//       borderColor = AppColors.buttonBorder;
 //       statusIcon = Icons.close;
 //     } else {
 //       return const SizedBox.shrink();
@@ -1265,9 +1265,9 @@
 //     return Container(
 //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 //       decoration: BoxDecoration(
-//         color: const Color(0xFFEAF4E8),
+//         color: AppColors.buttonBg,
 //         borderRadius: BorderRadius.circular(8),
-//         border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
+//         border: Border.all(color: AppColors.buttonBorder, width: 0.5),
 //       ),
 //       child: Row(
 //         mainAxisSize: MainAxisSize.min,
@@ -1275,7 +1275,7 @@
 //           Text(
 //             label,
 //             style: const TextStyle(
-//               color: Color(0xFF0E6805),
+//               color: AppColors.button,
 //               fontWeight: FontWeight.bold,
 //               fontSize: 12,
 //             ),
@@ -1284,7 +1284,7 @@
 //           const Icon(
 //             Icons.arrow_forward_ios,
 //             size: 10,
-//             color: Color(0xFF0E6805),
+//             color: AppColors.button,
 //           ),
 //         ],
 //       ),
@@ -1706,7 +1706,7 @@
 //               'कृपया सभी माइलस्टोन के लिए राशि भरें'),
 //           toastLength: Toast.LENGTH_SHORT,
 //           gravity: ToastGravity.BOTTOM,
-//           backgroundColor: Colors.red.shade700,
+//           backgroundColor: AppColors.button,
 //           textColor: Colors.white,
 //           fontSize: 16.0,
 //         );
@@ -1720,7 +1720,7 @@
 //               'कृपया सभी माइलस्टोन के लिए अवधि भरें'),
 //           toastLength: Toast.LENGTH_SHORT,
 //           gravity: ToastGravity.BOTTOM,
-//           backgroundColor: Colors.red.shade700,
+//           backgroundColor: AppColors.button,
 //           textColor: Colors.white,
 //           fontSize: 16.0,
 //         );
@@ -2293,7 +2293,7 @@
 //           shape: RoundedRectangleBorder(
 //             borderRadius: BorderRadius.circular(12),
 //           ),
-//           backgroundColor: Constants.AppColors.brand,
+//           backgroundColor: Constants.AppColors.button,
 //           foregroundColor: Colors.white,
 //           elevation: 0,
 //         ),
@@ -2337,7 +2337,7 @@
 //             shape: RoundedRectangleBorder(
 //               borderRadius: BorderRadius.circular(12),
 //             ),
-//             backgroundColor: const Color(0xFFDC2626), // Premium red
+//             backgroundColor: const Colors.red, // Premium red
 //             foregroundColor: Colors.white,
 //             elevation: 0,
 //           ),
@@ -2379,7 +2379,7 @@
 //             shape: RoundedRectangleBorder(
 //               borderRadius: BorderRadius.circular(12),
 //             ),
-//             backgroundColor: Constants.AppColors.brand,
+//             backgroundColor: Constants.AppColors.button,
 //             foregroundColor: Colors.white,
 //             elevation: 0,
 //           ),
@@ -2407,7 +2407,7 @@
 //               child: OutlinedButton(
 //                 onPressed: _showReviewDialog,
 //                 style: OutlinedButton.styleFrom(
-//                   side: BorderSide(color: Constants.AppColors.brand, width: 1.5),
+//                   side: BorderSide(color: Constants.AppColors.button, width: 1.5),
 //                   shape: RoundedRectangleBorder(
 //                     borderRadius: BorderRadius.circular(12),
 //                   ),
@@ -2417,7 +2417,7 @@
 //                   style: TextStyle(
 //                     fontSize: 16,
 //                     fontWeight: FontWeight.bold,
-//                     color: Constants.AppColors.brand,
+//                     color: Constants.AppColors.button,
 //                   ),
 //                 ),
 //               ),
@@ -2487,7 +2487,7 @@
 //           shape: RoundedRectangleBorder(
 //             borderRadius: BorderRadius.circular(12),
 //           ),
-//           backgroundColor: Constants.AppColors.brand,
+//           backgroundColor: Constants.AppColors.button,
 //           foregroundColor: Colors.white,
 //           elevation: 0,
 //         ),
@@ -2537,12 +2537,12 @@
 //             width: 32,
 //             height: 32,
 //             decoration: const BoxDecoration(
-//               color: Color(0xFFEAF4E8),
+//               color: AppColors.brandTint,
 //               shape: BoxShape.circle,
 //             ),
 //             child: Icon(
 //               icon,
-//               color: const Color(0xFF0E6805),
+//               color: AppColors.brand,
 //               size: 16,
 //             ),
 //           ),
@@ -2568,7 +2568,7 @@
 //                   style: const TextStyle(
 //                     fontSize: 12,
 //                     fontWeight: FontWeight.bold,
-//                     color: Color(0xFF152018),
+//                     color: AppColors.ink,
 //                   ),
 //                   maxLines: 2,
 //                   overflow: TextOverflow.ellipsis,
@@ -2812,7 +2812,7 @@
 //
 //     if (isLoading) {
 //       return Scaffold(
-//         backgroundColor: const Color(0xFFFAFBF7),
+//         backgroundColor: AppColors.surface,
 //         appBar: AppBar(
 //           backgroundColor: Constants.AppColors.brand,
 //           foregroundColor: Colors.white,
@@ -2847,7 +2847,7 @@
 //     final String skillsText = translateText(project['required_skills']?.toString() ?? 'N/A');
 //
 //     return Scaffold(
-//       backgroundColor: const Color(0xFFFAFBF7),
+//       backgroundColor: AppColors.surface,
 //       appBar: AppBar(
 //         backgroundColor: Constants.AppColors.brand,
 //         foregroundColor: Colors.white,
@@ -2903,7 +2903,7 @@
 //                                       style: const TextStyle(
 //                                         fontSize: 17,
 //                                         fontWeight: FontWeight.w700,
-//                                         color: Color(0xFF1B2B1B),
+//                                         color: AppColors.ink,
 //                                       ),
 //                                     ),
 //                                     const SizedBox(height: 6),
@@ -2950,10 +2950,10 @@
 //                                 padding: const EdgeInsets.symmetric(
 //                                     horizontal: 8, vertical: 4),
 //                                 decoration: BoxDecoration(
-//                                   color: const Color(0xFFEAF4E8),
+//                                   color: AppColors.brandTint,
 //                                   borderRadius: BorderRadius.circular(20),
 //                                   border: Border.all(
-//                                       color: const Color(0xFFA5D6A7), width: 1),
+//                                       color: AppColors.brandSoft, width: 1),
 //                                 ),
 //                                 child: Row(
 //                                   mainAxisSize: MainAxisSize.min,
@@ -3048,12 +3048,12 @@
 //                                 width: 36,
 //                                 height: 36,
 //                                 decoration: const BoxDecoration(
-//                                   color: Color(0xFFFFF3E0),
+//                                   color: AppColors.buttonBg,
 //                                   shape: BoxShape.circle,
 //                                 ),
 //                                 child: const Icon(
 //                                   Icons.workspace_premium_outlined,
-//                                   color: Color(0xFFFF8F00),
+//                                   color: AppColors.amberNotice,
 //                                   size: 18,
 //                                 ),
 //                               ),
@@ -3063,7 +3063,7 @@
 //                                 style: const TextStyle(
 //                                   fontSize: 15,
 //                                   fontWeight: FontWeight.w700,
-//                                   color: Color(0xFF1B2B1B),
+//                                   color: AppColors.ink,
 //                                 ),
 //                               ),
 //                             ],
@@ -3078,16 +3078,16 @@
 //                               return Container(
 //                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 //                                 decoration: BoxDecoration(
-//                                   color: const Color(0xFFFFFBEB),
+//                                   color: AppColors.buttonBg,
 //                                   borderRadius: BorderRadius.circular(20),
-//                                   border: Border.all(color: const Color(0xFFFDE68A), width: 1),
+//                                   border: Border.all(color: AppColors.amberNotice, width: 1),
 //                                 ),
 //                                 child: Text(
 //                                   cleanSkill,
 //                                   style: const TextStyle(
 //                                     fontSize: 13,
 //                                     fontWeight: FontWeight.w600,
-//                                     color: Color(0xFFB45309),
+//                                     color: AppColors.button,
 //                                   ),
 //                                 ),
 //                               );
@@ -3119,12 +3119,12 @@
 //                             width: 36,
 //                             height: 36,
 //                             decoration: const BoxDecoration(
-//                               color: Color(0xFFEAF4E8),
+//                               color: AppColors.brandTint,
 //                               shape: BoxShape.circle,
 //                             ),
 //                             child: const Icon(
 //                               Icons.receipt_long_outlined,
-//                               color: Color(0xFF0E6805),
+//                               color: AppColors.brand,
 //                               size: 18,
 //                             ),
 //                           ),
@@ -3147,7 +3147,7 @@
 //                                   style: const TextStyle(
 //                                     fontSize: 14,
 //                                     fontWeight: FontWeight.bold,
-//                                     color: Color(0xFF152018),
+//                                     color: AppColors.ink,
 //                                   ),
 //                                 ),
 //                               ],
@@ -3205,7 +3205,7 @@
 //                             translateText(description),
 //                             style: TextStyle(
 //                               fontSize: 13,
-//                               color: Colors.grey[700],
+//                               color: AppColors.inkSoft,
 //                               height: 1.5,
 //                             ),
 //                           ),
@@ -3331,9 +3331,9 @@
 //                                       return Container(
 //                                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
 //                                         decoration: BoxDecoration(
-//                                           color: isEven ? Colors.white : const Color(0xFFF9FBF9),
+//                                           color: isEven ? Colors.white : AppColors.surface,
 //                                           border: Border(
-//                                             bottom: BorderSide(color: Colors.grey[100]!, width: 1),
+//                                             bottom: BorderSide(color: AppColors.surface2!, width: 1),
 //                                           ),
 //                                         ),
 //                                         child: Row(
@@ -3386,18 +3386,18 @@
 //                                                     : mStatus == '3'
 //                                                         ? _buildMilestoneAction(
 //                                                             label: translate('Submitted', 'जमा किया'),
-//                                                             color: const Color(0xFFF97316),
+//                                                             color: AppColors.amberNotice,
 //                                                             onPressed: null,
 //                                                           )
 //                                                         : mStatus == '4'
 //                                                             ? _buildMilestoneAction(
 //                                                                 label: translate('Completed', 'पूर्ण किया'),
-//                                                                 color: const Color(0xFF16A34A),
+//                                                                 color: AppColors.brand,
 //                                                                 onPressed: null,
 //                                                               )
 //                                                             : IconButton(
 //                                                                 icon: const Icon(Icons.edit_outlined,
-//                                                                     color: Colors.blue, size: 20),
+//                                                                     color: AppColors.brand, size: 20),
 //                                                                 padding: EdgeInsets.zero,
 //                                                                 constraints: const BoxConstraints(),
 //                                                                 onPressed: () => showEditMilestoneDialog(
@@ -3424,9 +3424,9 @@
 //                       // Applied: show proposal details in a premium card
 //                       Container(
 //                         decoration: BoxDecoration(
-//                           color: const Color(0xFFF1F9F1),
+//                           color: AppColors.brandTint,
 //                           borderRadius: BorderRadius.circular(16),
-//                           border: Border.all(color: const Color(0xFFE2EFE2), width: 1),
+//                           border: Border.all(color: AppColors.brandTint, width: 1),
 //                         ),
 //                         padding: const EdgeInsets.all(16),
 //                         child: Row(
@@ -3439,12 +3439,12 @@
 //                                     width: 32,
 //                                     height: 32,
 //                                     decoration: const BoxDecoration(
-//                                       color: Color(0xFFEAF4E8),
+//                                       color: AppColors.brandTint,
 //                                       shape: BoxShape.circle,
 //                                     ),
 //                                     child: const Icon(
 //                                       Icons.edit_note_outlined,
-//                                       color: Color(0xFF0E6805),
+//                                       color: AppColors.brand,
 //                                       size: 18,
 //                                     ),
 //                                   ),
@@ -3457,7 +3457,7 @@
 //                                           translate('Proposal Amount', 'प्रस्ताव राशि'),
 //                                           style: const TextStyle(
 //                                             fontSize: 10,
-//                                             color: Color(0xFF5B6B5E),
+//                                             color: AppColors.inkSoft,
 //                                             fontWeight: FontWeight.w500,
 //                                           ),
 //                                           maxLines: 1,
@@ -3471,7 +3471,7 @@
 //                                           style: const TextStyle(
 //                                             fontSize: 12,
 //                                             fontWeight: FontWeight.bold,
-//                                             color: Color(0xFF152018),
+//                                             color: AppColors.ink,
 //                                           ),
 //                                           maxLines: 1,
 //                                           overflow: TextOverflow.ellipsis,
@@ -3490,12 +3490,12 @@
 //                                     width: 32,
 //                                     height: 32,
 //                                     decoration: const BoxDecoration(
-//                                       color: Color(0xFFEAF4E8),
+//                                       color: AppColors.brandTint,
 //                                       shape: BoxShape.circle,
 //                                     ),
 //                                     child: const Icon(
 //                                       Icons.access_time_outlined,
-//                                       color: Color(0xFF0E6805),
+//                                       color: AppColors.brand,
 //                                       size: 18,
 //                                     ),
 //                                   ),
@@ -3508,7 +3508,7 @@
 //                                           translate('Estimate Duration', 'अनुमानित अवधि'),
 //                                           style: const TextStyle(
 //                                             fontSize: 10,
-//                                             color: Color(0xFF5B6B5E),
+//                                             color: AppColors.inkSoft,
 //                                             fontWeight: FontWeight.w500,
 //                                           ),
 //                                           maxLines: 1,
@@ -3520,7 +3520,7 @@
 //                                           style: const TextStyle(
 //                                             fontSize: 12,
 //                                             fontWeight: FontWeight.bold,
-//                                             color: Color(0xFF152018),
+//                                             color: AppColors.ink,
 //                                           ),
 //                                           maxLines: 1,
 //                                           overflow: TextOverflow.ellipsis,
@@ -3539,12 +3539,12 @@
 //                                     width: 32,
 //                                     height: 32,
 //                                     decoration: const BoxDecoration(
-//                                       color: Color(0xFFEAF4E8),
+//                                       color: AppColors.brandTint,
 //                                       shape: BoxShape.circle,
 //                                     ),
 //                                     child: const Icon(
 //                                       Icons.chat_bubble_outline,
-//                                       color: Color(0xFF0E6805),
+//                                       color: AppColors.brand,
 //                                       size: 16,
 //                                     ),
 //                                   ),
@@ -3557,7 +3557,7 @@
 //                                           translate('Comment', 'टिप्पणी'),
 //                                           style: const TextStyle(
 //                                             fontSize: 10,
-//                                             color: Color(0xFF5B6B5E),
+//                                             color: AppColors.inkSoft,
 //                                             fontWeight: FontWeight.w500,
 //                                           ),
 //                                           maxLines: 1,
@@ -3569,7 +3569,7 @@
 //                                           style: const TextStyle(
 //                                             fontSize: 12,
 //                                             fontWeight: FontWeight.bold,
-//                                             color: Color(0xFF152018),
+//                                             color: AppColors.ink,
 //                                           ),
 //                                           maxLines: 1,
 //                                           overflow: TextOverflow.ellipsis,
@@ -3625,11 +3625,11 @@
 //                                 labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
 //                                 border: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(10),
-//                                   borderSide: BorderSide(color: Colors.grey[300]!),
+//                                   borderSide: BorderSide(color: AppColors.border!),
 //                                 ),
 //                                 enabledBorder: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(10),
-//                                   borderSide: BorderSide(color: Colors.grey[200]!),
+//                                   borderSide: BorderSide(color: AppColors.border!),
 //                                 ),
 //                                 focusedBorder: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(10),
@@ -3660,11 +3660,11 @@
 //                                 labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
 //                                 border: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(10),
-//                                   borderSide: BorderSide(color: Colors.grey[300]!),
+//                                   borderSide: BorderSide(color: AppColors.border!),
 //                                 ),
 //                                 enabledBorder: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(10),
-//                                   borderSide: BorderSide(color: Colors.grey[200]!),
+//                                   borderSide: BorderSide(color: AppColors.border!),
 //                                 ),
 //                                 focusedBorder: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(10),
@@ -3696,11 +3696,11 @@
 //                                 suffixIcon: MicIconButton(controller: _commentController),
 //                                 border: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(10),
-//                                   borderSide: BorderSide(color: Colors.grey[300]!),
+//                                   borderSide: BorderSide(color: AppColors.border!),
 //                                 ),
 //                                 enabledBorder: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(10),
-//                                   borderSide: BorderSide(color: Colors.grey[200]!),
+//                                   borderSide: BorderSide(color: AppColors.border!),
 //                                 ),
 //                                 focusedBorder: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(10),
@@ -3724,7 +3724,7 @@
 //
 //           // ── Fixed bottom CTA ───────────────────────────────────────────────
 //           Container(
-//             color: const Color(0xFFFAFBF7),
+//             color: AppColors.surface,
 //             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
 //             child: SizedBox(
 //               width: double.infinity,
@@ -4289,7 +4289,7 @@
 //                 'Applied successfully!', 'सफलतापूर्वक लागू किया गया!'),
 //             toastLength: Toast.LENGTH_SHORT,
 //             gravity: ToastGravity.BOTTOM,
-//             backgroundColor: Colors.green.shade700,
+//             backgroundColor: AppColors.brand,
 //             textColor: Colors.white,
 //             fontSize: 16.0,
 //           );
@@ -4380,8 +4380,8 @@
 //             //     begin: Alignment.topLeft,
 //             //     end: Alignment.bottomRight,
 //             //     colors: [
-//             //       Color(0xFFA8D5BA), // Light green
-//             //       Color(0xFF68A691), // Darker green
+//             //       AppColors.brandSoft, // Light green
+//             //       AppColors.brandSoft, // Darker green
 //             //     ],
 //             //   ),
 //             // ),
@@ -4432,7 +4432,7 @@
 //                                          color: Constants.AppColors.card,
 //                                          borderRadius: BorderRadius.circular(16),
 //                                          border: Border.all(
-//                                            color: const Color(0xFFF1F5EE),
+//                                            color: AppColors.surface2,
 //                                            width: 1.0,
 //                                          ),
 //                                          boxShadow: [
@@ -4457,7 +4457,7 @@
 //                                                    width: 50,
 //                                                    height: 50,
 //                                                    decoration: const BoxDecoration(
-//                                                      color: Color(0xFFF1F5EE),
+//                                                      color: AppColors.surface2,
 //                                                      shape: BoxShape.circle,
 //                                                    ),
 //                                                    alignment: Alignment.center,
@@ -4542,7 +4542,7 @@
 //                                                ],
 //                                              ),
 //                                              const SizedBox(height: 12),
-//                                              const Divider(color: Color(0xFFF1F5EE), height: 1),
+//                                              const Divider(color: AppColors.surface2, height: 1),
 //                                              const SizedBox(height: 10),
 //                                              // ── Location ──
 //                                              Row(
@@ -4568,25 +4568,25 @@
 //                                                  _buildChip(
 //                                                    icon: Icons.people_outline,
 //                                                    label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
-//                                                    bgColor: const Color(0xFFEAF4E8),
-//                                                    textColor: const Color(0xFF0E6805),
-//                                                    iconColor: const Color(0xFF0E6805),
+//                                                    bgColor: AppColors.brandTint,
+//                                                    textColor: AppColors.brand,
+//                                                    iconColor: AppColors.brand,
 //                                                  ),
 //                                                  const SizedBox(width: 8),
 //                                                  _buildChip(
 //                                                    icon: Icons.currency_rupee,
 //                                                    label: '₹${project['budget'] ?? '0'}',
-//                                                    bgColor: const Color(0xFFFFF3E0),
-//                                                    textColor: const Color(0xFFE65100),
-//                                                    iconColor: const Color(0xFFE65100),
+//                                                    bgColor: AppColors.buttonBg,
+//                                                    textColor: AppColors.button,
+//                                                    iconColor: AppColors.button,
 //                                                  ),
 //                                                  const SizedBox(width: 8),
 //                                                  _buildChip(
 //                                                    icon: Icons.access_time,
 //                                                    label: translateText(project['days']?.toString() ?? '') ?? '',
-//                                                    bgColor: const Color(0xFFE3F2FD),
-//                                                    textColor: const Color(0xFF0D47A1),
-//                                                    iconColor: const Color(0xFF0D47A1),
+//                                                    bgColor: AppColors.brandTint,
+//                                                    textColor: AppColors.brandDeep,
+//                                                    iconColor: AppColors.brandDeep,
 //                                                  ),
 //                                                ],
 //                                              ),
@@ -4654,22 +4654,22 @@
 //     }
 //
 //     String text = '';
-//     Color bgColor = const Color(0xFFEAF4E8);
-//     Color textColor = const Color(0xFF0E6805);
-//     Color borderColor = const Color(0xFFC8E6C9);
+//     Color bgColor = AppColors.brandTint;
+//     Color textColor = AppColors.brand;
+//     Color borderColor = AppColors.brandSoft;
 //     IconData statusIcon = Icons.check;
 //
 //     if (appliedStatus == "0") {
 //       text = translate('Applied', 'आवेदन किया');
-//       bgColor = const Color(0xFFEAF4E8);
-//       textColor = const Color(0xFF0E6805);
-//       borderColor = const Color(0xFFC8E6C9);
+//       bgColor = AppColors.brandTint;
+//       textColor = AppColors.brand;
+//       borderColor = AppColors.brandSoft;
 //       statusIcon = Icons.check;
 //     } else if (appliedStatus == "1") {
 //       text = translate('Assigned', 'आवंटित');
-//       bgColor = const Color(0xFFEFF6FF);
-//       textColor = const Color(0xFF1E40AF);
-//       borderColor = const Color(0xFFBFDBFE);
+//       bgColor = AppColors.brandTint;
+//       textColor = AppColors.brandDeep;
+//       borderColor = AppColors.brand.shade200;
 //       statusIcon = Icons.assignment_ind_outlined;
 //     } else if (appliedStatus == "2") {
 //       text = translate('Work Started', 'कार्य शुरू हुआ');
@@ -4678,21 +4678,21 @@
 //       } else if (project['cancel_confirm']?.toString() == "1") {
 //         text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
 //       }
-//       bgColor = const Color(0xFFFFF7ED);
-//       textColor = const Color(0xFFC2410C);
-//       borderColor = const Color(0xFFFED7AA);
+//       bgColor = AppColors.buttonBg;
+//       textColor = AppColors.button;
+//       borderColor = AppColors.buttonBorder;
 //       statusIcon = Icons.hourglass_top_outlined;
 //     } else if (appliedStatus == "3") {
 //       text = translate('Work Completed', 'कार्य पूर्ण');
-//       bgColor = const Color(0xFFF0FDF4);
-//       textColor = const Color(0xFF15803D);
-//       borderColor = const Color(0xFFBBF7D0);
+//       bgColor = AppColors.brandTint;
+//       textColor = AppColors.brandDeep;
+//       borderColor = AppColors.brandSoft;
 //       statusIcon = Icons.check_circle_outline;
 //     } else if (appliedStatus == "4") {
 //       text = translate('Work Cancelled', 'रद्द किया गया');
-//       bgColor = const Color(0xFFFEF2F2);
-//       textColor = const Color(0xFF991B1B);
-//       borderColor = const Color(0xFFFCA5A5);
+//       bgColor = AppColors.buttonBg;
+//       textColor = AppColors.button;
+//       borderColor = AppColors.buttonBorder;
 //       statusIcon = Icons.close;
 //     } else {
 //       return const SizedBox.shrink();
@@ -4737,9 +4737,9 @@
 //     return Container(
 //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 //       decoration: BoxDecoration(
-//         color: const Color(0xFFEAF4E8),
+//         color: AppColors.buttonBg,
 //         borderRadius: BorderRadius.circular(8),
-//         border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
+//         border: Border.all(color: AppColors.buttonBorder, width: 0.5),
 //       ),
 //       child: Row(
 //         mainAxisSize: MainAxisSize.min,
@@ -4747,7 +4747,7 @@
 //           Text(
 //             label,
 //             style: const TextStyle(
-//               color: Color(0xFF0E6805),
+//               color: AppColors.button,
 //               fontWeight: FontWeight.bold,
 //               fontSize: 12,
 //             ),
@@ -4756,7 +4756,7 @@
 //           const Icon(
 //             Icons.arrow_forward_ios,
 //             size: 10,
-//             color: Color(0xFF0E6805),
+//             color: AppColors.button,
 //           ),
 //         ],
 //       ),
@@ -4786,7 +4786,7 @@
 //       width: size,
 //       height: size,
 //       decoration: const BoxDecoration(
-//         color: Color(0xFFEAF4E8),
+//         color: AppColors.brandTint,
 //         shape: BoxShape.circle,
 //       ),
 //       child: CustomPaint(
@@ -4801,14 +4801,14 @@
 //   @override
 //   void paint(Canvas canvas, Size size) {
 //     final paint = Paint()
-//       ..color = const Color(0xFF0E6805)
+//       ..color = AppColors.brand
 //       ..style = PaintingStyle.stroke
 //       ..strokeWidth = 1.8
 //       ..strokeCap = StrokeCap.round
 //       ..strokeJoin = StrokeJoin.round;
 //
 //     final fillPaint = Paint()
-//       ..color = const Color(0xFF0E6805)
+//       ..color = AppColors.brand
 //       ..style = PaintingStyle.fill;
 //
 //     final double w = size.width;
@@ -4873,7 +4873,7 @@
 //       text: TextSpan(
 //         text: 'IWM',
 //         style: TextStyle(
-//           color: const Color(0xFF0E6805),
+//           color: AppColors.brand,
 //           fontSize: 8.5 * scale,
 //           fontWeight: FontWeight.w900,
 //           letterSpacing: 0.8,
@@ -4996,8 +4996,8 @@
 //             begin: Alignment.topLeft,
 //             end: Alignment.bottomRight,
 //             colors: [
-//               Color(0xFFA8D5BA), // Light green
-//               Color(0xFF68A691), // Darker green
+//               AppColors.brandSoft, // Light green
+//               AppColors.brandSoft, // Darker green
 //             ],
 //           ),
 //         ),
@@ -5108,6 +5108,7 @@ import 'package:greencollar/labourhomepage.dart';
 import 'package:greencollar/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -5277,7 +5278,7 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                 'Applied successfully!', 'सफलतापूर्वक लागू किया गया!'),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.green.shade700,
+            backgroundColor: AppColors.brand,
             textColor: Colors.white,
             fontSize: 16.0,
           );
@@ -5531,7 +5532,7 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                   });
                 },
                 child: Text(translate('Reset Filters', 'फ़िल्टर रीसेट करें'),
-                    style: const TextStyle(color: Colors.red)),
+                    style: const TextStyle(color: AppColors.button)),
               ),
             ],
           );
@@ -5802,8 +5803,8 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
             //     begin: Alignment.topLeft,
             //     end: Alignment.bottomRight,
             //     colors: [
-            //       Color(0xFFA8D5BA), // Light green
-            //       Color(0xFF68A691), // Darker green
+            //       AppColors.brandSoft, // Light green
+            //       AppColors.brandSoft, // Darker green
             //     ],
             //   ),
             // ),
@@ -5811,7 +5812,7 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.filter_list, color: Constants.AppColors.brand),
+                  icon: const Icon(Icons.filter_list, color: Constants.AppColors.button),
                   onPressed: () => _showFilterDialog(),
                 ),
                 Expanded(
@@ -5852,12 +5853,12 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                               color: Constants.AppColors.card,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: const Color(0xFFF1F5EE),
+                                color: AppColors.surface2,
                                 width: 1.0,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: AppColors.ink.withOpacity(0.04),
                                   blurRadius: 16,
                                   offset: const Offset(0, 6),
                                 ),
@@ -5877,7 +5878,7 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                                         width: 50,
                                         height: 50,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFF1F5EE),
+                                          color: AppColors.surface2,
                                           shape: BoxShape.circle,
                                         ),
                                         alignment: Alignment.center,
@@ -5900,7 +5901,7 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                                                   child: Text(
                                                     translateText(project['title']?.toString() ?? 'No Title') ?? 'No Title',
                                                     style: Constants.AppTypography.h2.copyWith(
-                                                      color: Constants.AppColors.ink,
+                                                      color: Constants.AppColors.brand,
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: 16,
                                                     ),
@@ -5921,14 +5922,14 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                                                 const Icon(
                                                   Icons.calendar_today_outlined,
                                                   size: 13,
-                                                  color: Colors.grey,
+                                                  color: AppColors.inkSoft,
                                                 ),
                                                 const SizedBox(width: 4),
                                                 Text(
                                                   _formatDate(project['created_at']?.toString() ?? ''),
                                                   style: const TextStyle(
                                                     fontSize: 13,
-                                                    color: Colors.grey,
+                                                    color: AppColors.inkSoft,
                                                   ),
                                                 ),
                                                 const SizedBox(width: 10),
@@ -5962,7 +5963,7 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 12),
-                                  const Divider(color: Color(0xFFF1F5EE), height: 1),
+                                  const Divider(color: AppColors.surface2, height: 1),
                                   const SizedBox(height: 10),
                                   // ── Location ──
                                   Row(
@@ -5990,23 +5991,23 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
                                       _buildChip(
                                         icon: Icons.people_outline,
                                         label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
-                                        bgColor: const Color(0xFFEAF4E8),
-                                        textColor: const Color(0xFF0E6805),
-                                        iconColor: const Color(0xFF0E6805),
+                                        bgColor: AppColors.brandTint,
+                                        textColor: AppColors.brand,
+                                        iconColor: AppColors.brand,
                                       ),
                                       _buildChip(
                                         icon: Icons.currency_rupee,
                                         label: '₹${project['budget'] ?? '0'}',
-                                        bgColor: const Color(0xFFFFF3E0),
-                                        textColor: const Color(0xFFE65100),
-                                        iconColor: const Color(0xFFE65100),
+                                        bgColor: AppColors.buttonBg,
+                                        textColor: AppColors.button,
+                                        iconColor: AppColors.button,
                                       ),
                                       _buildChip(
                                         icon: Icons.access_time,
                                         label: translateText(project['days']?.toString() ?? '') ?? '',
-                                        bgColor: const Color(0xFFE3F2FD),
-                                        textColor: const Color(0xFF0D47A1),
-                                        iconColor: const Color(0xFF0D47A1),
+                                        bgColor: AppColors.brandTint,
+                                        textColor: AppColors.brandDeep,
+                                        iconColor: AppColors.brandDeep,
                                       ),
                                     ],
                                   ),
@@ -6043,18 +6044,18 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: const Color(0xFFF3E8DC),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: iconColor),
+          Icon(icon, size: 14, color: const Color(0xFF865E2A)),
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(
-              color: textColor,
+            style: const TextStyle(
+              color: Color(0xFF865E2A),
               fontWeight: FontWeight.w600,
               fontSize: 12,
             ),
@@ -6074,22 +6075,22 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
     }
 
     String text = '';
-    Color bgColor = const Color(0xFFEAF4E8);
-    Color textColor = const Color(0xFF0E6805);
-    Color borderColor = const Color(0xFFC8E6C9);
+    Color bgColor = AppColors.brandTint;
+    Color textColor = AppColors.brand;
+    Color borderColor = AppColors.brandSoft;
     IconData statusIcon = Icons.check;
 
     if (appliedStatus == "0") {
       text = translate('Applied', 'आवेदन किया');
-      bgColor = const Color(0xFFEAF4E8);
-      textColor = const Color(0xFF0E6805);
-      borderColor = const Color(0xFFC8E6C9);
+      bgColor = AppColors.brandTint;
+      textColor = AppColors.brand;
+      borderColor = AppColors.brandSoft;
       statusIcon = Icons.check;
     } else if (appliedStatus == "1") {
       text = translate('Assigned', 'आवंटित');
-      bgColor = const Color(0xFFEFF6FF);
-      textColor = const Color(0xFF1E40AF);
-      borderColor = const Color(0xFFBFDBFE);
+      bgColor = AppColors.brandTint;
+      textColor = AppColors.brandDeep;
+      borderColor = AppColors.brandSoft;
       statusIcon = Icons.assignment_ind_outlined;
     } else if (appliedStatus == "2") {
       text = translate('Work Started', 'कार्य शुरू हुआ');
@@ -6098,21 +6099,21 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
       } else if (project['cancel_confirm']?.toString() == "1") {
         text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
       }
-      bgColor = const Color(0xFFFFF7ED);
-      textColor = const Color(0xFFC2410C);
-      borderColor = const Color(0xFFFED7AA);
+      bgColor = AppColors.buttonBg;
+      textColor = AppColors.button;
+      borderColor = AppColors.buttonBorder;
       statusIcon = Icons.hourglass_top_outlined;
     } else if (appliedStatus == "3") {
       text = translate('Work Completed', 'कार्य पूर्ण');
-      bgColor = const Color(0xFFF0FDF4);
-      textColor = const Color(0xFF15803D);
-      borderColor = const Color(0xFFBBF7D0);
+      bgColor = AppColors.brandTint;
+      textColor = AppColors.brandDeep;
+      borderColor = AppColors.brandSoft;
       statusIcon = Icons.check_circle_outline;
     } else if (appliedStatus == "4") {
       text = translate('Work Cancelled', 'रद्द किया गया');
-      bgColor = const Color(0xFFFEF2F2);
-      textColor = const Color(0xFF991B1B);
-      borderColor = const Color(0xFFFCA5A5);
+      bgColor = AppColors.buttonBg;
+      textColor = AppColors.button;
+      borderColor = AppColors.buttonBorder;
       statusIcon = Icons.close;
     } else {
       return const SizedBox.shrink();
@@ -6157,9 +6158,8 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFEAF4E8),
+        color: AppColors.button,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -6167,7 +6167,7 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
           Text(
             label,
             style: const TextStyle(
-              color: Color(0xFF0E6805),
+              color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
@@ -6176,7 +6176,7 @@ class _NearbyProjectPageState extends State<NearbyProjectPage> {
           const Icon(
             Icons.arrow_forward_ios,
             size: 10,
-            color: Color(0xFF0E6805),
+            color: Colors.white,
           ),
         ],
       ),
@@ -6336,7 +6336,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F5EE),
+        color: AppColors.surface2,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -6421,7 +6421,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         SnackBar(
           content: Text(translate('User ID not found in secure storage',
               'सुरक्षित भंडारण में उपयोगकर्ता आईडी नहीं मिली')),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.button,
         ),
       );
       return;
@@ -6441,7 +6441,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       SnackBar(
         content: Text(result['message'] ??
             translate('Unknown response', 'अज्ञात प्रतिक्रिया')),
-        backgroundColor: result['status'] == "1" ? Colors.green : Colors.red,
+        backgroundColor: result['status'] == "1" ? AppColors.brand : Colors.red,
         duration: const Duration(seconds: 3),
       ),
     );
@@ -6604,7 +6604,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               'कृपया सभी माइलस्टोन के लिए राशि भरें'),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red.shade700,
+          backgroundColor: AppColors.button,
           textColor: Colors.white,
           fontSize: 16.0,
         );
@@ -6617,7 +6617,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               'कृपया सभी माइलस्टोन के लिए अवधि भरें'),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red.shade700,
+          backgroundColor: AppColors.button,
           textColor: Colors.white,
           fontSize: 16.0,
         );
@@ -7144,7 +7144,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: Constants.AppColors.brand,
+          backgroundColor: Constants.AppColors.button,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -7164,7 +7164,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: Colors.grey[400],
+          backgroundColor: AppColors.inkSoft,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -7185,7 +7185,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            backgroundColor: const Color(0xFFDC2626),
+            backgroundColor: AppColors.button,
             foregroundColor: Colors.white,
             elevation: 0,
           ),
@@ -7205,7 +7205,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            backgroundColor: Colors.grey[400],
+            backgroundColor: AppColors.inkSoft,
             foregroundColor: Colors.white,
             elevation: 0,
           ),
@@ -7225,7 +7225,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            backgroundColor: Constants.AppColors.brand,
+            backgroundColor: Constants.AppColors.button,
             foregroundColor: Colors.white,
             elevation: 0,
           ),
@@ -7252,7 +7252,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               child: OutlinedButton(
                 onPressed: _showReviewDialog,
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Constants.AppColors.brand, width: 1.5),
+                  side: BorderSide(color: Constants.AppColors.button, width: 1.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -7262,7 +7262,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Constants.AppColors.brand,
+                    color: Constants.AppColors.button,
                   ),
                 ),
               ),
@@ -7275,7 +7275,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               child: ElevatedButton(
                 onPressed: null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[400],
+                  backgroundColor: AppColors.inkSoft,
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -7302,7 +7302,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: Colors.grey[400],
+          backgroundColor: AppColors.inkSoft,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -7330,7 +7330,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: Constants.AppColors.brand,
+          backgroundColor: Constants.AppColors.button,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -7350,7 +7350,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: Colors.grey[400],
+          backgroundColor: AppColors.inkSoft,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -7379,12 +7379,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             width: 32,
             height: 32,
             decoration: const BoxDecoration(
-              color: Color(0xFFEAF4E8),
+              color: AppColors.brandTint,
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
-              color: const Color(0xFF0E6805),
+              color: AppColors.brand,
               size: 16,
             ),
           ),
@@ -7398,7 +7398,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   label,
                   style: TextStyle(
                     fontSize: 10,
-                    color: Colors.grey[500],
+                    color: AppColors.inkSoft,
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 1,
@@ -7410,7 +7410,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF152018),
+                    color: AppColors.ink,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -7653,7 +7653,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: const Color(0xFFFAFBF7),
+        backgroundColor: AppColors.surface,
         appBar: AppBar(
           backgroundColor: Constants.AppColors.brand,
           foregroundColor: Colors.white,
@@ -7688,7 +7688,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     final String skillsText = translateText(project['required_skills']?.toString() ?? 'N/A');
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFBF7),
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
         backgroundColor: Constants.AppColors.brand,
         foregroundColor: Colors.white,
@@ -7720,7 +7720,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: AppColors.ink.withOpacity(0.04),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -7744,7 +7744,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                       style: const TextStyle(
                                         fontSize: 17,
                                         fontWeight: FontWeight.w700,
-                                        color: Color(0xFF1B2B1B),
+                                        color: AppColors.ink,
                                       ),
                                     ),
                                     const SizedBox(height: 6),
@@ -7752,13 +7752,13 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                     Row(
                                       children: [
                                         Icon(Icons.person_outline,
-                                            size: 14, color: Colors.grey[500]),
+                                            size: 14, color: AppColors.inkSoft),
                                         const SizedBox(width: 4),
                                         Text(
                                           translate('Posted by ', 'द्वारा पोस्ट किया गया '),
                                           style: TextStyle(
                                               fontSize: 11,
-                                              color: Colors.grey[500]),
+                                              color: AppColors.inkSoft),
                                         ),
                                         Expanded(
                                           child: Text(
@@ -7774,13 +7774,13 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                         ),
                                         const SizedBox(width: 4),
                                         Icon(Icons.calendar_today_outlined,
-                                            size: 11, color: Colors.grey[400]),
+                                            size: 11, color: AppColors.inkSoft),
                                         const SizedBox(width: 3),
                                         Text(
                                           translateText(project['time_elapsed']?.toString() ?? 'N/A'),
                                           style: TextStyle(
                                               fontSize: 11,
-                                              color: Colors.grey[500]),
+                                              color: AppColors.inkSoft),
                                         ),
                                       ],
                                     ),
@@ -7798,7 +7798,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                                   ? Icons.star_half
                                                   : Icons.star_border),
                                               size: 14,
-                                              color: Colors.amber,
+                                              color: AppColors.amberNotice,
                                             );
                                           }),
                                         ),
@@ -7807,7 +7807,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                           '(${project['review_count'] ?? 0} ${translate('reviews', 'समीक्षाएँ')})',
                                           style: TextStyle(
                                             fontSize: 11,
-                                            color: Colors.grey[600],
+                                            color: AppColors.inkSoft,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -7837,10 +7837,10 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFEAF4E8),
+                                  color: AppColors.brandTint,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                      color: const Color(0xFFA5D6A7), width: 1),
+                                      color: AppColors.brandSoft, width: 1),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -7918,7 +7918,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: AppColors.ink.withOpacity(0.04),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -7934,12 +7934,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                 width: 36,
                                 height: 36,
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFFFFF3E0),
+                                  color: AppColors.buttonBg,
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
                                   Icons.workspace_premium_outlined,
-                                  color: Color(0xFFFF8F00),
+                                  color: AppColors.amberNotice,
                                   size: 18,
                                 ),
                               ),
@@ -7949,7 +7949,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF1B2B1B),
+                                  color: AppColors.ink,
                                 ),
                               ),
                             ],
@@ -7964,16 +7964,16 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               return Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFBEB),
+                                  color: AppColors.buttonBg,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: const Color(0xFFFDE68A), width: 1),
+                                  border: Border.all(color: AppColors.amberNotice, width: 1),
                                 ),
                                 child: Text(
                                   cleanSkill,
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFFB45309),
+                                    color: AppColors.button,
                                   ),
                                 ),
                               );
@@ -7992,7 +7992,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: AppColors.ink.withOpacity(0.04),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -8005,12 +8005,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                             width: 36,
                             height: 36,
                             decoration: const BoxDecoration(
-                              color: Color(0xFFEAF4E8),
+                              color: AppColors.brandTint,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
                               Icons.receipt_long_outlined,
-                              color: Color(0xFF0E6805),
+                              color: AppColors.brand,
                               size: 18,
                             ),
                           ),
@@ -8023,7 +8023,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                   translate('Payment Type', 'भुगतान का प्रकार'),
                                   style: TextStyle(
                                     fontSize: 11,
-                                    color: Colors.grey[500],
+                                    color: AppColors.inkSoft,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -8033,7 +8033,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF152018),
+                                    color: AppColors.ink,
                                   ),
                                 ),
                               ],
@@ -8052,7 +8052,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: AppColors.ink.withOpacity(0.04),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -8091,7 +8091,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                             translateText(description),
                             style: TextStyle(
                               fontSize: 13,
-                              color: Colors.grey[700],
+                              color: AppColors.inkSoft,
                               height: 1.5,
                             ),
                           ),
@@ -8109,7 +8109,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
+                              color: AppColors.ink.withOpacity(0.04),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -8217,9 +8217,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                       return Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                         decoration: BoxDecoration(
-                                          color: isEven ? Colors.white : const Color(0xFFF9FBF9),
+                                          color: isEven ? Colors.white : AppColors.surface,
                                           border: Border(
-                                            bottom: BorderSide(color: Colors.grey[100]!, width: 1),
+                                            bottom: BorderSide(color: AppColors.surface2!, width: 1),
                                           ),
                                         ),
                                         child: Row(
@@ -8272,18 +8272,18 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                                     : mStatus == '3'
                                                     ? _buildMilestoneAction(
                                                   label: translate('Submitted', 'जमा किया'),
-                                                  color: const Color(0xFFF97316),
+                                                  color: AppColors.amberNotice,
                                                   onPressed: null,
                                                 )
                                                     : mStatus == '4'
                                                     ? _buildMilestoneAction(
                                                   label: translate('Completed', 'पूर्ण किया'),
-                                                  color: const Color(0xFF16A34A),
+                                                  color: AppColors.brand,
                                                   onPressed: null,
                                                 )
                                                     : IconButton(
                                                   icon: const Icon(Icons.edit_outlined,
-                                                      color: Colors.blue, size: 20),
+                                                      color: AppColors.brand, size: 20),
                                                   padding: EdgeInsets.zero,
                                                   constraints: const BoxConstraints(),
                                                   onPressed: () => showEditMilestoneDialog(
@@ -8309,9 +8309,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                     if (project['applyStatus'] != null) ...[
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F9F1),
+                          color: AppColors.brandTint,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE2EFE2), width: 1),
+                          border: Border.all(color: AppColors.brandTint, width: 1),
                         ),
                         padding: const EdgeInsets.all(16),
                         child: Row(
@@ -8324,12 +8324,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                     width: 32,
                                     height: 32,
                                     decoration: const BoxDecoration(
-                                      color: Color(0xFFEAF4E8),
+                                      color: AppColors.brandTint,
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
                                       Icons.edit_note_outlined,
-                                      color: Color(0xFF0E6805),
+                                      color: AppColors.brand,
                                       size: 18,
                                     ),
                                   ),
@@ -8342,7 +8342,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                           translate('Proposal Amount', 'प्रस्ताव राशि'),
                                           style: const TextStyle(
                                             fontSize: 10,
-                                            color: Color(0xFF5B6B5E),
+                                            color: AppColors.inkSoft,
                                             fontWeight: FontWeight.w500,
                                           ),
                                           maxLines: 1,
@@ -8356,7 +8356,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                           style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFF152018),
+                                            color: AppColors.ink,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -8375,12 +8375,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                     width: 32,
                                     height: 32,
                                     decoration: const BoxDecoration(
-                                      color: Color(0xFFEAF4E8),
+                                      color: AppColors.brandTint,
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
                                       Icons.access_time_outlined,
-                                      color: Color(0xFF0E6805),
+                                      color: AppColors.brand,
                                       size: 18,
                                     ),
                                   ),
@@ -8393,7 +8393,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                           translate('Estimate Duration', 'अनुमानित अवधि'),
                                           style: const TextStyle(
                                             fontSize: 10,
-                                            color: Color(0xFF5B6B5E),
+                                            color: AppColors.inkSoft,
                                             fontWeight: FontWeight.w500,
                                           ),
                                           maxLines: 1,
@@ -8405,7 +8405,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                           style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFF152018),
+                                            color: AppColors.ink,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -8424,12 +8424,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                     width: 32,
                                     height: 32,
                                     decoration: const BoxDecoration(
-                                      color: Color(0xFFEAF4E8),
+                                      color: AppColors.brandTint,
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
                                       Icons.chat_bubble_outline,
-                                      color: Color(0xFF0E6805),
+                                      color: AppColors.brand,
                                       size: 16,
                                     ),
                                   ),
@@ -8442,7 +8442,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                           translate('Comment', 'टिप्पणी'),
                                           style: const TextStyle(
                                             fontSize: 10,
-                                            color: Color(0xFF5B6B5E),
+                                            color: AppColors.inkSoft,
                                             fontWeight: FontWeight.w500,
                                           ),
                                           maxLines: 1,
@@ -8454,7 +8454,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                           style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFF152018),
+                                            color: AppColors.ink,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -8475,7 +8475,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
+                              color: AppColors.ink.withOpacity(0.04),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -8507,15 +8507,15 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               decoration: InputDecoration(
                                 labelText: translate("Proposal Amount", "प्रस्ताव राशि"),
                                 hintText: translate('Enter proposal amount', 'प्रस्ताव राशि दर्ज करें'),
-                                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
-                                labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                hintStyle: TextStyle(color: AppColors.inkSoft, fontSize: 13),
+                                labelStyle: TextStyle(color: AppColors.inkSoft, fontSize: 13),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                  borderSide: BorderSide(color: AppColors.border!),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey[200]!),
+                                  borderSide: BorderSide(color: AppColors.border!),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -8543,14 +8543,14 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               },
                               decoration: InputDecoration(
                                 labelText: translate('Estimated Days', 'अनुमानित दिन'),
-                                labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                labelStyle: TextStyle(color: AppColors.inkSoft, fontSize: 13),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                  borderSide: BorderSide(color: AppColors.border!),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey[200]!),
+                                  borderSide: BorderSide(color: AppColors.border!),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -8579,16 +8579,16 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               decoration: InputDecoration(
                                 labelText: translate("Enter your Comment", "अपनी टिप्पणी दर्ज करें"),
                                 hintText: translate('Write your comment here', 'अपनी टिप्पणी यहाँ लिखें'),
-                                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
-                                labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                hintStyle: TextStyle(color: AppColors.inkSoft, fontSize: 13),
+                                labelStyle: TextStyle(color: AppColors.inkSoft, fontSize: 13),
                                 suffixIcon: MicIconButton(controller: _commentController),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                  borderSide: BorderSide(color: AppColors.border!),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey[200]!),
+                                  borderSide: BorderSide(color: AppColors.border!),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -8612,7 +8612,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 
           // ── Fixed bottom CTA ───────────────────────────────────────────────
           Container(
-            color: const Color(0xFFFAFBF7),
+            color: AppColors.surface,
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             child: SizedBox(
               width: double.infinity,
@@ -8859,19 +8859,19 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                       controller: _labourSearchController,
                       decoration: InputDecoration(
                         prefixIcon:
-                        const Icon(Icons.search, color: Colors.green),
+                        const Icon(Icons.search, color: AppColors.brand),
                         hintText: translate('Search by pincode, city, or state',
                             'पिनकोड, शहर या राज्य द्वारा खोजें'),
                         fillColor: Colors.white,
                         filled: true,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
-                          borderSide: const BorderSide(color: Colors.green),
+                          borderSide: const BorderSide(color: AppColors.brand),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           borderSide:
-                          const BorderSide(color: Colors.green, width: 2),
+                          const BorderSide(color: AppColors.brand, width: 2),
                         ),
                       ),
                     ),
@@ -8963,7 +8963,7 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                   });
                 },
                 child: Text(translate('Reset Filters', 'फ़िल्टर रीसेट करें'),
-                    style: const TextStyle(color: Colors.red)),
+                    style: const TextStyle(color: AppColors.button)),
               ),
             ],
           );
@@ -9177,7 +9177,7 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                 'Applied successfully!', 'सफलतापूर्वक लागू किया गया!'),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.green.shade700,
+            backgroundColor: AppColors.brand,
             textColor: Colors.white,
             fontSize: 16.0,
           );
@@ -9250,7 +9250,7 @@ class _AppliedProjectsState extends State<AppliedProjects> {
           flexibleSpace: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.green, Colors.teal],
+                colors: [AppColors.brand, Colors.teal],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -9268,8 +9268,8 @@ class _AppliedProjectsState extends State<AppliedProjects> {
             //     begin: Alignment.topLeft,
             //     end: Alignment.bottomRight,
             //     colors: [
-            //       Color(0xFFA8D5BA), // Light green
-            //       Color(0xFF68A691), // Darker green
+            //       AppColors.brandSoft, // Light green
+            //       AppColors.brandSoft, // Darker green
             //     ],
             //   ),
             // ),
@@ -9290,7 +9290,7 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
-                        color: Colors.brown,
+                        color: AppColors.button,
                       ),
                     ),
                   )
@@ -9320,12 +9320,12 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                               color: Constants.AppColors.card,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: const Color(0xFFF1F5EE),
+                                color: AppColors.surface2,
                                 width: 1.0,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: AppColors.ink.withOpacity(0.04),
                                   blurRadius: 16,
                                   offset: const Offset(0, 6),
                                 ),
@@ -9345,7 +9345,7 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                                         width: 50,
                                         height: 50,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFF1F5EE),
+                                          color: AppColors.surface2,
                                           shape: BoxShape.circle,
                                         ),
                                         alignment: Alignment.center,
@@ -9368,7 +9368,7 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                                                   child: Text(
                                                     translateText(project['title']?.toString() ?? 'No Title') ?? 'No Title',
                                                     style: Constants.AppTypography.h2.copyWith(
-                                                      color: Constants.AppColors.ink,
+                                                      color: Constants.AppColors.brand,
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: 16,
                                                     ),
@@ -9389,14 +9389,14 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                                                 const Icon(
                                                   Icons.calendar_today_outlined,
                                                   size: 13,
-                                                  color: Colors.grey,
+                                                  color: AppColors.inkSoft,
                                                 ),
                                                 const SizedBox(width: 4),
                                                 Text(
                                                   _formatDate(project['created_at']?.toString() ?? ''),
                                                   style: const TextStyle(
                                                     fontSize: 13,
-                                                    color: Colors.grey,
+                                                    color: AppColors.inkSoft,
                                                   ),
                                                 ),
                                                 const SizedBox(width: 10),
@@ -9430,7 +9430,7 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                                     ],
                                   ),
                                   const SizedBox(height: 12),
-                                  const Divider(color: Color(0xFFF1F5EE), height: 1),
+                                  const Divider(color: AppColors.surface2, height: 1),
                                   const SizedBox(height: 10),
                                   // ── Location ──
                                   Row(
@@ -9456,25 +9456,25 @@ class _AppliedProjectsState extends State<AppliedProjects> {
                                       _buildChip(
                                         icon: Icons.people_outline,
                                         label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
-                                        bgColor: const Color(0xFFEAF4E8),
-                                        textColor: const Color(0xFF0E6805),
-                                        iconColor: const Color(0xFF0E6805),
+                                        bgColor: AppColors.brandTint,
+                                        textColor: AppColors.brand,
+                                        iconColor: AppColors.brand,
                                       ),
                                       const SizedBox(width: 8),
                                       _buildChip(
                                         icon: Icons.currency_rupee,
                                         label: '₹${project['budget'] ?? '0'}',
-                                        bgColor: const Color(0xFFFFF3E0),
-                                        textColor: const Color(0xFFE65100),
-                                        iconColor: const Color(0xFFE65100),
+                                        bgColor: AppColors.buttonBg,
+                                        textColor: AppColors.button,
+                                        iconColor: AppColors.button,
                                       ),
                                       const SizedBox(width: 8),
                                       _buildChip(
                                         icon: Icons.access_time,
                                         label: translateText(project['days']?.toString() ?? '') ?? '',
-                                        bgColor: const Color(0xFFE3F2FD),
-                                        textColor: const Color(0xFF0D47A1),
-                                        iconColor: const Color(0xFF0D47A1),
+                                        bgColor: AppColors.brandTint,
+                                        textColor: AppColors.brandDeep,
+                                        iconColor: AppColors.brandDeep,
                                       ),
                                     ],
                                   ),
@@ -9511,18 +9511,18 @@ class _AppliedProjectsState extends State<AppliedProjects> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: const Color(0xFFF3E8DC),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: iconColor),
+          Icon(icon, size: 14, color: const Color(0xFF865E2A)),
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(
-              color: textColor,
+            style: const TextStyle(
+              color: Color(0xFF865E2A),
               fontWeight: FontWeight.w600,
               fontSize: 12,
             ),
@@ -9542,22 +9542,22 @@ class _AppliedProjectsState extends State<AppliedProjects> {
     }
 
     String text = '';
-    Color bgColor = const Color(0xFFEAF4E8);
-    Color textColor = const Color(0xFF0E6805);
-    Color borderColor = const Color(0xFFC8E6C9);
+    Color bgColor = AppColors.brandTint;
+    Color textColor = AppColors.brand;
+    Color borderColor = AppColors.brandSoft;
     IconData statusIcon = Icons.check;
 
     if (appliedStatus == "0") {
       text = translate('Applied', 'आवेदन किया');
-      bgColor = const Color(0xFFEAF4E8);
-      textColor = const Color(0xFF0E6805);
-      borderColor = const Color(0xFFC8E6C9);
+      bgColor = AppColors.brandTint;
+      textColor = AppColors.brand;
+      borderColor = AppColors.brandSoft;
       statusIcon = Icons.check;
     } else if (appliedStatus == "1") {
       text = translate('Assigned', 'आवंटित');
-      bgColor = const Color(0xFFEFF6FF);
-      textColor = const Color(0xFF1E40AF);
-      borderColor = const Color(0xFFBFDBFE);
+      bgColor = AppColors.brandTint;
+      textColor = AppColors.brandDeep;
+      borderColor = AppColors.brandSoft;
       statusIcon = Icons.assignment_ind_outlined;
     } else if (appliedStatus == "2") {
       text = translate('Work Started', 'कार्य शुरू हुआ');
@@ -9566,21 +9566,21 @@ class _AppliedProjectsState extends State<AppliedProjects> {
       } else if (project['cancel_confirm']?.toString() == "1") {
         text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
       }
-      bgColor = const Color(0xFFFFF7ED);
-      textColor = const Color(0xFFC2410C);
-      borderColor = const Color(0xFFFED7AA);
+      bgColor = AppColors.buttonBg;
+      textColor = AppColors.button;
+      borderColor = AppColors.buttonBorder;
       statusIcon = Icons.hourglass_top_outlined;
     } else if (appliedStatus == "3") {
       text = translate('Work Completed', 'कार्य पूर्ण');
-      bgColor = const Color(0xFFF0FDF4);
-      textColor = const Color(0xFF15803D);
-      borderColor = const Color(0xFFBBF7D0);
+      bgColor = AppColors.brandTint;
+      textColor = AppColors.brandDeep;
+      borderColor = AppColors.brandSoft;
       statusIcon = Icons.check_circle_outline;
     } else if (appliedStatus == "4") {
       text = translate('Work Cancelled', 'रद्द किया गया');
-      bgColor = const Color(0xFFFEF2F2);
-      textColor = const Color(0xFF991B1B);
-      borderColor = const Color(0xFFFCA5A5);
+      bgColor = AppColors.buttonBg;
+      textColor = AppColors.button;
+      borderColor = AppColors.buttonBorder;
       statusIcon = Icons.close;
     } else {
       return const SizedBox.shrink();
@@ -9625,9 +9625,8 @@ class _AppliedProjectsState extends State<AppliedProjects> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFEAF4E8),
+        color: AppColors.button,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -9635,7 +9634,7 @@ class _AppliedProjectsState extends State<AppliedProjects> {
           Text(
             label,
             style: const TextStyle(
-              color: Color(0xFF0E6805),
+              color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
@@ -9644,7 +9643,7 @@ class _AppliedProjectsState extends State<AppliedProjects> {
           const Icon(
             Icons.arrow_forward_ios,
             size: 10,
-            color: Color(0xFF0E6805),
+            color: Colors.white,
           ),
         ],
       ),
@@ -9674,7 +9673,7 @@ class CowAvatar extends StatelessWidget {
       width: size,
       height: size,
       decoration: const BoxDecoration(
-        color: Color(0xFFEAF4E8),
+        color: AppColors.brandTint,
         shape: BoxShape.circle,
       ),
       child: CustomPaint(
@@ -9689,14 +9688,14 @@ class CowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF0E6805)
+      ..color = AppColors.brand
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
     final fillPaint = Paint()
-      ..color = const Color(0xFF0E6805)
+      ..color = AppColors.brand
       ..style = PaintingStyle.fill;
 
     final double w = size.width;
@@ -9761,7 +9760,7 @@ class CowPainter extends CustomPainter {
       text: TextSpan(
         text: 'IWM',
         style: TextStyle(
-          color: const Color(0xFF0E6805),
+          color: AppColors.brand,
           fontSize: 8.5 * scale,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.8,
@@ -9779,3 +9778,4 @@ class CowPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+

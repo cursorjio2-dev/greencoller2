@@ -1334,22 +1334,22 @@
 // //     }
 // //
 // //     String text = '';
-// //     Color bgColor = const Color(0xFFEAF4E8);
-// //     Color textColor = const Color(0xFF0E6805);
-// //     Color borderColor = const Color(0xFFC8E6C9);
+// //     Color bgColor = AppColors.brandTint;
+// //     Color textColor = AppColors.brand;
+// //     Color borderColor = AppColors.brandSoft;
 // //     IconData statusIcon = Icons.check;
 // //
 // //     if (appliedStatus == "0") {
 // //       text = translate('Applied', 'आवेदन किया');
-// //       bgColor = const Color(0xFFEAF4E8);
-// //       textColor = const Color(0xFF0E6805);
-// //       borderColor = const Color(0xFFC8E6C9);
+// //       bgColor = AppColors.brandTint;
+// //       textColor = AppColors.brand;
+// //       borderColor = AppColors.brandSoft;
 // //       statusIcon = Icons.check;
 // //     } else if (appliedStatus == "1") {
 // //       text = translate('Assigned', 'आवंटित');
-// //       bgColor = const Color(0xFFEFF6FF);
-// //       textColor = const Color(0xFF1E40AF);
-// //       borderColor = const Color(0xFFBFDBFE);
+// //       bgColor = AppColors.brandTint;
+// //       textColor = AppColors.brandDeep;
+// //       borderColor = AppColors.brand.shade200;
 // //       statusIcon = Icons.assignment_ind_outlined;
 // //     } else if (appliedStatus == "2") {
 // //       text = translate('Work Started', 'कार्य शुरू हुआ');
@@ -1358,21 +1358,21 @@
 // //       } else if (project['cancel_confirm']?.toString() == "1") {
 // //         text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
 // //       }
-// //       bgColor = const Color(0xFFFFF7ED);
-// //       textColor = const Color(0xFFC2410C);
-// //       borderColor = const Color(0xFFFED7AA);
+// //       bgColor = AppColors.buttonBg;
+// //       textColor = AppColors.button;
+// //       borderColor = AppColors.buttonBorder;
 // //       statusIcon = Icons.hourglass_top_outlined;
 // //     } else if (appliedStatus == "3") {
 // //       text = translate('Work Completed', 'कार्य पूर्ण');
-// //       bgColor = const Color(0xFFF0FDF4);
-// //       textColor = const Color(0xFF15803D);
-// //       borderColor = const Color(0xFFBBF7D0);
+// //       bgColor = AppColors.brandTint;
+// //       textColor = AppColors.brandDeep;
+// //       borderColor = AppColors.brandSoft;
 // //       statusIcon = Icons.check_circle_outline;
 // //     } else if (appliedStatus == "4") {
 // //       text = translate('Work Cancelled', 'रद्द किया गया');
-// //       bgColor = const Color(0xFFFEF2F2);
-// //       textColor = const Color(0xFF991B1B);
-// //       borderColor = const Color(0xFFFCA5A5);
+// //       bgColor = AppColors.buttonBg;
+// //       textColor = AppColors.button;
+// //       borderColor = AppColors.buttonBorder;
 // //       statusIcon = Icons.close;
 // //     } else {
 // //       return const SizedBox.shrink();
@@ -1418,9 +1418,9 @@
 // //     return Container(
 // //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 // //       decoration: BoxDecoration(
-// //         color: const Color(0xFFEAF4E8),
+// //         color: AppColors.buttonBg,
 // //         borderRadius: BorderRadius.circular(8),
-// //         border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
+// //         border: Border.all(color: AppColors.buttonBorder, width: 0.5),
 // //       ),
 // //       child: Row(
 // //         mainAxisSize: MainAxisSize.min,
@@ -1428,7 +1428,7 @@
 // //           Text(
 // //             label,
 // //             style: const TextStyle(
-// //               color: Color(0xFF0E6805),
+// //               color: AppColors.button,
 // //               fontWeight: FontWeight.bold,
 // //               fontSize: 12,
 // //             ),
@@ -1437,7 +1437,7 @@
 // //           const Icon(
 // //             Icons.arrow_forward_ios,
 // //             size: 10,
-// //             color: Color(0xFF0E6805),
+// //             color: AppColors.button,
 // //           ),
 // //         ],
 // //       ),
@@ -1487,7 +1487,7 @@
 // //                       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 // //                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
 // //                       decoration: BoxDecoration(
-// //                         color: const Color(0xFFFFF9E6),
+// //                         color: AppColors.amberNotice,
 // //                         borderRadius: BorderRadius.circular(14),
 // //                         border: Border.all(
 // //                           color: Constants.AppColors.amberNotice.withOpacity(0.4),
@@ -1740,7 +1740,7 @@
 // //                               color: Constants.AppColors.card,
 // //                               borderRadius: BorderRadius.circular(16),
 // //                               border: Border.all(
-// //                                 color: const Color(0xFFF1F5EE),
+// //                                 color: AppColors.surface2,
 // //                                 width: 1.0,
 // //                               ),
 // //                               boxShadow: [
@@ -1765,7 +1765,7 @@
 // //                                         width: 50,
 // //                                         height: 50,
 // //                                         decoration: const BoxDecoration(
-// //                                           color: Color(0xFFF1F5EE),
+// //                                           color: AppColors.surface2,
 // //                                           shape: BoxShape.circle,
 // //                                         ),
 // //                                         alignment: Alignment.center,
@@ -1850,7 +1850,7 @@
 // //                                     ],
 // //                                   ),
 // //                                   const SizedBox(height: 12),
-// //                                   const Divider(color: Color(0xFFF1F5EE), height: 1),
+// //                                   const Divider(color: AppColors.surface2, height: 1),
 // //                                   const SizedBox(height: 10),
 // //                                   // ── Location ──
 // //                                   Row(
@@ -1876,25 +1876,25 @@
 // //                                       _buildChip(
 // //                                         icon: Icons.people_outline,
 // //                                         label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
-// //                                         bgColor: const Color(0xFFEAF4E8),
-// //                                         textColor: const Color(0xFF0E6805),
-// //                                         iconColor: const Color(0xFF0E6805),
+// //                                         bgColor: AppColors.brandTint,
+// //                                         textColor: AppColors.brand,
+// //                                         iconColor: AppColors.brand,
 // //                                       ),
 // //                                       const SizedBox(width: 8),
 // //                                       _buildChip(
 // //                                         icon: Icons.currency_rupee,
 // //                                         label: '₹${project['budget'] ?? '0'}',
-// //                                         bgColor: const Color(0xFFFFF3E0),
-// //                                         textColor: const Color(0xFFE65100),
-// //                                         iconColor: const Color(0xFFE65100),
+// //                                         bgColor: AppColors.buttonBg,
+// //                                         textColor: AppColors.button,
+// //                                         iconColor: AppColors.button,
 // //                                       ),
 // //                                       const SizedBox(width: 8),
 // //                                       _buildChip(
 // //                                         icon: Icons.access_time,
 // //                                         label: translateText(project['days']?.toString() ?? '') ?? '',
-// //                                         bgColor: const Color(0xFFE3F2FD),
-// //                                         textColor: const Color(0xFF0D47A1),
-// //                                         iconColor: const Color(0xFF0D47A1),
+// //                                         bgColor: AppColors.brandTint,
+// //                                         textColor: AppColors.brandDeep,
+// //                                         iconColor: AppColors.brandDeep,
 // //                                       ),
 // //                                     ],
 // //                                   ),
@@ -2060,7 +2060,7 @@
 // //     } else if (appliedStatus == "4") {
 // //       return statusBadge(
 // //         translate('Work Cancelled', 'कार्य रद्द'),
-// //         Colors.red.shade50,
+// //         AppColors.buttonBg,
 // //         Colors.red.shade900,
 // //       );
 // //     }
@@ -2266,8 +2266,8 @@
 // //     Widget? trailing,
 // //     bool isLogout = false,
 // //   }) {
-// //     final Color tintColor = isLogout ? const Color(0xFFFEF2F2) : Constants.AppColors.brandTint;
-// //     final Color iconColor = isLogout ? const Color(0xFFEF4444) : Constants.AppColors.brand;
+// //     final Color tintColor = isLogout ? AppColors.buttonBg : Constants.AppColors.brandTint;
+// //     final Color iconColor = isLogout ? const Colors.red : Constants.AppColors.brand;
 // //
 // //     return Padding(
 // //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -2288,7 +2288,7 @@
 // //         trailing: trailing ??
 // //             Icon(
 // //               Icons.chevron_right_rounded,
-// //               color: isLogout ? const Color(0xFFEF4444) : const Color(0xFF9CA3AF),
+// //               color: isLogout ? const Colors.red : AppColors.inkSoft,
 // //               size: 20,
 // //             ),
 // //         onTap: onTap,
@@ -3445,22 +3445,22 @@
 // //     }
 // //
 // //     String text = '';
-// //     Color bgColor = const Color(0xFFEAF4E8);
-// //     Color textColor = const Color(0xFF0E6805);
-// //     Color borderColor = const Color(0xFFC8E6C9);
+// //     Color bgColor = AppColors.brandTint;
+// //     Color textColor = AppColors.brand;
+// //     Color borderColor = AppColors.brandSoft;
 // //     IconData statusIcon = Icons.check;
 // //
 // //     if (appliedStatus == "0") {
 // //       text = translate('Applied', 'आवेदन किया');
-// //       bgColor = const Color(0xFFEAF4E8);
-// //       textColor = const Color(0xFF0E6805);
-// //       borderColor = const Color(0xFFC8E6C9);
+// //       bgColor = AppColors.brandTint;
+// //       textColor = AppColors.brand;
+// //       borderColor = AppColors.brandSoft;
 // //       statusIcon = Icons.check;
 // //     } else if (appliedStatus == "1") {
 // //       text = translate('Assigned', 'आवंटित');
-// //       bgColor = const Color(0xFFEFF6FF);
-// //       textColor = const Color(0xFF1E40AF);
-// //       borderColor = const Color(0xFFBFDBFE);
+// //       bgColor = AppColors.brandTint;
+// //       textColor = AppColors.brandDeep;
+// //       borderColor = AppColors.brand.shade200;
 // //       statusIcon = Icons.assignment_ind_outlined;
 // //     } else if (appliedStatus == "2") {
 // //       text = translate('Work Started', 'कार्य शुरू हुआ');
@@ -3469,21 +3469,21 @@
 // //       } else if (project['cancel_confirm']?.toString() == "1") {
 // //         text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
 // //       }
-// //       bgColor = const Color(0xFFFFF7ED);
-// //       textColor = const Color(0xFFC2410C);
-// //       borderColor = const Color(0xFFFED7AA);
+// //       bgColor = AppColors.buttonBg;
+// //       textColor = AppColors.button;
+// //       borderColor = AppColors.buttonBorder;
 // //       statusIcon = Icons.hourglass_top_outlined;
 // //     } else if (appliedStatus == "3") {
 // //       text = translate('Work Completed', 'कार्य पूर्ण');
-// //       bgColor = const Color(0xFFF0FDF4);
-// //       textColor = const Color(0xFF15803D);
-// //       borderColor = const Color(0xFFBBF7D0);
+// //       bgColor = AppColors.brandTint;
+// //       textColor = AppColors.brandDeep;
+// //       borderColor = AppColors.brandSoft;
 // //       statusIcon = Icons.check_circle_outline;
 // //     } else if (appliedStatus == "4") {
 // //       text = translate('Work Cancelled', 'रद्द किया गया');
-// //       bgColor = const Color(0xFFFEF2F2);
-// //       textColor = const Color(0xFF991B1B);
-// //       borderColor = const Color(0xFFFCA5A5);
+// //       bgColor = AppColors.buttonBg;
+// //       textColor = AppColors.button;
+// //       borderColor = AppColors.buttonBorder;
 // //       statusIcon = Icons.close;
 // //     } else {
 // //       return const SizedBox.shrink();
@@ -3528,9 +3528,9 @@
 // //     return Container(
 // //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 // //       decoration: BoxDecoration(
-// //         color: const Color(0xFFEAF4E8),
+// //         color: AppColors.buttonBg,
 // //         borderRadius: BorderRadius.circular(8),
-// //         border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
+// //         border: Border.all(color: AppColors.buttonBorder, width: 0.5),
 // //       ),
 // //       child: Row(
 // //         mainAxisSize: MainAxisSize.min,
@@ -3538,7 +3538,7 @@
 // //           Text(
 // //             label,
 // //             style: const TextStyle(
-// //               color: Color(0xFF0E6805),
+// //               color: AppColors.button,
 // //               fontWeight: FontWeight.bold,
 // //               fontSize: 12,
 // //             ),
@@ -3547,7 +3547,7 @@
 // //           const Icon(
 // //             Icons.arrow_forward_ios,
 // //             size: 10,
-// //             color: Color(0xFF0E6805),
+// //             color: AppColors.button,
 // //           ),
 // //         ],
 // //       ),
@@ -3597,7 +3597,7 @@
 // //                       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 // //                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
 // //                       decoration: BoxDecoration(
-// //                         color: const Color(0xFFFFF9E6),
+// //                         color: AppColors.amberNotice,
 // //                         borderRadius: BorderRadius.circular(14),
 // //                         border: Border.all(
 // //                           color: Constants.AppColors.amberNotice.withOpacity(0.4),
@@ -3850,7 +3850,7 @@
 // //                               color: Constants.AppColors.card,
 // //                               borderRadius: BorderRadius.circular(16),
 // //                               border: Border.all(
-// //                                 color: const Color(0xFFF1F5EE),
+// //                                 color: AppColors.surface2,
 // //                                 width: 1.0,
 // //                               ),
 // //                               boxShadow: [
@@ -3875,7 +3875,7 @@
 // //                                         width: 50,
 // //                                         height: 50,
 // //                                         decoration: const BoxDecoration(
-// //                                           color: Color(0xFFF1F5EE),
+// //                                           color: AppColors.surface2,
 // //                                           shape: BoxShape.circle,
 // //                                         ),
 // //                                         alignment: Alignment.center,
@@ -3960,7 +3960,7 @@
 // //                                     ],
 // //                                   ),
 // //                                   const SizedBox(height: 12),
-// //                                   const Divider(color: Color(0xFFF1F5EE), height: 1),
+// //                                   const Divider(color: AppColors.surface2, height: 1),
 // //                                   const SizedBox(height: 10),
 // //                                   // ── Location ──
 // //                                   Row(
@@ -3986,25 +3986,25 @@
 // //                                       _buildChip(
 // //                                         icon: Icons.people_outline,
 // //                                         label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
-// //                                         bgColor: const Color(0xFFEAF4E8),
-// //                                         textColor: const Color(0xFF0E6805),
-// //                                         iconColor: const Color(0xFF0E6805),
+// //                                         bgColor: AppColors.brandTint,
+// //                                         textColor: AppColors.brand,
+// //                                         iconColor: AppColors.brand,
 // //                                       ),
 // //                                       const SizedBox(width: 8),
 // //                                       _buildChip(
 // //                                         icon: Icons.currency_rupee,
 // //                                         label: '₹${project['budget'] ?? '0'}',
-// //                                         bgColor: const Color(0xFFFFF3E0),
-// //                                         textColor: const Color(0xFFE65100),
-// //                                         iconColor: const Color(0xFFE65100),
+// //                                         bgColor: AppColors.buttonBg,
+// //                                         textColor: AppColors.button,
+// //                                         iconColor: AppColors.button,
 // //                                       ),
 // //                                       const SizedBox(width: 8),
 // //                                       _buildChip(
 // //                                         icon: Icons.access_time,
 // //                                         label: translateText(project['days']?.toString() ?? '') ?? '',
-// //                                         bgColor: const Color(0xFFE3F2FD),
-// //                                         textColor: const Color(0xFF0D47A1),
-// //                                         iconColor: const Color(0xFF0D47A1),
+// //                                         bgColor: AppColors.brandTint,
+// //                                         textColor: AppColors.brandDeep,
+// //                                         iconColor: AppColors.brandDeep,
 // //                                       ),
 // //                                     ],
 // //                                   ),
@@ -4170,7 +4170,7 @@
 // //     } else if (appliedStatus == "4") {
 // //       return statusBadge(
 // //         translate('Work Cancelled', 'कार्य रद्द'),
-// //         Colors.red.shade50,
+// //         AppColors.buttonBg,
 // //         Colors.red.shade900,
 // //       );
 // //     }
@@ -4356,8 +4356,8 @@
 //     Widget? trailing,
 //     bool isLogout = false,
 //   }) {
-//     final Color tintColor = isLogout ? const Color(0xFFFEF2F2) : Constants.AppColors.brandTint;
-//     final Color iconColor = isLogout ? const Color(0xFFEF4444) : Constants.AppColors.brand;
+//     final Color tintColor = isLogout ? AppColors.buttonBg : Constants.AppColors.brandTint;
+//     final Color iconColor = isLogout ? const Colors.red : Constants.AppColors.brand;
 //
 //     return Padding(
 //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -4378,7 +4378,7 @@
 //         trailing: trailing ??
 //             Icon(
 //               Icons.chevron_right_rounded,
-//               color: isLogout ? const Color(0xFFEF4444) : const Color(0xFF9CA3AF),
+//               color: isLogout ? const Colors.red : AppColors.inkSoft,
 //               size: 20,
 //             ),
 //         onTap: onTap,
@@ -5465,32 +5465,32 @@
 //     Map<String, dynamic> statusMap = {
 //       "0": {
 //         'label': 'Applied',
-//         'bg': const Color(0xFFECFDF5),
-//         'color': const Color(0xFF065F46),
+//         'bg': AppColors.brandTint,
+//         'color': AppColors.brandDeep,
 //         'icon': Icons.check_circle_outline,
 //       },
 //       "1": {
 //         'label': 'Assigned',
-//         'bg': const Color(0xFFEFF6FF),
-//         'color': const Color(0xFF1E40AF),
+//         'bg': AppColors.brandTint,
+//         'color': AppColors.brandDeep,
 //         'icon': Icons.assignment_outlined,
 //       },
 //       "2": {
 //         'label': 'In Progress',
-//         'bg': const Color(0xFFFFF7ED),
-//         'color': const Color(0xFFC2410C),
+//         'bg': AppColors.buttonBg,
+//         'color': AppColors.button,
 //         'icon': Icons.hourglass_top_outlined,
 //       },
 //       "3": {
 //         'label': 'Completed',
-//         'bg': const Color(0xFFECFDF5),
-//         'color': const Color(0xFF065F46),
+//         'bg': AppColors.brandTint,
+//         'color': AppColors.brandDeep,
 //         'icon': Icons.check_circle_outline,
 //       },
 //       "4": {
 //         'label': 'Cancelled',
-//         'bg': const Color(0xFFFEF2F2),
-//         'color': const Color(0xFF991B1B),
+//         'bg': AppColors.buttonBg,
+//         'color': AppColors.button,
 //         'icon': Icons.cancel_outlined,
 //       },
 //     };
@@ -5635,7 +5635,7 @@
 //                       style: const TextStyle(
 //                         fontSize: 16,
 //                         fontWeight: FontWeight.bold,
-//                         color: Color(0xFF1A1A2E),
+//                         color: AppColors.ink,
 //                       ),
 //                     ),
 //                   ),
@@ -5740,7 +5740,7 @@
 //                         style: const TextStyle(
 //                           fontSize: 13,
 //                           fontWeight: FontWeight.w600,
-//                           color: Color(0xFF64748B),
+//                           color: AppColors.inkSoft,
 //                         ),
 //                       ),
 //                     ],
@@ -5755,7 +5755,7 @@
 //                           Icon(
 //                             Icons.search_off,
 //                             size: 64,
-//                             color: Colors.grey.shade300,
+//                             color: AppColors.border,
 //                           ),
 //                           const SizedBox(height: 16),
 //                           Text(
@@ -5763,7 +5763,7 @@
 //                             style: const TextStyle(
 //                               fontSize: 16,
 //                               fontWeight: FontWeight.w600,
-//                               color: Color(0xFF94A3B8),
+//                               color: AppColors.inkSoft,
 //                             ),
 //                           ),
 //                         ],
@@ -5909,7 +5909,7 @@
 //                                                     fontSize: 16,
 //                                                     fontWeight: FontWeight
 //                                                         .w700,
-//                                                     color: Color(0xFF1A1A2E),
+//                                                     color: AppColors.ink,
 //                                                     height: 1.3,
 //                                                   ),
 //                                                   maxLines: 2,
@@ -5963,11 +5963,11 @@
 //                                             padding: const EdgeInsets.symmetric(
 //                                                 horizontal: 10, vertical: 6),
 //                                             decoration: BoxDecoration(
-//                                               color: const Color(0xFFF8FAFC),
+//                                               color: AppColors.surface,
 //                                               borderRadius:
 //                                               BorderRadius.circular(12),
 //                                               border: Border.all(
-//                                                 color: const Color(0xFFE2E8F0),
+//                                                 color: AppColors.surface2,
 //                                                 width: 0.8,
 //                                               ),
 //                                             ),
@@ -5978,7 +5978,7 @@
 //                                                   Icons
 //                                                       .calendar_today_outlined,
 //                                                   size: 11,
-//                                                   color: Color(0xFF64748B),
+//                                                   color: AppColors.inkSoft,
 //                                                 ),
 //                                                 const SizedBox(width: 4),
 //                                                 Text(
@@ -5989,7 +5989,7 @@
 //                                                   style: const TextStyle(
 //                                                     fontSize: 10,
 //                                                     fontWeight: FontWeight.w600,
-//                                                     color: Color(0xFF64748B),
+//                                                     color: AppColors.inkSoft,
 //                                                   ),
 //                                                 ),
 //                                               ],
@@ -6005,7 +6005,7 @@
 //                                           const Icon(
 //                                             Icons.location_on_outlined,
 //                                             size: 14,
-//                                             color: Color(0xFF64748B),
+//                                             color: AppColors.inkSoft,
 //                                           ),
 //                                           const SizedBox(width: 6),
 //                                           Expanded(
@@ -6014,7 +6014,7 @@
 //                                               style: const TextStyle(
 //                                                 fontSize: 13,
 //                                                 fontWeight: FontWeight.w500,
-//                                                 color: Color(0xFF475569),
+//                                                 color: AppColors.inkSoft,
 //                                               ),
 //                                             ),
 //                                           ),
@@ -6031,26 +6031,26 @@
 //                                             icon: Icons.people_outline,
 //                                             label:
 //                                             '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
-//                                             bgColor: const Color(0xFFF0FDF4),
-//                                             iconColor: const Color(0xFF16A34A),
-//                                             labelColor: const Color(0xFF166534),
+//                                             bgColor: AppColors.brandTint,
+//                                             iconColor: AppColors.brand,
+//                                             labelColor: AppColors.brandDeep,
 //                                           ),
 //                                           const SizedBox(width: 8),
 //                                           _buildPremiumChip(
 //                                             icon: Icons.currency_rupee,
 //                                             label:
 //                                             '${NumberFormat('#,##0').format(project['budget'] ?? 0)}',
-//                                             bgColor: const Color(0xFFFFF7ED),
-//                                             iconColor: const Color(0xFFEA580C),
-//                                             labelColor: const Color(0xFF9A3412),
+//                                             bgColor: AppColors.buttonBg,
+//                                             iconColor: AppColors.button,
+//                                             labelColor: AppColors.button,
 //                                           ),
 //                                           const SizedBox(width: 8),
 //                                           _buildPremiumChip(
 //                                             icon: Icons.access_time_outlined,
 //                                             label: durationLabel,
-//                                             bgColor: const Color(0xFFEFF6FF),
-//                                             iconColor: const Color(0xFF2563EB),
-//                                             labelColor: const Color(0xFF1E3A8A),
+//                                             bgColor: AppColors.brandTint,
+//                                             iconColor: AppColors.brand,
+//                                             labelColor: AppColors.brandDeep,
 //                                           ),
 //                                         ],
 //                                       ),
@@ -6175,6 +6175,7 @@ import 'package:provider/provider.dart';
 import 'package:greencollar/location_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:translator/translator.dart';
 import 'package:intl/intl.dart';
@@ -6297,8 +6298,8 @@ class _LabourhomepageState extends State<Labourhomepage> {
     Widget? trailing,
     bool isLogout = false,
   }) {
-    final Color tintColor = isLogout ? const Color(0xFFFEF2F2) : Constants.AppColors.brandTint;
-    final Color iconColor = isLogout ? const Color(0xFFEF4444) : Constants.AppColors.brand;
+    final Color tintColor = isLogout ? AppColors.buttonBg : Constants.AppColors.brandTint;
+    final Color iconColor = isLogout ? Colors.red : Constants.AppColors.brand;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -6319,7 +6320,7 @@ class _LabourhomepageState extends State<Labourhomepage> {
         trailing: trailing ??
             Icon(
               Icons.chevron_right_rounded,
-              color: isLogout ? const Color(0xFFEF4444) : const Color(0xFF9CA3AF),
+              color: isLogout ? Colors.red : AppColors.inkSoft,
               size: 20,
             ),
         onTap: onTap,
@@ -6418,9 +6419,9 @@ class _LabourhomepageState extends State<Labourhomepage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.20),
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white30, width: 0.5),
+                          border: Border.all(color: Colors.white, width: 1.0),
                         ),
                         child: Text(
                           _selectedLanguage == 'en' ? 'Worker' : 'श्रमिक',
@@ -6447,11 +6448,7 @@ class _LabourhomepageState extends State<Labourhomepage> {
             style: Constants.AppTypography.h2.copyWith(color: Colors.white),
           ),
           iconTheme: const IconThemeData(color: Colors.white),
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: Constants.AppColors.brandGradient,
-            ),
-          ),
+          backgroundColor: Constants.AppColors.brand,
           elevation: 0,
           actions: [
             IconButton(
@@ -6464,7 +6461,7 @@ class _LabourhomepageState extends State<Labourhomepage> {
                       top: 0,
                       child: CircleAvatar(
                         radius: 8,
-                        backgroundColor: Colors.red,
+                        backgroundColor: AppColors.button,
                         child: Text(
                           unreadNotificationsCount.toString(),
                           style: const TextStyle(fontSize: 10, color: Colors.white),
@@ -6617,7 +6614,7 @@ class _LabourhomepageState extends State<Labourhomepage> {
                               padding: const EdgeInsets.only(left: 8.0),
                               child: CircleAvatar(
                                 radius: 10,
-                                backgroundColor: Colors.red,
+                                backgroundColor: AppColors.button,
                                 child: Text(
                                   unreadNotificationsCount.toString(),
                                   style: const TextStyle(fontSize: 12, color: Colors.white),
@@ -6802,6 +6799,20 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
   late Timer _timer;
 
   String? _selectedCategoryFilter;
+
+  IconData _getCategoryIcon(String jobname) {
+    final name = jobname.toLowerCase();
+    if (name.contains('crop') || name.contains('farm') || name.contains('कृषि') || name.contains('फसल')) {
+      return Icons.grass;
+    } else if (name.contains('cow') || name.contains('animal') || name.contains('dairy') || name.contains('husbandry') || name.contains('पशु') || name.contains('गाय')) {
+      return Icons.pets;
+    } else if (name.contains('tractor') || name.contains('driver') || name.contains('ट्रैक्टर')) {
+      return Icons.agriculture;
+    } else if (name.contains('box') || name.contains('pack') || name.contains('warehouse') || name.contains('logistics') || name.contains('डिब्बा') || name.contains('पैकिंग')) {
+      return Icons.inventory_2;
+    }
+    return Icons.category;
+  }
 
   bool _matchesJobTitle(String jobTitle, String filter) {
     final cleanTitle = jobTitle.trim().toLowerCase();
@@ -7169,7 +7180,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                       controller: _labourSearchController,
                       decoration: InputDecoration(
                         prefixIcon:
-                        const Icon(Icons.search, color: Colors.green),
+                        const Icon(Icons.search, color: AppColors.brand),
                         suffixIcon:
                         MicIconButton(controller: _labourSearchController),
                         hintText:
@@ -7178,12 +7189,12 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                         filled: true,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
-                          borderSide: const BorderSide(color: Colors.green),
+                          borderSide: const BorderSide(color: AppColors.brand),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           borderSide:
-                          const BorderSide(color: Colors.green, width: 2),
+                          const BorderSide(color: AppColors.brand, width: 2),
                         ),
                       ),
                     ),
@@ -7264,7 +7275,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                   setState(() => _selectedCategoryFilter = null);
                 },
                 child: Text(translateText('Reset Filters'),
-                    style: const TextStyle(color: Colors.red)),
+                    style: const TextStyle(color: AppColors.button)),
               ),
             ],
           );
@@ -7406,32 +7417,32 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
     Map<String, dynamic> statusMap = {
       "0": {
         'label': 'Applied',
-        'bg': const Color(0xFFECFDF5),
-        'color': const Color(0xFF065F46),
+        'bg': AppColors.brandTint,
+        'color': AppColors.brandDeep,
         'icon': Icons.check_circle_outline,
       },
       "1": {
         'label': 'Assigned',
-        'bg': const Color(0xFFEFF6FF),
-        'color': const Color(0xFF1E40AF),
+        'bg': AppColors.brandTint,
+        'color': AppColors.brandDeep,
         'icon': Icons.assignment_outlined,
       },
       "2": {
         'label': 'In Progress',
-        'bg': const Color(0xFFFFF7ED),
-        'color': const Color(0xFFC2410C),
+        'bg': AppColors.buttonBg,
+        'color': AppColors.button,
         'icon': Icons.hourglass_top_outlined,
       },
       "3": {
         'label': 'Completed',
-        'bg': const Color(0xFFECFDF5),
-        'color': const Color(0xFF065F46),
+        'bg': AppColors.brandTint,
+        'color': AppColors.brandDeep,
         'icon': Icons.check_circle_outline,
       },
       "4": {
         'label': 'Cancelled',
-        'bg': const Color(0xFFFEF2F2),
-        'color': const Color(0xFF991B1B),
+        'bg': AppColors.buttonBg,
+        'color': AppColors.button,
         'icon': Icons.cancel_outlined,
       },
     };
@@ -7576,7 +7587,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A1A2E),
+                        color: AppColors.ink,
                       ),
                     ),
                   ),
@@ -7614,7 +7625,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                     margin: const EdgeInsets.symmetric(
                                         horizontal: 4, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: Constants.AppColors.brandTint,
+                                      color: const Color(0xFFE8F2E6),
                                       shape: BoxShape.circle,
                                       border: _selectedCategoryFilter ==
                                           job.jobname
@@ -7631,11 +7642,19 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                         width: 42,
                                         height: 42,
                                         placeholder: (context, url) =>
-                                        const CircularProgressIndicator(),
+                                        const Center(
+                                          child: SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          ),
+                                        ),
                                         errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error,
-                                            color: Constants
-                                                .AppColors.brand),
+                                        Icon(
+                                          _getCategoryIcon(job.jobname),
+                                          color: const Color(0xFF0E6805),
+                                          size: 32,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -7646,7 +7665,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                       translateText(job.jobname),
                                       style: Constants.AppTypography.label
                                           .copyWith(
-                                        color: Constants.AppColors.ink,
+                                        color: Constants.AppColors.button,
                                         fontWeight: FontWeight.bold,
                                       ),
                                       textAlign: TextAlign.center,
@@ -7681,7 +7700,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF64748B),
+                          color: AppColors.inkSoft,
                         ),
                       ),
                     ],
@@ -7696,7 +7715,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                           Icon(
                             Icons.search_off,
                             size: 64,
-                            color: Colors.grey.shade300,
+                            color: AppColors.border,
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -7704,7 +7723,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF94A3B8),
+                              color: AppColors.inkSoft,
                             ),
                           ),
                         ],
@@ -7755,14 +7774,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                Constants.AppColors.brandTint.withOpacity(0.08),
-                              ],
-                            ),
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: Constants.AppColors.brand.withOpacity(0.12),
@@ -7850,7 +7862,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                                     fontSize: 16,
                                                     fontWeight: FontWeight
                                                         .w700,
-                                                    color: Color(0xFF1A1A2E),
+                                                    color: AppColors.brand,
                                                     height: 1.3,
                                                   ),
                                                   maxLines: 2,
@@ -7904,11 +7916,11 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 6),
                                             decoration: BoxDecoration(
-                                              color: const Color(0xFFF8FAFC),
+                                              color: AppColors.surface,
                                               borderRadius:
                                               BorderRadius.circular(12),
                                               border: Border.all(
-                                                color: const Color(0xFFE2E8F0),
+                                                color: AppColors.surface2,
                                                 width: 0.8,
                                               ),
                                             ),
@@ -7919,7 +7931,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                                   Icons
                                                       .calendar_today_outlined,
                                                   size: 11,
-                                                  color: Color(0xFF64748B),
+                                                  color: AppColors.inkSoft,
                                                 ),
                                                 const SizedBox(width: 4),
                                                 Text(
@@ -7930,7 +7942,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                                   style: const TextStyle(
                                                     fontSize: 10,
                                                     fontWeight: FontWeight.w600,
-                                                    color: Color(0xFF64748B),
+                                                    color: AppColors.inkSoft,
                                                   ),
                                                 ),
                                               ],
@@ -7946,7 +7958,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                           const Icon(
                                             Icons.location_on_outlined,
                                             size: 14,
-                                            color: Color(0xFF64748B),
+                                            color: AppColors.inkSoft,
                                           ),
                                           const SizedBox(width: 6),
                                           Expanded(
@@ -7955,7 +7967,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                               style: const TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w500,
-                                                color: Color(0xFF475569),
+                                                color: AppColors.inkSoft,
                                               ),
                                             ),
                                           ),
@@ -7972,26 +7984,26 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                             icon: Icons.people_outline,
                                             label:
                                             '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
-                                            bgColor: const Color(0xFFF0FDF4),
-                                            iconColor: const Color(0xFF16A34A),
-                                            labelColor: const Color(0xFF166534),
+                                            bgColor: const Color(0xFFF3E8DC),
+                                            iconColor: const Color(0xFF865E2A),
+                                            labelColor: const Color(0xFF865E2A),
                                           ),
                                           const SizedBox(width: 8),
                                           _buildPremiumChip(
                                             icon: Icons.currency_rupee,
                                             label:
                                             '${NumberFormat('#,##0').format(project['budget'] ?? 0)}',
-                                            bgColor: const Color(0xFFFFF7ED),
-                                            iconColor: const Color(0xFFEA580C),
-                                            labelColor: const Color(0xFF9A3412),
+                                            bgColor: const Color(0xFFF3E8DC),
+                                            iconColor: const Color(0xFF865E2A),
+                                            labelColor: const Color(0xFF865E2A),
                                           ),
                                           const SizedBox(width: 8),
                                           _buildPremiumChip(
                                             icon: Icons.access_time_outlined,
                                             label: durationLabel,
-                                            bgColor: const Color(0xFFEFF6FF),
-                                            iconColor: const Color(0xFF2563EB),
-                                            labelColor: const Color(0xFF1E3A8A),
+                                            bgColor: const Color(0xFFF3E8DC),
+                                            iconColor: const Color(0xFF865E2A),
+                                            labelColor: const Color(0xFF865E2A),
                                           ),
                                         ],
                                       ),
@@ -8003,13 +8015,12 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                         width: double.infinity,
                                         height: 48, // increased from 44
                                         decoration: BoxDecoration(
-                                          gradient: Constants
-                                              .AppColors.brandGradient,
+                                          color: Constants.AppColors.button,
                                           borderRadius:
                                           BorderRadius.circular(12),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Constants.AppColors.brand
+                                              color: Constants.AppColors.button
                                                   .withOpacity(0.3),
                                               blurRadius: 12,
                                               offset: const Offset(0, 4),
@@ -8093,3 +8104,5 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
     );
   }
 }
+
+

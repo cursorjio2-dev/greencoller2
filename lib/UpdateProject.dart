@@ -10,6 +10,7 @@ import 'package:greencollar/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:greencollar/main.dart'; // Adjust the import as needed
 import 'package:http/http.dart' as http;
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:translator/translator.dart';
 
@@ -463,7 +464,7 @@ class _UpdateProjectState extends State<UpdateProject> {
           msg: "Error getting location details.",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red.shade700,
+          backgroundColor: AppColors.button,
           textColor: Colors.white,
           fontSize: 16.0,
         );
@@ -474,7 +475,7 @@ class _UpdateProjectState extends State<UpdateProject> {
         msg: "Error getting location. Please try again or enter manually.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: AppColors.button,
         textColor: Colors.white,
         fontSize: 16.0,
       );
@@ -618,7 +619,7 @@ class _UpdateProjectState extends State<UpdateProject> {
               'प्रोजेक्ट सफलतापूर्वक अपडेट किया गया!'),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.green.shade700,
+          backgroundColor: AppColors.brand,
           textColor: Colors.white,
           fontSize: 16.0,
         );
@@ -860,14 +861,14 @@ class _UpdateProjectState extends State<UpdateProject> {
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
         borderSide: const BorderSide(
-          color: Colors.red,
+          color: AppColors.button,
           width: 1.0,
         ),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
         borderSide: const BorderSide(
-          color: Colors.red,
+          color: AppColors.button,
           width: 1.5,
         ),
       ),
@@ -1368,12 +1369,12 @@ class _UpdateProjectState extends State<UpdateProject> {
                                 DataCell(Row(
                                   children: [
                                     IconButton(
-                                      icon: const Icon(Icons.edit, color: Colors.blue),
+                                      icon: const Icon(Icons.edit, color: AppColors.brand),
                                       onPressed: () =>
                                           showEditMilestoneDialog(index),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      icon: const Icon(Icons.delete, color: AppColors.button),
                                       onPressed: () => deleteMilestone(index),
                                     ),
                                   ],
@@ -1409,9 +1410,9 @@ class _UpdateProjectState extends State<UpdateProject> {
                         height: 48,
                         width: 200,
                         decoration: BoxDecoration(
-                          gradient: Constants.AppColors.brandGradient,
+                          gradient: Constants.AppColors.buttonGradient,
                           borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                          boxShadow: const [Constants.AppShadows.soft],
+                          boxShadow: const [Constants.AppShadows.buttonSoft],
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -1446,3 +1447,5 @@ class _UpdateProjectState extends State<UpdateProject> {
     );
   }
 }
+
+

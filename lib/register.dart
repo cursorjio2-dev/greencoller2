@@ -385,7 +385,7 @@
 // // //                 AppLocalizations.of(context)!.registerSuccessful,
 // // //             toastLength: Toast.LENGTH_SHORT,
 // // //             gravity: ToastGravity.BOTTOM,
-// // //             backgroundColor: Colors.green.shade700,
+// // //             backgroundColor: AppColors.brand,
 // // //             textColor: Colors.white,
 // // //             fontSize: 16.0,
 // // //           );
@@ -409,7 +409,7 @@
 // // //                   msg: message,
 // // //                   toastLength: Toast.LENGTH_SHORT,
 // // //                   gravity: ToastGravity.BOTTOM,
-// // //                   backgroundColor: Colors.red.shade700,
+// // //                   backgroundColor: AppColors.button,
 // // //                   textColor: Colors.white,
 // // //                   fontSize: 16.0,
 // // //                 );
@@ -421,7 +421,7 @@
 // // //             msg: AppLocalizations.of(context)!.registerError,
 // // //             toastLength: Toast.LENGTH_SHORT,
 // // //             gravity: ToastGravity.BOTTOM,
-// // //             backgroundColor: Colors.red.shade700,
+// // //             backgroundColor: AppColors.button,
 // // //             textColor: Colors.white,
 // // //             fontSize: 16.0,
 // // //           );
@@ -808,7 +808,7 @@
 // // //                 //   onTap: _pickImage,
 // // //                 //   child: CircleAvatar(
 // // //                 //     radius: 50,
-// // //                 //     backgroundColor: Colors.grey[200],
+// // //                 //     backgroundColor: AppColors.border,
 // // //                 //     backgroundImage: _profileImage != null
 // // //                 //         ? FileImage(_profileImage!)
 // // //                 //         : null,
@@ -1542,7 +1542,7 @@
 // //                 AppLocalizations.of(context)!.registerSuccessful,
 // //             toastLength: Toast.LENGTH_SHORT,
 // //             gravity: ToastGravity.BOTTOM,
-// //             backgroundColor: Colors.green.shade700,
+// //             backgroundColor: AppColors.brand,
 // //             textColor: Colors.white,
 // //             fontSize: 16.0,
 // //           );
@@ -1562,7 +1562,7 @@
 // //                   msg: message,
 // //                   toastLength: Toast.LENGTH_SHORT,
 // //                   gravity: ToastGravity.BOTTOM,
-// //                   backgroundColor: Colors.red.shade700,
+// //                   backgroundColor: AppColors.button,
 // //                   textColor: Colors.white,
 // //                   fontSize: 16.0,
 // //                 );
@@ -1574,7 +1574,7 @@
 // //             msg: AppLocalizations.of(context)!.registerError,
 // //             toastLength: Toast.LENGTH_SHORT,
 // //             gravity: ToastGravity.BOTTOM,
-// //             backgroundColor: Colors.red.shade700,
+// //             backgroundColor: AppColors.button,
 // //             textColor: Colors.white,
 // //             fontSize: 16.0,
 // //           );
@@ -2229,7 +2229,7 @@
 //                 AppLocalizations.of(context)!.registerSuccessful,
 //             toastLength: Toast.LENGTH_SHORT,
 //             gravity: ToastGravity.BOTTOM,
-//             backgroundColor: Colors.green.shade700,
+//             backgroundColor: AppColors.brand,
 //             textColor: Colors.white,
 //             fontSize: 16.0,
 //           );
@@ -2249,7 +2249,7 @@
 //                   msg: message,
 //                   toastLength: Toast.LENGTH_SHORT,
 //                   gravity: ToastGravity.BOTTOM,
-//                   backgroundColor: Colors.red.shade700,
+//                   backgroundColor: AppColors.button,
 //                   textColor: Colors.white,
 //                   fontSize: 16.0,
 //                 );
@@ -2261,7 +2261,7 @@
 //             msg: AppLocalizations.of(context)!.registerError,
 //             toastLength: Toast.LENGTH_SHORT,
 //             gravity: ToastGravity.BOTTOM,
-//             backgroundColor: Colors.red.shade700,
+//             backgroundColor: AppColors.button,
 //             textColor: Colors.white,
 //             fontSize: 16.0,
 //           );
@@ -2527,6 +2527,7 @@ import 'main.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:pinput/pinput.dart';
 
@@ -2937,7 +2938,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
       msg: msg,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: isSuccess ? Colors.green.shade700 : Colors.red.shade700,
+      backgroundColor: isSuccess ? AppColors.brand : AppColors.button,
       textColor: Colors.white,
       fontSize: 16.0,
     );
@@ -3040,12 +3041,12 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: selectedOption == 'farmer'
-                                ? Constants.AppColors.brand
+                                ? Constants.AppColors.button
                                 : Constants.AppColors.card,
                             borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                             border: Border.all(
                               color: selectedOption == 'farmer'
-                                  ? Constants.AppColors.brand
+                                  ? Constants.AppColors.button
                                   : Constants.AppColors.border,
                               width: 1.0,
                             ),
@@ -3073,12 +3074,12 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: selectedOption == 'labour'
-                                ? Constants.AppColors.brand
+                                ? Constants.AppColors.button
                                 : Constants.AppColors.card,
                             borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                             border: Border.all(
                               color: selectedOption == 'labour'
-                                  ? Constants.AppColors.brand
+                                  ? Constants.AppColors.button
                                   : Constants.AppColors.border,
                               width: 1.0,
                             ),
@@ -3149,7 +3150,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     child: ElevatedButton(
                       onPressed: _isButtonDisabled ? null : _sendOtp,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Constants.AppColors.brand,
+                        backgroundColor: Constants.AppColors.button,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                         ),
@@ -3245,14 +3246,14 @@ class _RegistrationFormState extends State<RegistrationForm> {
                       width: 48,
                       height: 52,
                       textStyle: Constants.AppTypography.h2.copyWith(
-                        color: Colors.red,
+                        color: AppColors.button,
                         fontWeight: FontWeight.bold,
                       ),
                       decoration: BoxDecoration(
                         color: Constants.AppColors.surface,
                         borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                         border: Border.all(
-                          color: Colors.red,
+                          color: AppColors.button,
                           width: 2,
                         ),
                       ),
@@ -3267,7 +3268,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                           child: ElevatedButton(
                             onPressed: _isButtonDisabled ? null : _verifyOtpAndRegister,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Constants.AppColors.brand,
+                              backgroundColor: Constants.AppColors.button,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                               ),
@@ -3298,7 +3299,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         child: Text(
                           translate('Resend OTP', 'OTP पुनः भेजें'),
                           style: Constants.AppTypography.label.copyWith(
-                            color: Constants.AppColors.brand,
+                            color: Constants.AppColors.button,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -3317,3 +3318,4 @@ class _RegistrationFormState extends State<RegistrationForm> {
     );
   }
 }
+

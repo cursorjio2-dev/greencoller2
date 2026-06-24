@@ -282,19 +282,19 @@
 //               Container(
 //                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
 //                 decoration: BoxDecoration(
-//                   color: const Color(0xFFFFF3E0),
+//                   color: AppColors.buttonBg,
 //                   borderRadius: BorderRadius.circular(8),
-//                   border: Border.all(color: const Color(0xFFFFB74D), width: 1),
+//                   border: Border.all(color: AppColors.amberNotice, width: 1),
 //                 ),
 //                 child: Row(
 //                   mainAxisSize: MainAxisSize.min,
 //                   children: [
-//                     const Icon(Icons.lock, color: Color(0xFFE65100), size: 14),
+//                     const Icon(Icons.lock, color: AppColors.button, size: 14),
 //                     const SizedBox(width: 4),
 //                     Text(
 //                       translateText("Unlock"),
 //                       style: const TextStyle(
-//                         color: Color(0xFFE65100),
+//                         color: AppColors.button,
 //                         fontSize: 12,
 //                         fontWeight: FontWeight.bold,
 //                       ),
@@ -867,19 +867,19 @@
 //               Container(
 //                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
 //                 decoration: BoxDecoration(
-//                   color: const Color(0xFFFFF3E0),
+//                   color: AppColors.buttonBg,
 //                   borderRadius: BorderRadius.circular(8),
-//                   border: Border.all(color: const Color(0xFFFFB74D), width: 1),
+//                   border: Border.all(color: AppColors.amberNotice, width: 1),
 //                 ),
 //                 child: Row(
 //                   mainAxisSize: MainAxisSize.min,
 //                   children: [
-//                     const Icon(Icons.lock, color: Color(0xFFE65100), size: 14),
+//                     const Icon(Icons.lock, color: AppColors.button, size: 14),
 //                     const SizedBox(width: 4),
 //                     Text(
 //                       translateText("Unlock"),
 //                       style: const TextStyle(
-//                         color: Color(0xFFE65100),
+//                         color: AppColors.button,
 //                         fontSize: 12,
 //                         fontWeight: FontWeight.bold,
 //                       ),
@@ -1362,6 +1362,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:greencollar/HomeScree.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:greencollar/wallet_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -1629,19 +1630,19 @@ class _LabourDetailsPageState extends State<LabourDetailsPage> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFF3E0),
+                    color: AppColors.buttonBg,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFFFFB74D), width: 1),
+                    border: Border.all(color: AppColors.amberNotice, width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.lock, color: Color(0xFFE65100), size: 14),
+                      const Icon(Icons.lock, color: AppColors.button, size: 14),
                       const SizedBox(width: 4),
                       Text(
                         translateText("Unlock"),
                         style: const TextStyle(
-                          color: Color(0xFFE65100),
+                          color: AppColors.button,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -2152,3 +2153,4 @@ class _LabourDetailsPageState extends State<LabourDetailsPage> {
     );
   }
 }
+

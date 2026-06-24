@@ -196,8 +196,8 @@
 //               //   begin: Alignment.topLeft,
 //               //   end: Alignment.bottomRight,
 //               //   colors: [
-//               //     Color(0xFFA8D5BA), // Light green
-//               //     Color(0xFF68A691), // Darker green
+//               //     AppColors.brandSoft, // Light green
+//               //     AppColors.brandSoft, // Darker green
 //               //   ],
 //               // ),
 //               ),
@@ -590,7 +590,7 @@
 //       curve: Curves.easeInOut,
 //       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 //       decoration: BoxDecoration(
-//         color: const Color(0xFFEBF5F0),
+//         color: AppColors.brandTint,
 //         borderRadius: BorderRadius.circular(15),
 //         boxShadow: [
 //           BoxShadow(
@@ -656,6 +656,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:translator/translator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:greencollar/wallet_helper.dart';
 
@@ -872,7 +873,7 @@ class _LabourPageState extends State<LabourPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
-                        color: Colors.brown,
+                        color: AppColors.button,
                       ),
                     ),
                   )
@@ -978,7 +979,7 @@ class _LabourPageState extends State<LabourPage> {
                                         child: Container(
                                           padding: const EdgeInsets.all(2),
                                           decoration: const BoxDecoration(
-                                            color: Colors.green,
+                                            color: AppColors.brand,
                                             shape: BoxShape.circle,
                                           ),
                                           child: const Icon(
@@ -1020,16 +1021,16 @@ class _LabourPageState extends State<LabourPage> {
                                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                                   decoration: BoxDecoration(
                                                     color: labour['type'] == '0'
-                                                        ? const Color(0xFFE8F5E9)
-                                                        : const Color(0xFFE3F2FD),
+                                                        ? AppColors.brandTint
+                                                        : AppColors.brandTint,
                                                     borderRadius: BorderRadius.circular(4),
                                                   ),
                                                   child: Text(
                                                     labourType,
                                                     style: Constants.AppTypography.micro.copyWith(
                                                       color: labour['type'] == '0'
-                                                          ? const Color(0xFF2E7D32)
-                                                          : const Color(0xFF1565C0),
+                                                          ? AppColors.brandDeep
+                                                          : AppColors.brandDeep,
                                                       fontSize: 10,
                                                       fontWeight: FontWeight.bold,
                                                     ),
@@ -1041,19 +1042,19 @@ class _LabourPageState extends State<LabourPage> {
                                                   Container(
                                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                                     decoration: BoxDecoration(
-                                                      color: const Color(0xFFFFF3E0),
+                                                      color: AppColors.buttonBg,
                                                       borderRadius: BorderRadius.circular(4),
-                                                      border: Border.all(color: const Color(0xFFFFB74D), width: 0.5),
+                                                      border: Border.all(color: AppColors.amberNotice, width: 0.5),
                                                     ),
                                                     child: Row(
                                                       mainAxisSize: MainAxisSize.min,
                                                       children: [
-                                                        const Icon(Icons.monetization_on, color: Color(0xFFFFA500), size: 10),
+                                                        const Icon(Icons.monetization_on, color: AppColors.amberNotice, size: 10),
                                                         const SizedBox(width: 3),
                                                         Text(
                                                           '$_coinCharge ' + translateText("Coins"),
                                                           style: Constants.AppTypography.micro.copyWith(
-                                                            color: const Color(0xFFE65100),
+                                                            color: AppColors.button,
                                                             fontSize: 9,
                                                             fontWeight: FontWeight.bold,
                                                           ),
@@ -1162,3 +1163,4 @@ class _LabourPageState extends State<LabourPage> {
     );
   }
 }
+

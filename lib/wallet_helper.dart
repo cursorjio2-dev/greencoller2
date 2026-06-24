@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:http/http.dart' as http;
@@ -224,10 +225,10 @@ class WalletHelper {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF3E0),
+                  color: AppColors.buttonBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.lock_open, color: Color(0xFFFFA500), size: 24),
+                child: const Icon(Icons.lock_open, color: AppColors.amberNotice, size: 24),
               ),
               const SizedBox(width: 12),
               const Expanded(
@@ -240,19 +241,19 @@ class WalletHelper {
           ),
           content: RichText(
             text: TextSpan(
-              style: const TextStyle(fontSize: 15, color: Colors.black87, height: 1.5),
+              style: const TextStyle(fontSize: 15, color: AppColors.ink, height: 1.5),
               children: [
                 const TextSpan(text: 'To see the contact number for '),
                 TextSpan(
                   text: workerName,
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.ink),
                 ),
                 const TextSpan(text: ', '),
                 TextSpan(
                   text: '$coinCost coins',
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFFFFA500),
+                    color: AppColors.amberNotice,
                   ),
                 ),
                 const TextSpan(text: ' will be debited.\n\nDo you want to proceed?'),
@@ -264,12 +265,12 @@ class WalletHelper {
               onPressed: () => Navigator.pop(ctx),
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600),
+                style: TextStyle(color: AppColors.inkSoft, fontWeight: FontWeight.w600),
               ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Constants.AppColors.brand,
+                backgroundColor: Constants.AppColors.button,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
@@ -591,12 +592,12 @@ class WalletHelper {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+            colors: [AppColors.amberNotice, AppColors.amberNotice],
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFFD700).withValues(alpha: 0.4),
+              color: AppColors.amberNotice.withValues(alpha: 0.4),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -653,10 +654,10 @@ class WalletHelper {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF3E0),
+                  color: AppColors.buttonBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.lock_open, color: Color(0xFFFFA500), size: 24),
+                child: const Icon(Icons.lock_open, color: AppColors.amberNotice, size: 24),
               ),
               const SizedBox(width: 12),
               const Expanded(
@@ -669,14 +670,14 @@ class WalletHelper {
           ),
           content: RichText(
             text: TextSpan(
-              style: const TextStyle(fontSize: 15, color: Colors.black87, height: 1.5),
+              style: const TextStyle(fontSize: 15, color: AppColors.ink, height: 1.5),
               children: [
                 const TextSpan(text: 'To see the full mobile number, '),
                 TextSpan(
                   text: '$_unlockCost coins',
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFFFFA500),
+                    color: AppColors.amberNotice,
                   ),
                 ),
                 const TextSpan(text: ' will be debited.\n\nDo you want to proceed?'),
@@ -688,12 +689,12 @@ class WalletHelper {
               onPressed: () => Navigator.pop(ctx),
               child: Text(
                 'No',
-                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600),
+                style: TextStyle(color: AppColors.inkSoft, fontWeight: FontWeight.w600),
               ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Constants.AppColors.brand,
+                backgroundColor: Constants.AppColors.button,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
@@ -726,7 +727,7 @@ class WalletHelper {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 28),
+              Icon(Icons.warning_amber_rounded, color: AppColors.button, size: 28),
               SizedBox(width: 10),
               Text(
                 'Insufficient Coins',
@@ -743,14 +744,14 @@ class WalletHelper {
               onPressed: () => Navigator.pop(ctx),
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[600]),
+                style: TextStyle(color: AppColors.inkSoft),
               ),
             ),
             ElevatedButton.icon(
               icon: const Icon(Icons.shopping_cart, size: 18),
               label: const Text('Buy Coins'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFA500),
+                backgroundColor: AppColors.amberNotice,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
@@ -828,7 +829,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Invalid package. Please try again later.'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.button,
           ),
         );
       }
@@ -869,7 +870,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Payment failed or cancelled. Please try again.'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.button,
           ),
         );
       }
@@ -894,7 +895,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
           Container(
             width: 40, height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppColors.border,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -909,7 +910,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+                      colors: [AppColors.amberNotice, AppColors.amberNotice],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -925,7 +926,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                     ),
                     Text(
                       'Balance: $_currentBalance coins',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 14, color: AppColors.inkSoft),
                     ),
                   ],
                 ),
@@ -941,19 +942,19 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFE8F5E9),
+                color: AppColors.brandTint,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF4CAF50)),
+                border: Border.all(color: AppColors.brand),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 24),
+                  const Icon(Icons.check_circle, color: AppColors.brand, size: 24),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       '$_addedCoins coins added successfully!',
                       style: const TextStyle(
-                        color: Color(0xFF2E7D32),
+                        color: AppColors.brandDeep,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
                       ),
@@ -969,7 +970,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: AppColors.surface2,
               borderRadius: BorderRadius.circular(12),
             ),
             child: TabBar(
@@ -980,7 +981,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
               ),
               indicatorSize: TabBarIndicatorSize.tab,
               labelColor: Colors.white,
-              unselectedLabelColor: Colors.grey[600],
+              unselectedLabelColor: AppColors.inkSoft,
               labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
               unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
               dividerColor: Colors.transparent,
@@ -1010,11 +1011,11 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.security, size: 14, color: Colors.grey[400]),
+                Icon(Icons.security, size: 14, color: AppColors.inkSoft),
                 const SizedBox(width: 4),
                 Text(
                   'Powered by PhonePe (Sandbox)',
-                  style: TextStyle(fontSize: 11, color: Colors.grey[400]),
+                  style: TextStyle(fontSize: 11, color: AppColors.inkSoft),
                 ),
               ],
             ),
@@ -1030,7 +1031,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
         child: Padding(
           padding: EdgeInsets.all(40.0),
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFA500)),
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.amberNotice),
           ),
         ),
       );
@@ -1052,7 +1053,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: AppColors.border),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.04),
@@ -1078,7 +1079,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                       width: 48, height: 48,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+                          colors: [AppColors.amberNotice, AppColors.amberNotice],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -1107,7 +1108,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                           const SizedBox(height: 2),
                           Text(
                             'Add $coins coins to your wallet',
-                            style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                            style: TextStyle(color: AppColors.inkSoft, fontSize: 12),
                           ),
                         ],
                       ),
@@ -1118,14 +1119,14 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                             width: 24, height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFA500)),
+                              valueColor: AlwaysStoppedAnimation<Color>(AppColors.amberNotice),
                             ),
                           )
                         : Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [Color(0xFF4CAF50), Color(0xFF388E3C)],
+                                colors: [AppColors.brand, AppColors.brand],
                               ),
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -1156,20 +1157,20 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.receipt_long, size: 56, color: Colors.grey[300]),
+              Icon(Icons.receipt_long, size: 56, color: AppColors.border),
               const SizedBox(height: 12),
               Text(
                 'No purchases yet',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[400],
+                  color: AppColors.inkSoft,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 'Your coin purchase history will appear here',
-                style: TextStyle(fontSize: 13, color: Colors.grey[400]),
+                style: TextStyle(fontSize: 13, color: AppColors.inkSoft),
               ),
             ],
           ),
@@ -1205,7 +1206,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: AppColors.border),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.03),
@@ -1221,13 +1222,13 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                 width: 40, height: 40,
                 decoration: BoxDecoration(
                   color: isSuccess
-                      ? const Color(0xFFE8F5E9)
-                      : const Color(0xFFFFEBEE),
+                      ? AppColors.brandTint
+                      : AppColors.buttonBg,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   isSuccess ? Icons.check_circle : Icons.cancel,
-                  color: isSuccess ? const Color(0xFF4CAF50) : Colors.red,
+                  color: isSuccess ? AppColors.brand : Colors.red,
                   size: 22,
                 ),
               ),
@@ -1247,11 +1248,11 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                     const SizedBox(height: 2),
                     Text(
                       '₹$price • $formattedDate',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                      style: TextStyle(fontSize: 12, color: AppColors.inkSoft),
                     ),
                     Text(
                       'ID: ${txnId.length > 20 ? '${txnId.substring(0, 20)}...' : txnId}',
-                      style: TextStyle(fontSize: 10, color: Colors.grey[400]),
+                      style: TextStyle(fontSize: 10, color: AppColors.inkSoft),
                     ),
                   ],
                 ),
@@ -1261,8 +1262,8 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: isSuccess
-                      ? const Color(0xFFE8F5E9)
-                      : const Color(0xFFFFEBEE),
+                      ? AppColors.brandTint
+                      : AppColors.buttonBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -1270,7 +1271,7 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: isSuccess ? const Color(0xFF4CAF50) : Colors.red,
+                    color: isSuccess ? AppColors.brand : Colors.red,
                   ),
                 ),
               ),
@@ -1281,3 +1282,5 @@ class _CoinShopSheetState extends State<_CoinShopSheet> with SingleTickerProvide
     );
   }
 }
+
+

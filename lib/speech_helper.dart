@@ -259,19 +259,19 @@ class _SpeakerIconButtonState extends State<SpeakerIconButton> {
       margin: const EdgeInsets.symmetric(horizontal: 4.0),
       decoration: BoxDecoration(
         color: _isPlaying
-            ? Constants.AppColors.brand.withOpacity(0.15)
-            : Constants.AppColors.brandTint,
+            ? Constants.AppColors.button.withOpacity(0.15)
+            : Constants.AppColors.buttonBg,
         shape: BoxShape.circle,
         border: Border.all(
           color: _isPlaying
-              ? Constants.AppColors.brand
-              : Constants.AppColors.brandSoft.withOpacity(0.5),
+              ? Constants.AppColors.button
+              : Constants.AppColors.buttonBorder,
           width: 1.0,
         ),
         boxShadow: _isPlaying
             ? [
                 BoxShadow(
-                  color: Constants.AppColors.brand.withOpacity(0.3),
+                  color: Constants.AppColors.button.withOpacity(0.3),
                   blurRadius: 6,
                   spreadRadius: 1,
                 )
@@ -281,7 +281,7 @@ class _SpeakerIconButtonState extends State<SpeakerIconButton> {
       child: IconButton(
         icon: Icon(
           _isPlaying ? Icons.volume_up : Icons.volume_down_outlined,
-          color: _isPlaying ? Constants.AppColors.brandDeep : Constants.AppColors.brand,
+          color: _isPlaying ? Constants.AppColors.button : Constants.AppColors.button,
           size: widget.size,
         ),
         constraints: const BoxConstraints(),
@@ -292,3 +292,5 @@ class _SpeakerIconButtonState extends State<SpeakerIconButton> {
     );
   }
 }
+
+

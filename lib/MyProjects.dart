@@ -7,6 +7,7 @@ import 'package:greencollar/labourhomepage.dart';
 import 'package:greencollar/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:provider/provider.dart';
 import 'package:translator/translator.dart';
@@ -313,12 +314,12 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                               color: Constants.AppColors.card,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: const Color(0xFFF1F5EE),
+                                color: AppColors.surface2,
                                 width: 1.0,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: AppColors.ink.withOpacity(0.04),
                                   blurRadius: 16,
                                   offset: const Offset(0, 6),
                                 ),
@@ -338,7 +339,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                                         width: 50,
                                         height: 50,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFF1F5EE),
+                                          color: AppColors.surface2,
                                           shape: BoxShape.circle,
                                         ),
                                         alignment: Alignment.center,
@@ -382,14 +383,14 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                                                 const Icon(
                                                   Icons.calendar_today_outlined,
                                                   size: 13,
-                                                  color: Colors.grey,
+                                                  color: AppColors.inkSoft,
                                                 ),
                                                 const SizedBox(width: 4),
                                                 Text(
                                                   _formatDate(project['created_at']?.toString() ?? ''),
                                                   style: const TextStyle(
                                                     fontSize: 13,
-                                                    color: Colors.grey,
+                                                    color: AppColors.inkSoft,
                                                   ),
                                                 ),
                                                 const SizedBox(width: 10),
@@ -423,7 +424,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 12),
-                                  const Divider(color: Color(0xFFF1F5EE), height: 1),
+                                  const Divider(color: AppColors.surface2, height: 1),
                                   const SizedBox(height: 10),
                                   // ── Farmer Name ──
                                   if (project['farmer_name'] != null)
@@ -431,7 +432,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                                       padding: const EdgeInsets.only(bottom: 8),
                                       child: Row(
                                         children: [
-                                          const Icon(Icons.person_outline, size: 14, color: Colors.grey),
+                                          const Icon(Icons.person_outline, size: 14, color: AppColors.inkSoft),
                                           const SizedBox(width: 6),
                                           Expanded(
                                             child: Text(
@@ -472,23 +473,23 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                                       _buildChip(
                                         icon: Icons.people_outline,
                                         label: '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
-                                        bgColor: const Color(0xFFEAF4E8),
-                                        textColor: const Color(0xFF0E6805),
-                                        iconColor: const Color(0xFF0E6805),
+                                        bgColor: AppColors.brandTint,
+                                        textColor: AppColors.brand,
+                                        iconColor: AppColors.brand,
                                       ),
                                       _buildChip(
                                         icon: Icons.currency_rupee,
-                                        label: '₹${project['budget'] ?? '0'}',
-                                        bgColor: const Color(0xFFFFF3E0),
-                                        textColor: const Color(0xFFE65100),
-                                        iconColor: const Color(0xFFE65100),
+                                        label: '${project['budget'] ?? '0'}',
+                                        bgColor: AppColors.buttonBg,
+                                        textColor: AppColors.button,
+                                        iconColor: AppColors.button,
                                       ),
                                       _buildChip(
                                         icon: Icons.access_time,
                                         label: translateText(project['days']?.toString() ?? '') ?? '',
-                                        bgColor: const Color(0xFFE3F2FD),
-                                        textColor: const Color(0xFF0D47A1),
-                                        iconColor: const Color(0xFF0D47A1),
+                                        bgColor: AppColors.brandTint,
+                                        textColor: AppColors.brandDeep,
+                                        iconColor: AppColors.brandDeep,
                                       ),
                                     ],
                                   ),
@@ -556,22 +557,22 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
     }
 
     String text = '';
-    Color bgColor = const Color(0xFFEAF4E8);
-    Color textColor = const Color(0xFF0E6805);
-    Color borderColor = const Color(0xFFC8E6C9);
+    Color bgColor = AppColors.brandTint;
+    Color textColor = AppColors.brand;
+    Color borderColor = AppColors.brandSoft;
     IconData statusIcon = Icons.check;
 
     if (appliedStatus == "0") {
       text = translate('Applied', 'आवेदन किया');
-      bgColor = const Color(0xFFEAF4E8);
-      textColor = const Color(0xFF0E6805);
-      borderColor = const Color(0xFFC8E6C9);
+      bgColor = AppColors.brandTint;
+      textColor = AppColors.brand;
+      borderColor = AppColors.brandSoft;
       statusIcon = Icons.check;
     } else if (appliedStatus == "1") {
       text = translate('Assigned', 'आवंटित');
-      bgColor = const Color(0xFFEFF6FF);
-      textColor = const Color(0xFF1E40AF);
-      borderColor = const Color(0xFFBFDBFE);
+      bgColor = AppColors.brandTint;
+      textColor = AppColors.brandDeep;
+      borderColor = AppColors.brandSoft;
       statusIcon = Icons.assignment_ind_outlined;
     } else if (appliedStatus == "2") {
       text = translate('Work Started', 'कार्य शुरू हुआ');
@@ -580,21 +581,21 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
       } else if (project['cancel_confirm']?.toString() == "1") {
         text = translate('Cancellation Requested', 'रद्दीकरण का अनुरोध');
       }
-      bgColor = const Color(0xFFFFF7ED);
-      textColor = const Color(0xFFC2410C);
-      borderColor = const Color(0xFFFED7AA);
+      bgColor = AppColors.buttonBg;
+      textColor = AppColors.button;
+      borderColor = AppColors.buttonBorder;
       statusIcon = Icons.hourglass_top_outlined;
     } else if (appliedStatus == "3") {
       text = translate('Work Completed', 'कार्य पूर्ण');
-      bgColor = const Color(0xFFF0FDF4);
-      textColor = const Color(0xFF15803D);
-      borderColor = const Color(0xFFBBF7D0);
+      bgColor = AppColors.brandTint;
+      textColor = AppColors.brandDeep;
+      borderColor = AppColors.brandSoft;
       statusIcon = Icons.check_circle_outline;
     } else if (appliedStatus == "4") {
       text = translate('Work Cancelled', 'रद्द किया गया');
-      bgColor = const Color(0xFFFEF2F2);
-      textColor = const Color(0xFF991B1B);
-      borderColor = const Color(0xFFFCA5A5);
+      bgColor = AppColors.buttonBg;
+      textColor = AppColors.button;
+      borderColor = AppColors.buttonBorder;
       statusIcon = Icons.close;
     } else {
       return const SizedBox.shrink();
@@ -636,9 +637,9 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFEAF4E8),
+        color: AppColors.buttonBg,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFC8E6C9), width: 0.5),
+        border: Border.all(color: AppColors.buttonBorder, width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -646,7 +647,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
           Text(
             label,
             style: const TextStyle(
-              color: Color(0xFF0E6805),
+              color: AppColors.button,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
@@ -655,7 +656,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
           const Icon(
             Icons.arrow_forward_ios,
             size: 10,
-            color: Color(0xFF0E6805),
+            color: AppColors.button,
           ),
         ],
       ),
@@ -672,3 +673,5 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
     }
   }
 }
+
+

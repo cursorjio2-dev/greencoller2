@@ -454,7 +454,7 @@
 //               ),
 //               ElevatedButton(
 //                 style: ElevatedButton.styleFrom(
-//                   backgroundColor: Constants.AppColors.brand,
+//                   backgroundColor: Constants.AppColors.button,
 //                   shape: RoundedRectangleBorder(
 //                     borderRadius: BorderRadius.circular(8),
 //                   ),
@@ -548,12 +548,12 @@
 //                             icon: const Icon(
 //                               Icons.filter_list,
 //                               size: 16,
-//                               color: Constants.AppColors.brand,
+//                               color: Constants.AppColors.button,
 //                             ),
 //                             label: Text(
 //                               translateText('Filter'),
 //                               style: Constants.AppTypography.label.copyWith(
-//                                 color: Constants.AppColors.brandDeep,
+//                                 color: Constants.AppColors.button,
 //                                 fontWeight: FontWeight.bold,
 //                               ),
 //                             ),
@@ -563,7 +563,7 @@
 //                               shape: RoundedRectangleBorder(
 //                                 borderRadius: BorderRadius.circular(14),
 //                               ),
-//                               backgroundColor: Constants.AppColors.brandTint,
+//                               backgroundColor: Constants.AppColors.buttonBg,
 //                             ),
 //                           ),
 //                         ],
@@ -734,16 +734,16 @@
 //                                                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
 //                                                               decoration: BoxDecoration(
 //                                                                 color: isProgressive
-//                                                                     ? const Color(0xFFE8F5E9)
-//                                                                     : const Color(0xFFE3F2FD),
+//                                                                     ? AppColors.brandTint
+//                                                                     : AppColors.brandTint,
 //                                                                 borderRadius: BorderRadius.circular(4),
 //                                                               ),
 //                                                               child: Text(
 //                                                                 farmerType,
 //                                                                 style: Constants.AppTypography.micro.copyWith(
 //                                                                   color: isProgressive
-//                                                                       ? const Color(0xFF2E7D32)
-//                                                                       : const Color(0xFF1565C0),
+//                                                                       ? AppColors.brandDeep
+//                                                                       : AppColors.brand.shade800,
 //                                                                   fontSize: 10,
 //                                                                   fontWeight: FontWeight.bold,
 //                                                                 ),
@@ -882,6 +882,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:translator/translator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:greencollar/FarmerDetails.dart';
 
@@ -1352,12 +1353,12 @@ class _FarmerPageState extends State<FarmerPage> {
                 },
                 child: Text(
                   translate('Reset', 'रीसेट'),
-                  style: const TextStyle(color: Colors.red),
+                  style: const TextStyle(color: AppColors.button),
                 ),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Constants.AppColors.brand,
+                  backgroundColor: Constants.AppColors.button,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -1446,12 +1447,12 @@ class _FarmerPageState extends State<FarmerPage> {
                         icon: const Icon(
                           Icons.filter_list,
                           size: 16,
-                          color: Constants.AppColors.brand,
+                          color: Constants.AppColors.button,
                         ),
                         label: Text(
                           translateText('Filter'),
                           style: Constants.AppTypography.label.copyWith(
-                            color: Constants.AppColors.brandDeep,
+                            color: Constants.AppColors.button,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -1461,7 +1462,7 @@ class _FarmerPageState extends State<FarmerPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          backgroundColor: Constants.AppColors.brandTint,
+                          backgroundColor: Constants.AppColors.buttonBg,
                         ),
                       ),
                     ],
@@ -1617,7 +1618,7 @@ class _FarmerPageState extends State<FarmerPage> {
                                         child: Container(
                                           padding: const EdgeInsets.all(2),
                                           decoration: const BoxDecoration(
-                                            color: Colors.green,
+                                            color: AppColors.brand,
                                             shape: BoxShape.circle,
                                           ),
                                           child: const Icon(
@@ -1659,16 +1660,16 @@ class _FarmerPageState extends State<FarmerPage> {
                                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                                   decoration: BoxDecoration(
                                                     color: isProgressive
-                                                        ? const Color(0xFFE8F5E9)
-                                                        : const Color(0xFFE3F2FD),
+                                                        ? AppColors.brandTint
+                                                        : AppColors.brandTint,
                                                     borderRadius: BorderRadius.circular(4),
                                                   ),
                                                   child: Text(
                                                     translatedType,
                                                     style: Constants.AppTypography.micro.copyWith(
                                                       color: isProgressive
-                                                          ? const Color(0xFF2E7D32)
-                                                          : const Color(0xFF1565C0),
+                                                          ? AppColors.brandDeep
+                                                          : AppColors.brandDeep,
                                                       fontSize: 10,
                                                       fontWeight: FontWeight.bold,
                                                     ),
@@ -1781,3 +1782,4 @@ class _FarmerPageState extends State<FarmerPage> {
     );
   }
 }
+

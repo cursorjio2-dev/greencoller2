@@ -252,7 +252,7 @@ class _SplashScreenState extends State<SplashScreen> {
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 3,
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.button,
           textColor: Colors.white,
           fontSize: 16.0);
     }
@@ -533,7 +533,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                             await _checkUserLogin(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Constants.AppColors.brand,
+                            backgroundColor: Constants.AppColors.button,
                             padding: const EdgeInsets.symmetric(
                                 vertical: 2, horizontal: 16),
                             shape: RoundedRectangleBorder(
@@ -576,13 +576,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 10),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? Constants.AppColors.brand : Constants.AppColors.card,
+          color: isSelected ? Constants.AppColors.button : Constants.AppColors.card,
           borderRadius: BorderRadius.circular(Constants.AppRadii.md),
           border: Border.all(
-            color: isSelected ? Constants.AppColors.brand : Constants.AppColors.border,
+            color: isSelected ? Constants.AppColors.button : Constants.AppColors.border,
             width: isSelected ? 2 : 1,
           ),
-          boxShadow: isSelected ? const [Constants.AppShadows.card] : const [Constants.AppShadows.soft],
+          boxShadow: isSelected ? const [Constants.AppShadows.buttonCard] : const [Constants.AppShadows.soft],
         ),
         width: 150,
         height: 150,
@@ -591,7 +591,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: isSelected ? Constants.AppColors.card : Constants.AppColors.brandTint,
+                color: isSelected ? Constants.AppColors.card : Constants.AppColors.buttonBg,
                 shape: BoxShape.circle,
               ),
               width: 60,
@@ -658,7 +658,6 @@ class _LoginScreenState extends State<LoginScreen> {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      // Throw an exception with status and response body
       throw Exception('HTTP ${response.statusCode}: ${response.body}');
     }
   }
@@ -692,7 +691,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
       try {
         final data = await _postRequest(apiUrl, {'phone': phone});
-        // data should have "success" and "message"
         if (data['success'] == true) {
           setState(() {
             _isOtpSent = true;
@@ -741,7 +739,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // ─── VERIFY OTP (calls existing login API) ───────────────────────────
+  // ─── VERIFY OTP ─────────────────────────────────────────────────────────
   Future<void> _verifyOtp() async {
     if (_isVerifying) return;
     if (otpController.text.length != 6) {
@@ -779,7 +777,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final data = await _postRequest(apiUrl, {'phone': phone, 'otp': otp});
-      // data should contain 'user' and 'token' as before
       if (data['user'] != null) {
         await _handleSuccessfulLogin(data);
       } else {
@@ -864,7 +861,7 @@ class _LoginScreenState extends State<LoginScreen> {
       msg: msg,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: isSuccess ? Colors.green.shade700 : Colors.red.shade700,
+      backgroundColor: isSuccess ? Constants.AppColors.brand : Constants.AppColors.button,
       textColor: Colors.white,
       fontSize: 16.0,
     );
@@ -954,7 +951,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: selectedOption == 'farmer'
-                                        ? Constants.AppColors.brand
+                                        ? Constants.AppColors.button
                                         : Constants.AppColors.surface2,
                                     borderRadius: BorderRadius.circular(Constants.AppRadii.md),
                                     border: Border.all(
@@ -963,7 +960,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           : Constants.AppColors.border,
                                     ),
                                     boxShadow: selectedOption == 'farmer'
-                                        ? const [Constants.AppShadows.soft]
+                                        ? const [Constants.AppShadows.buttonSoft]
                                         : null,
                                   ),
                                   height: 48,
@@ -987,7 +984,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: selectedOption == 'labour'
-                                        ? Constants.AppColors.brand
+                                        ? Constants.AppColors.button
                                         : Constants.AppColors.surface2,
                                     borderRadius: BorderRadius.circular(Constants.AppRadii.md),
                                     border: Border.all(
@@ -996,7 +993,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           : Constants.AppColors.border,
                                     ),
                                     boxShadow: selectedOption == 'labour'
-                                        ? const [Constants.AppShadows.soft]
+                                        ? const [Constants.AppShadows.buttonSoft]
                                         : null,
                                   ),
                                   height: 48,
@@ -1073,11 +1070,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                                          borderSide: const BorderSide(color: Constants.AppColors.border),
+                                          borderSide: const BorderSide(
+                                            color: Constants.AppColors.border,
+                                            width: 1.0,
+                                          ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
-                                          borderSide: const BorderSide(color: Constants.AppColors.brand, width: 1.5),
+                                          borderSide: BorderSide(
+                                            color: Constants.AppColors.button,  // ✅ matches button
+                                            width: 1.5,
+                                          ),
                                         ),
                                         contentPadding: const EdgeInsets.symmetric(
                                           vertical: 0,
@@ -1111,7 +1114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: ElevatedButton(
                                     onPressed: _isButtonDisabled ? null : _sendOtp,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Constants.AppColors.brand,
+                                      backgroundColor: Constants.AppColors.button,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                                       ),
@@ -1182,7 +1185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: Constants.AppColors.surface,
                                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                                       border: Border.all(
-                                        color: Constants.AppColors.brand,
+                                        color: Constants.AppColors.button,  // ✅ matches button
                                         width: 2,
                                       ),
                                     ),
@@ -1198,7 +1201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: Constants.AppColors.brandTint,
                                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                                       border: Border.all(
-                                        color: Constants.AppColors.brand,
+                                        color: Constants.AppColors.button,  // ✅ matches button
                                         width: 1.5,
                                       ),
                                     ),
@@ -1207,14 +1210,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                     width: 48,
                                     height: 52,
                                     textStyle: Constants.AppTypography.h2.copyWith(
-                                      color: Colors.red,
+                                      color: Constants.AppColors.button,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     decoration: BoxDecoration(
                                       color: Constants.AppColors.surface,
                                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                                       border: Border.all(
-                                        color: Colors.red,
+                                        color: Constants.AppColors.button,
                                         width: 2,
                                       ),
                                     ),
@@ -1229,7 +1232,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         child: ElevatedButton(
                                           onPressed: _isButtonDisabled ? null : _verifyOtp,
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: Constants.AppColors.brand,
+                                            backgroundColor: Constants.AppColors.button,
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                                             ),
@@ -1260,7 +1263,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       child: Text(
                                         translate('Resend OTP', 'OTP पुनः भेजें'),
                                         style: Constants.AppTypography.label.copyWith(
-                                          color: Constants.AppColors.brand,
+                                          color: Constants.AppColors.button,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -1314,7 +1317,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextSpan(
                             text: AppLocalizations.of(context)!.termsAndCondition2,
                             style: const TextStyle(
-                              color: Colors.blue,
+                              color: Constants.AppColors.brand,
                               decoration: TextDecoration.underline,
                             ),
                             recognizer: TapGestureRecognizer()
@@ -1349,6 +1352,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
 
 
 // class LoginScreen extends StatefulWidget {
@@ -1415,7 +1419,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //             ),
 //             toastLength: Toast.LENGTH_SHORT,
 //             gravity: ToastGravity.BOTTOM,
-//             backgroundColor: Colors.green.shade700,
+//             backgroundColor: AppColors.brand,
 //             textColor: Colors.white,
 //             fontSize: 16.0,
 //           );
@@ -1470,7 +1474,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //             ),
 //             toastLength: Toast.LENGTH_SHORT,
 //             gravity: ToastGravity.BOTTOM,
-//             backgroundColor: Colors.red.shade700,
+//             backgroundColor: AppColors.button,
 //             textColor: Colors.white,
 //             fontSize: 16.0,
 //           );
@@ -1484,7 +1488,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //                 msg: message,
 //                 toastLength: Toast.LENGTH_SHORT,
 //                 gravity: ToastGravity.BOTTOM,
-//                 backgroundColor: Colors.red.shade700,
+//                 backgroundColor: AppColors.button,
 //                 textColor: Colors.white,
 //                 fontSize: 16.0,
 //               );
@@ -1499,7 +1503,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //             ),
 //             toastLength: Toast.LENGTH_SHORT,
 //             gravity: ToastGravity.BOTTOM,
-//             backgroundColor: Colors.red.shade700,
+//             backgroundColor: AppColors.button,
 //             textColor: Colors.white,
 //             fontSize: 16.0,
 //           );
@@ -1851,7 +1855,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //                                     }
 //                                   },
 //                             style: ElevatedButton.styleFrom(
-//                               backgroundColor: Constants.AppColors.brand,
+//                               backgroundColor: Constants.AppColors.button,
 //                               shape: RoundedRectangleBorder(
 //                                 borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
 //                               ),
@@ -1908,7 +1912,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //                           TextSpan(
 //                             text: AppLocalizations.of(context)!.termsAndCondition2,
 //                             style: const TextStyle(
-//                               color: Colors.blue,
+//                               color: AppColors.brand,
 //                               decoration: TextDecoration.underline,
 //                             ),
 //                             recognizer: TapGestureRecognizer()
@@ -1943,3 +1947,5 @@ class _LoginScreenState extends State<LoginScreen> {
 //     );
 //   }
 // }
+
+

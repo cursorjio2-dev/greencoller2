@@ -18,6 +18,7 @@ import 'main.dart'; // Import the LanguageProvider class
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 
 class UpdateLabourProfile extends StatefulWidget {
@@ -706,7 +707,7 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
             msg: translate("Updation Failed", "अपडेट करने में विफल"),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.red.shade700,
+            backgroundColor: AppColors.button,
             textColor: Constants.AppColors.card,
             fontSize: 16.0,
           );
@@ -825,14 +826,14 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
@@ -885,14 +886,14 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
@@ -940,14 +941,14 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                         borderSide: const BorderSide(
-                          color: Colors.red,
+                          color: AppColors.button,
                           width: 1.5,
                         ),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                         borderSide: const BorderSide(
-                          color: Colors.red,
+                          color: AppColors.button,
                           width: 1.5,
                         ),
                       ),
@@ -993,14 +994,14 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
@@ -1056,14 +1057,14 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
@@ -1117,14 +1118,14 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
@@ -1182,14 +1183,14 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                       borderSide: const BorderSide(
-                        color: Colors.red,
+                        color: AppColors.button,
                         width: 1.5,
                       ),
                     ),
@@ -1215,13 +1216,13 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.green, // Default border color
+                        color: AppColors.brand, // Default border color
                         width: 2.0, // Border width
                       ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.red, // Red border in case of error
+                        color: AppColors.button, // Red border in case of error
                         width: 2.0,
                       ),
                     ),
@@ -1297,13 +1298,13 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.green, // Default border color
+                        color: AppColors.brand, // Default border color
                         width: 2.0, // Border width
                       ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.red, // Red border in case of error
+                        color: AppColors.button, // Red border in case of error
                         width: 2.0,
                       ),
                     ),
@@ -1372,7 +1373,7 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.green, // Default border color
+                        color: AppColors.brand, // Default border color
                         width: 2.0, // Border width
                       ),
                     ),
@@ -1417,13 +1418,13 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     suffixIcon: MicIconButton(controller: addressController),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.green, // Default border color
+                        color: AppColors.brand, // Default border color
                         width: 2.0, // Border width
                       ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.red, // Red border in case of error
+                        color: AppColors.button, // Red border in case of error
                         width: 2.0,
                       ),
                     ),
@@ -1446,51 +1447,7 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                 ),
                 const SizedBox(height: 16),
 
-                DropdownButtonFormField<String>(
-                  value: selectedCity,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.city,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.green, // Default border color
-                        width: 2.0, // Border width
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.red, // Red border in case of error
-                        width: 2.0,
-                      ),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors
-                            .red, // Red border when focused and error exists
-                        width: 2.0,
-                      ),
-                    ),
-                  ),
-                  items: (citiesEn)
-                      .map((city) => DropdownMenuItem<String>(
-                            value: city,
-                            child: Text(city),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCity = value!;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.cityEmpty;
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
+
 
                 // State Dropdown
                 DropdownButtonFormField<String>(
@@ -1501,13 +1458,13 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                         EdgeInsets.symmetric(vertical: 3, horizontal: 5),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.green, // Default border color
+                        color: AppColors.brand, // Default border color
                         width: 2.0, // Border width
                       ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.red, // Red border in case of error
+                        color: AppColors.button, // Red border in case of error
                         width: 2.0,
                       ),
                     ),
@@ -1541,6 +1498,52 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                 ),
                 const SizedBox(height: 16),
 
+                DropdownButtonFormField<String>(
+                  value: selectedCity,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.city,
+                    contentPadding:
+                    EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.brand, // Default border color
+                        width: 2.0, // Border width
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.button, // Red border in case of error
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors
+                            .red, // Red border when focused and error exists
+                        width: 2.0,
+                      ),
+                    ),
+                  ),
+                  items: (citiesEn)
+                      .map((city) => DropdownMenuItem<String>(
+                    value: city,
+                    child: Text(city),
+                  ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCity = value!;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return AppLocalizations.of(context)!.cityEmpty;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+
                 TextFormField(
                   controller: pinCodeController,
                   keyboardType: TextInputType.number,
@@ -1550,13 +1553,13 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                     hintStyle: Constants.AppTypography.body.copyWith(color: Constants.AppColors.inkSoft.withOpacity(0.5)),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.green, // Default border color
+                        color: AppColors.brand, // Default border color
                         width: 2.0, // Border width
                       ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.red, // Red border in case of error
+                        color: AppColors.button, // Red border in case of error
                         width: 2.0,
                       ),
                     ),
@@ -1620,3 +1623,5 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
     );
   }
 }
+
+

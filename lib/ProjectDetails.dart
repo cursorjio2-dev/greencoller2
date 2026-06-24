@@ -986,12 +986,12 @@
 // //             width: 32,
 // //             height: 32,
 // //             decoration: const BoxDecoration(
-// //               color: Color(0xFFEAF4E8),
+// //               color: AppColors.brandTint,
 // //               shape: BoxShape.circle,
 // //             ),
 // //             child: Icon(
 // //               icon,
-// //               color: const Color(0xFF0E6805),
+// //               color: AppColors.brand,
 // //               size: 16,
 // //             ),
 // //           ),
@@ -1017,7 +1017,7 @@
 // //                   style: const TextStyle(
 // //                     fontSize: 12,
 // //                     fontWeight: FontWeight.bold,
-// //                     color: Color(0xFF152018),
+// //                     color: AppColors.ink,
 // //                   ),
 // //                   maxLines: 2,
 // //                   overflow: TextOverflow.ellipsis,
@@ -1055,7 +1055,7 @@
 // //     final String paymentType = translateText(selectedPaymentType ?? 'N/A');
 // //
 // //     return Scaffold(
-// //       backgroundColor: const Color(0xFFFAFBF7),
+// //       backgroundColor: AppColors.surface,
 // //       appBar: AppBar(
 // //         backgroundColor: Constants.AppColors.brand,
 // //         foregroundColor: Colors.white,
@@ -1113,7 +1113,7 @@
 // //                                     style: const TextStyle(
 // //                                       fontSize: 17,
 // //                                       fontWeight: FontWeight.w700,
-// //                                       color: Color(0xFF1B2B1B),
+// //                                       color: AppColors.ink,
 // //                                     ),
 // //                                   ),
 // //                                   const SizedBox(height: 6),
@@ -1157,10 +1157,10 @@
 // //                               padding: const EdgeInsets.symmetric(
 // //                                   horizontal: 8, vertical: 4),
 // //                               decoration: BoxDecoration(
-// //                                 color: const Color(0xFFEAF4E8),
+// //                                 color: AppColors.brandTint,
 // //                                 borderRadius: BorderRadius.circular(20),
 // //                                 border: Border.all(
-// //                                     color: const Color(0xFFA5D6A7), width: 1),
+// //                                     color: AppColors.brandSoft, width: 1),
 // //                               ),
 // //                               child: Row(
 // //                                 mainAxisSize: MainAxisSize.min,
@@ -1260,12 +1260,12 @@
 // //                               width: 36,
 // //                               height: 36,
 // //                               decoration: const BoxDecoration(
-// //                                 color: Color(0xFFFFF3E0),
+// //                                 color: AppColors.buttonBg,
 // //                                 shape: BoxShape.circle,
 // //                               ),
 // //                               child: const Icon(
 // //                                 Icons.workspace_premium_outlined,
-// //                                 color: Color(0xFFFF8F00),
+// //                                 color: AppColors.amberNotice,
 // //                                 size: 18,
 // //                               ),
 // //                             ),
@@ -1275,7 +1275,7 @@
 // //                               style: const TextStyle(
 // //                                 fontSize: 15,
 // //                                 fontWeight: FontWeight.w700,
-// //                                 color: Color(0xFF1B2B1B),
+// //                                 color: AppColors.ink,
 // //                               ),
 // //                             ),
 // //                           ],
@@ -1287,7 +1287,7 @@
 // //                             style: const TextStyle(
 // //                               fontSize: 13,
 // //                               fontWeight: FontWeight.w600,
-// //                               color: Color(0xFFB45309),
+// //                               color: AppColors.button,
 // //                             ),
 // //                           )
 // //                         else
@@ -1300,16 +1300,16 @@
 // //                               return Container(
 // //                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 // //                                 decoration: BoxDecoration(
-// //                                   color: const Color(0xFFFFFBEB),
+// //                                   color: AppColors.buttonBg,
 // //                                   borderRadius: BorderRadius.circular(20),
-// //                                   border: Border.all(color: const Color(0xFFFDE68A), width: 1),
+// //                                   border: Border.all(color: AppColors.amberNotice, width: 1),
 // //                                 ),
 // //                                 child: Text(
 // //                                   cleanSkill,
 // //                                   style: const TextStyle(
 // //                                     fontSize: 13,
 // //                                     fontWeight: FontWeight.w600,
-// //                                     color: Color(0xFFB45309),
+// //                                     color: AppColors.button,
 // //                                   ),
 // //                                 ),
 // //                               );
@@ -1341,12 +1341,12 @@
 // //                           width: 36,
 // //                           height: 36,
 // //                           decoration: const BoxDecoration(
-// //                             color: Color(0xFFEAF4E8),
+// //                             color: AppColors.brandTint,
 // //                             shape: BoxShape.circle,
 // //                           ),
 // //                           child: const Icon(
 // //                             Icons.receipt_long_outlined,
-// //                             color: Color(0xFF0E6805),
+// //                             color: AppColors.brand,
 // //                             size: 18,
 // //                           ),
 // //                         ),
@@ -1369,7 +1369,7 @@
 // //                                 style: const TextStyle(
 // //                                   fontSize: 14,
 // //                                   fontWeight: FontWeight.bold,
-// //                                   color: Color(0xFF152018),
+// //                                   color: AppColors.ink,
 // //                                 ),
 // //                               ),
 // //                             ],
@@ -1450,7 +1450,7 @@
 // //                               child: Container(
 // //                                 padding: const EdgeInsets.all(8),
 // //                                 decoration: const BoxDecoration(
-// //                                   color: Color(0xFFEAF4E8),
+// //                                   color: AppColors.brandTint,
 // //                                   shape: BoxShape.circle,
 // //                                 ),
 // //                                 child: Icon(
@@ -1467,7 +1467,7 @@
 // //                           translateText(description),
 // //                           style: TextStyle(
 // //                             fontSize: 13,
-// //                             color: Colors.grey[700],
+// //                             color: AppColors.inkSoft,
 // //                             height: 1.5,
 // //                           ),
 // //                         ),
@@ -1584,10 +1584,10 @@
 // //                                           decoration: BoxDecoration(
 // //                                             color: isEven
 // //                                                 ? Colors.white
-// //                                                 : const Color(0xFFF9FBF9),
+// //                                                 : AppColors.surface,
 // //                                             border: Border(
 // //                                               bottom: BorderSide(
-// //                                                 color: Colors.grey[100]!,
+// //                                                 color: AppColors.surface2!,
 // //                                                 width: 1,
 // //                                               ),
 // //                                             ),
@@ -1641,7 +1641,7 @@
 // //                           // Summary footer: Proposal Amount | Est. Duration | Comment
 // //                           Container(
 // //                             decoration: BoxDecoration(
-// //                               color: const Color(0xFFF1F9F1), // Light green background
+// //                               color: AppColors.brandTint, // Light green background
 // //                               borderRadius: BorderRadius.circular(12),
 // //                             ),
 // //                             padding: const EdgeInsets.all(12),
@@ -1655,12 +1655,12 @@
 // //                                         width: 32,
 // //                                         height: 32,
 // //                                         decoration: const BoxDecoration(
-// //                                           color: Color(0xFFEAF4E8),
+// //                                           color: AppColors.brandTint,
 // //                                           shape: BoxShape.circle,
 // //                                         ),
 // //                                         child: const Icon(
 // //                                           Icons.edit_note_outlined,
-// //                                           color: Color(0xFF0E6805),
+// //                                           color: AppColors.brand,
 // //                                           size: 18,
 // //                                         ),
 // //                                       ),
@@ -1673,7 +1673,7 @@
 // //                                               'Proposal Amount',
 // //                                               style: TextStyle(
 // //                                                 fontSize: 10,
-// //                                                 color: Color(0xFF5B6B5E),
+// //                                                 color: AppColors.inkSoft,
 // //                                                 fontWeight: FontWeight.w500,
 // //                                               ),
 // //                                               maxLines: 1,
@@ -1685,7 +1685,7 @@
 // //                                               style: const TextStyle(
 // //                                                 fontSize: 12,
 // //                                                 fontWeight: FontWeight.bold,
-// //                                                 color: Color(0xFF152018),
+// //                                                 color: AppColors.ink,
 // //                                               ),
 // //                                               maxLines: 1,
 // //                                               overflow: TextOverflow.ellipsis,
@@ -1704,12 +1704,12 @@
 // //                                         width: 32,
 // //                                         height: 32,
 // //                                         decoration: const BoxDecoration(
-// //                                           color: Color(0xFFEAF4E8),
+// //                                           color: AppColors.brandTint,
 // //                                           shape: BoxShape.circle,
 // //                                         ),
 // //                                         child: const Icon(
 // //                                           Icons.access_time_outlined,
-// //                                           color: Color(0xFF0E6805),
+// //                                           color: AppColors.brand,
 // //                                           size: 18,
 // //                                         ),
 // //                                       ),
@@ -1722,7 +1722,7 @@
 // //                                               'Estimate Duration',
 // //                                               style: TextStyle(
 // //                                                 fontSize: 10,
-// //                                                 color: Color(0xFF5B6B5E),
+// //                                                 color: AppColors.inkSoft,
 // //                                                 fontWeight: FontWeight.w500,
 // //                                               ),
 // //                                               maxLines: 1,
@@ -1734,7 +1734,7 @@
 // //                                               style: const TextStyle(
 // //                                                 fontSize: 12,
 // //                                                 fontWeight: FontWeight.bold,
-// //                                                 color: Color(0xFF152018),
+// //                                                 color: AppColors.ink,
 // //                                               ),
 // //                                               maxLines: 1,
 // //                                               overflow: TextOverflow.ellipsis,
@@ -1753,12 +1753,12 @@
 // //                                         width: 32,
 // //                                         height: 32,
 // //                                         decoration: const BoxDecoration(
-// //                                           color: Color(0xFFEAF4E8),
+// //                                           color: AppColors.brandTint,
 // //                                           shape: BoxShape.circle,
 // //                                         ),
 // //                                         child: const Icon(
 // //                                           Icons.chat_bubble_outline,
-// //                                           color: Color(0xFF0E6805),
+// //                                           color: AppColors.brand,
 // //                                           size: 16,
 // //                                         ),
 // //                                       ),
@@ -1771,7 +1771,7 @@
 // //                                               'Comment',
 // //                                               style: TextStyle(
 // //                                                 fontSize: 10,
-// //                                                 color: Color(0xFF5B6B5E),
+// //                                                 color: AppColors.inkSoft,
 // //                                                 fontWeight: FontWeight.w500,
 // //                                               ),
 // //                                               maxLines: 1,
@@ -1783,7 +1783,7 @@
 // //                                               style: const TextStyle(
 // //                                                 fontSize: 12,
 // //                                                 fontWeight: FontWeight.bold,
-// //                                                 color: Color(0xFF152018),
+// //                                                 color: AppColors.ink,
 // //                                               ),
 // //                                               maxLines: 1,
 // //                                               overflow: TextOverflow.ellipsis,
@@ -1810,7 +1810,7 @@
 // //
 // //           // ── Fixed bottom CTA ───────────────────────────────────────────────
 // //           Container(
-// //             color: const Color(0xFFFAFBF7),
+// //             color: AppColors.surface,
 // //             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
 // //             child: SizedBox(
 // //               width: double.infinity,
@@ -1828,7 +1828,7 @@
 // //                   ),
 // //                 ),
 // //                 style: ElevatedButton.styleFrom(
-// //                   backgroundColor: Constants.AppColors.brand,
+// //                   backgroundColor: Constants.AppColors.button,
 // //                   foregroundColor: Colors.white,
 // //                   elevation: 0,
 // //                   shape: RoundedRectangleBorder(
@@ -1856,7 +1856,7 @@
 // //       width: size,
 // //       height: size,
 // //       decoration: const BoxDecoration(
-// //         color: Color(0xFFEAF4E8),
+// //         color: AppColors.brandTint,
 // //         shape: BoxShape.circle,
 // //       ),
 // //       child: CustomPaint(
@@ -1871,14 +1871,14 @@
 // //   @override
 // //   void paint(Canvas canvas, Size size) {
 // //     final paint = Paint()
-// //       ..color = const Color(0xFF0E6805)
+// //       ..color = AppColors.brand
 // //       ..style = PaintingStyle.stroke
 // //       ..strokeWidth = 1.8
 // //       ..strokeCap = StrokeCap.round
 // //       ..strokeJoin = StrokeJoin.round;
 // //
 // //     final fillPaint = Paint()
-// //       ..color = const Color(0xFF0E6805)
+// //       ..color = AppColors.brand
 // //       ..style = PaintingStyle.fill;
 // //
 // //     final double w = size.width;
@@ -1943,7 +1943,7 @@
 // //       text: TextSpan(
 // //         text: 'IWM',
 // //         style: TextStyle(
-// //           color: const Color(0xFF0E6805),
+// //           color: AppColors.brand,
 // //           fontSize: 8.5 * scale,
 // //           fontWeight: FontWeight.w900,
 // //           letterSpacing: 0.8,
@@ -2317,12 +2317,12 @@
 //             width: 32,
 //             height: 32,
 //             decoration: const BoxDecoration(
-//               color: Color(0xFFEAF4E8),
+//               color: AppColors.brandTint,
 //               shape: BoxShape.circle,
 //             ),
 //             child: Icon(
 //               icon,
-//               color: const Color(0xFF0E6805),
+//               color: AppColors.brand,
 //               size: 16,
 //             ),
 //           ),
@@ -2348,7 +2348,7 @@
 //                   style: const TextStyle(
 //                     fontSize: 12,
 //                     fontWeight: FontWeight.bold,
-//                     color: Color(0xFF152018),
+//                     color: AppColors.ink,
 //                   ),
 //                   maxLines: 2,
 //                   overflow: TextOverflow.ellipsis,
@@ -2386,7 +2386,7 @@
 //     final String paymentType = translateText(selectedPaymentType ?? 'N/A');
 //
 //     return Scaffold(
-//       backgroundColor: const Color(0xFFFAFBF7),
+//       backgroundColor: AppColors.surface,
 //       appBar: AppBar(
 //         backgroundColor: Constants.AppColors.brand,
 //         foregroundColor: Colors.white,
@@ -2444,7 +2444,7 @@
 //                                     style: const TextStyle(
 //                                       fontSize: 17,
 //                                       fontWeight: FontWeight.w700,
-//                                       color: Color(0xFF1B2B1B),
+//                                       color: AppColors.ink,
 //                                     ),
 //                                   ),
 //                                   const SizedBox(height: 6),
@@ -2489,10 +2489,10 @@
 //                                 padding: const EdgeInsets.symmetric(
 //                                     horizontal: 8, vertical: 4),
 //                                 decoration: BoxDecoration(
-//                                   color: const Color(0xFFEAF4E8),
+//                                   color: AppColors.brandTint,
 //                                   borderRadius: BorderRadius.circular(20),
 //                                   border: Border.all(
-//                                       color: const Color(0xFFA5D6A7), width: 1),
+//                                       color: AppColors.brandSoft, width: 1),
 //                                 ),
 //                                 child: Row(
 //                                   mainAxisSize: MainAxisSize.min,
@@ -2593,12 +2593,12 @@
 //                               width: 36,
 //                               height: 36,
 //                               decoration: const BoxDecoration(
-//                                 color: Color(0xFFFFF3E0),
+//                                 color: AppColors.buttonBg,
 //                                 shape: BoxShape.circle,
 //                               ),
 //                               child: const Icon(
 //                                 Icons.workspace_premium_outlined,
-//                                 color: Color(0xFFFF8F00),
+//                                 color: AppColors.amberNotice,
 //                                 size: 18,
 //                               ),
 //                             ),
@@ -2608,7 +2608,7 @@
 //                               style: const TextStyle(
 //                                 fontSize: 15,
 //                                 fontWeight: FontWeight.w700,
-//                                 color: Color(0xFF1B2B1B),
+//                                 color: AppColors.ink,
 //                               ),
 //                             ),
 //                           ],
@@ -2620,7 +2620,7 @@
 //                             style: const TextStyle(
 //                               fontSize: 13,
 //                               fontWeight: FontWeight.w600,
-//                               color: Color(0xFFB45309),
+//                               color: AppColors.button,
 //                             ),
 //                           )
 //                         else
@@ -2633,16 +2633,16 @@
 //                               return Container(
 //                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 //                                 decoration: BoxDecoration(
-//                                   color: const Color(0xFFFFFBEB),
+//                                   color: AppColors.buttonBg,
 //                                   borderRadius: BorderRadius.circular(20),
-//                                   border: Border.all(color: const Color(0xFFFDE68A), width: 1),
+//                                   border: Border.all(color: AppColors.amberNotice, width: 1),
 //                                 ),
 //                                 child: Text(
 //                                   cleanSkill,
 //                                   style: const TextStyle(
 //                                     fontSize: 13,
 //                                     fontWeight: FontWeight.w600,
-//                                     color: Color(0xFFB45309),
+//                                     color: AppColors.button,
 //                                   ),
 //                                 ),
 //                               );
@@ -2674,12 +2674,12 @@
 //                           width: 36,
 //                           height: 36,
 //                           decoration: const BoxDecoration(
-//                             color: Color(0xFFEAF4E8),
+//                             color: AppColors.brandTint,
 //                             shape: BoxShape.circle,
 //                           ),
 //                           child: const Icon(
 //                             Icons.receipt_long_outlined,
-//                             color: Color(0xFF0E6805),
+//                             color: AppColors.brand,
 //                             size: 18,
 //                           ),
 //                         ),
@@ -2702,7 +2702,7 @@
 //                                 style: const TextStyle(
 //                                   fontSize: 14,
 //                                   fontWeight: FontWeight.bold,
-//                                   color: Color(0xFF152018),
+//                                   color: AppColors.ink,
 //                                 ),
 //                               ),
 //                             ],
@@ -2783,7 +2783,7 @@
 //                               child: Container(
 //                                 padding: const EdgeInsets.all(8),
 //                                 decoration: const BoxDecoration(
-//                                   color: Color(0xFFEAF4E8),
+//                                   color: AppColors.brandTint,
 //                                   shape: BoxShape.circle,
 //                                 ),
 //                                 child: Icon(
@@ -2800,7 +2800,7 @@
 //                           translateText(description),
 //                           style: TextStyle(
 //                             fontSize: 13,
-//                             color: Colors.grey[700],
+//                             color: AppColors.inkSoft,
 //                             height: 1.5,
 //                           ),
 //                         ),
@@ -2917,10 +2917,10 @@
 //                                       decoration: BoxDecoration(
 //                                         color: isEven
 //                                             ? Colors.white
-//                                             : const Color(0xFFF9FBF9),
+//                                             : AppColors.surface,
 //                                         border: Border(
 //                                           bottom: BorderSide(
-//                                             color: Colors.grey[100]!,
+//                                             color: AppColors.surface2!,
 //                                             width: 1,
 //                                           ),
 //                                         ),
@@ -2974,7 +2974,7 @@
 //                           // Summary footer: Proposal Amount | Est. Duration | Comment
 //                           Container(
 //                             decoration: BoxDecoration(
-//                               color: const Color(0xFFF1F9F1), // Light green background
+//                               color: AppColors.brandTint, // Light green background
 //                               borderRadius: BorderRadius.circular(12),
 //                             ),
 //                             padding: const EdgeInsets.all(12),
@@ -2988,12 +2988,12 @@
 //                                         width: 32,
 //                                         height: 32,
 //                                         decoration: const BoxDecoration(
-//                                           color: Color(0xFFEAF4E8),
+//                                           color: AppColors.brandTint,
 //                                           shape: BoxShape.circle,
 //                                         ),
 //                                         child: const Icon(
 //                                           Icons.edit_note_outlined,
-//                                           color: Color(0xFF0E6805),
+//                                           color: AppColors.brand,
 //                                           size: 18,
 //                                         ),
 //                                       ),
@@ -3006,7 +3006,7 @@
 //                                               'Proposal Amount',
 //                                               style: TextStyle(
 //                                                 fontSize: 10,
-//                                                 color: Color(0xFF5B6B5E),
+//                                                 color: AppColors.inkSoft,
 //                                                 fontWeight: FontWeight.w500,
 //                                               ),
 //                                               maxLines: 1,
@@ -3018,7 +3018,7 @@
 //                                               style: const TextStyle(
 //                                                 fontSize: 12,
 //                                                 fontWeight: FontWeight.bold,
-//                                                 color: Color(0xFF152018),
+//                                                 color: AppColors.ink,
 //                                               ),
 //                                               maxLines: 1,
 //                                               overflow: TextOverflow.ellipsis,
@@ -3037,12 +3037,12 @@
 //                                         width: 32,
 //                                         height: 32,
 //                                         decoration: const BoxDecoration(
-//                                           color: Color(0xFFEAF4E8),
+//                                           color: AppColors.brandTint,
 //                                           shape: BoxShape.circle,
 //                                         ),
 //                                         child: const Icon(
 //                                           Icons.access_time_outlined,
-//                                           color: Color(0xFF0E6805),
+//                                           color: AppColors.brand,
 //                                           size: 18,
 //                                         ),
 //                                       ),
@@ -3055,7 +3055,7 @@
 //                                               'Estimate Duration',
 //                                               style: TextStyle(
 //                                                 fontSize: 10,
-//                                                 color: Color(0xFF5B6B5E),
+//                                                 color: AppColors.inkSoft,
 //                                                 fontWeight: FontWeight.w500,
 //                                               ),
 //                                               maxLines: 1,
@@ -3067,7 +3067,7 @@
 //                                               style: const TextStyle(
 //                                                 fontSize: 12,
 //                                                 fontWeight: FontWeight.bold,
-//                                                 color: Color(0xFF152018),
+//                                                 color: AppColors.ink,
 //                                               ),
 //                                               maxLines: 1,
 //                                               overflow: TextOverflow.ellipsis,
@@ -3086,12 +3086,12 @@
 //                                         width: 32,
 //                                         height: 32,
 //                                         decoration: const BoxDecoration(
-//                                           color: Color(0xFFEAF4E8),
+//                                           color: AppColors.brandTint,
 //                                           shape: BoxShape.circle,
 //                                         ),
 //                                         child: const Icon(
 //                                           Icons.chat_bubble_outline,
-//                                           color: Color(0xFF0E6805),
+//                                           color: AppColors.brand,
 //                                           size: 16,
 //                                         ),
 //                                       ),
@@ -3104,7 +3104,7 @@
 //                                               'Comment',
 //                                               style: TextStyle(
 //                                                 fontSize: 10,
-//                                                 color: Color(0xFF5B6B5E),
+//                                                 color: AppColors.inkSoft,
 //                                                 fontWeight: FontWeight.w500,
 //                                               ),
 //                                               maxLines: 1,
@@ -3116,7 +3116,7 @@
 //                                               style: const TextStyle(
 //                                                 fontSize: 12,
 //                                                 fontWeight: FontWeight.bold,
-//                                                 color: Color(0xFF152018),
+//                                                 color: AppColors.ink,
 //                                               ),
 //                                               maxLines: 1,
 //                                               overflow: TextOverflow.ellipsis,
@@ -3143,7 +3143,7 @@
 //
 //           // ── Fixed bottom CTA ───────────────────────────────────────────────
 //           Container(
-//             color: const Color(0xFFFAFBF7),
+//             color: AppColors.surface,
 //             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
 //             child: SizedBox(
 //               width: double.infinity,
@@ -3161,7 +3161,7 @@
 //                   ),
 //                 ),
 //                 style: ElevatedButton.styleFrom(
-//                   backgroundColor: Constants.AppColors.brand,
+//                   backgroundColor: Constants.AppColors.button,
 //                   foregroundColor: Colors.white,
 //                   elevation: 0,
 //                   shape: RoundedRectangleBorder(
@@ -3189,7 +3189,7 @@
 //       width: size,
 //       height: size,
 //       decoration: const BoxDecoration(
-//         color: Color(0xFFEAF4E8),
+//         color: AppColors.brandTint,
 //         shape: BoxShape.circle,
 //       ),
 //       child: CustomPaint(
@@ -3204,14 +3204,14 @@
 //   @override
 //   void paint(Canvas canvas, Size size) {
 //     final paint = Paint()
-//       ..color = const Color(0xFF0E6805)
+//       ..color = AppColors.brand
 //       ..style = PaintingStyle.stroke
 //       ..strokeWidth = 1.8
 //       ..strokeCap = StrokeCap.round
 //       ..strokeJoin = StrokeJoin.round;
 //
 //     final fillPaint = Paint()
-//       ..color = const Color(0xFF0E6805)
+//       ..color = AppColors.brand
 //       ..style = PaintingStyle.fill;
 //
 //     final double w = size.width;
@@ -3276,7 +3276,7 @@
 //       text: TextSpan(
 //         text: 'IWM',
 //         style: TextStyle(
-//           color: const Color(0xFF0E6805),
+//           color: AppColors.brand,
 //           fontSize: 8.5 * scale,
 //           fontWeight: FontWeight.w900,
 //           letterSpacing: 0.8,
@@ -3308,6 +3308,7 @@ import 'package:greencollar/UpdateProject.dart';
 import 'package:provider/provider.dart';
 import 'package:greencollar/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 import 'package:translator/translator.dart';
 import 'package:greencollar/l10n/app_localizations.dart';
@@ -3653,12 +3654,12 @@ class _ProjectDetailsState extends State<ProjectDetails> {
             width: 32,
             height: 32,
             decoration: const BoxDecoration(
-              color: Color(0xFFEAF4E8),
+              color: AppColors.brandTint,
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
-              color: const Color(0xFF0E6805),
+              color: AppColors.brand,
               size: 16,
             ),
           ),
@@ -3672,7 +3673,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                   label,
                   style: TextStyle(
                     fontSize: 10,
-                    color: Colors.grey[500],
+                    color: AppColors.inkSoft,
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 1,
@@ -3684,7 +3685,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF152018),
+                    color: AppColors.ink,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -3722,7 +3723,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
     final String paymentType = translateText(selectedPaymentType ?? 'N/A');
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFBF7),
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
         backgroundColor: Constants.AppColors.brand,
         foregroundColor: Colors.white,
@@ -3753,7 +3754,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: AppColors.ink.withOpacity(0.04),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -3780,21 +3781,21 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                     style: const TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w700,
-                                      color: Color(0xFF1B2B1B),
+                                      color: AppColors.ink,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
                                   Row(
                                     children: [
                                       Icon(Icons.person_outline,
-                                          size: 14, color: Colors.grey[500]),
+                                          size: 14, color: AppColors.inkSoft),
                                       const SizedBox(width: 4),
                                       Flexible(
                                         child: Text(
                                           'Posted by ${postedBy ?? ''}',
                                           style: TextStyle(
                                             fontSize: 11,
-                                            color: Colors.grey[500],
+                                            color: AppColors.inkSoft,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
@@ -3802,14 +3803,14 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                       ),
                                       const SizedBox(width: 8),
                                       Icon(Icons.calendar_today_outlined,
-                                          size: 11, color: Colors.grey[400]),
+                                          size: 11, color: AppColors.inkSoft),
                                       const SizedBox(width: 3),
                                       Flexible(
                                         child: Text(
                                           postedDate ?? '',
                                           style: TextStyle(
                                               fontSize: 11,
-                                              color: Colors.grey[500]),
+                                              color: AppColors.inkSoft),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
                                         ),
@@ -3826,10 +3827,10 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFEAF4E8),
+                                  color: AppColors.brandTint,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                      color: const Color(0xFFA5D6A7), width: 1),
+                                      color: AppColors.brandSoft, width: 1),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -3922,7 +3923,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: AppColors.ink.withOpacity(0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -3938,12 +3939,12 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                               width: 36,
                               height: 36,
                               decoration: const BoxDecoration(
-                                color: Color(0xFFFFF3E0),
+                                color: AppColors.buttonBg,
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
                                 Icons.workspace_premium_outlined,
-                                color: Color(0xFFFF8F00),
+                                color: AppColors.amberNotice,
                                 size: 18,
                               ),
                             ),
@@ -3953,7 +3954,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF1B2B1B),
+                                color: AppColors.ink,
                               ),
                             ),
                           ],
@@ -3965,7 +3966,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFFB45309),
+                              color: AppColors.button,
                             ),
                           )
                         else
@@ -3978,16 +3979,16 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                               return Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFBEB),
+                                  color: AppColors.buttonBg,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: const Color(0xFFFDE68A), width: 1),
+                                  border: Border.all(color: AppColors.amberNotice, width: 1),
                                 ),
                                 child: Text(
                                   cleanSkill,
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFFB45309),
+                                    color: AppColors.button,
                                   ),
                                 ),
                               );
@@ -4006,7 +4007,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: AppColors.ink.withOpacity(0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -4019,12 +4020,12 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                           width: 36,
                           height: 36,
                           decoration: const BoxDecoration(
-                            color: Color(0xFFEAF4E8),
+                            color: AppColors.brandTint,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
                             Icons.receipt_long_outlined,
-                            color: Color(0xFF0E6805),
+                            color: AppColors.brand,
                             size: 18,
                           ),
                         ),
@@ -4037,7 +4038,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                 translateText('Payment Type'),
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: Colors.grey[500],
+                                  color: AppColors.inkSoft,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -4047,7 +4048,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF152018),
+                                  color: AppColors.ink,
                                 ),
                               ),
                             ],
@@ -4067,7 +4068,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: AppColors.ink.withOpacity(0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -4128,7 +4129,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                               child: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFFEAF4E8),
+                                  color: AppColors.brandTint,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -4145,7 +4146,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                           translateText(description),
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey[700],
+                            color: AppColors.inkSoft,
                             height: 1.5,
                           ),
                         ),
@@ -4164,7 +4165,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: AppColors.ink.withOpacity(0.04),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -4262,10 +4263,10 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                       decoration: BoxDecoration(
                                         color: isEven
                                             ? Colors.white
-                                            : const Color(0xFFF9FBF9),
+                                            : AppColors.surface,
                                         border: Border(
                                           bottom: BorderSide(
-                                            color: Colors.grey[100]!,
+                                            color: AppColors.surface2!,
                                             width: 1,
                                           ),
                                         ),
@@ -4319,7 +4320,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                           // Summary footer: Proposal Amount | Est. Duration | Comment
                           Container(
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF1F9F1), // Light green background
+                              color: AppColors.brandTint, // Light green background
                               borderRadius: BorderRadius.circular(12),
                             ),
                             padding: const EdgeInsets.all(12),
@@ -4333,12 +4334,12 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                         width: 32,
                                         height: 32,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFEAF4E8),
+                                          color: AppColors.brandTint,
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Icon(
                                           Icons.edit_note_outlined,
-                                          color: Color(0xFF0E6805),
+                                          color: AppColors.brand,
                                           size: 18,
                                         ),
                                       ),
@@ -4351,7 +4352,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                               'Proposal Amount',
                                               style: TextStyle(
                                                 fontSize: 10,
-                                                color: Color(0xFF5B6B5E),
+                                                color: AppColors.inkSoft,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                               maxLines: 1,
@@ -4363,7 +4364,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                               style: const TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
-                                                color: Color(0xFF152018),
+                                                color: AppColors.ink,
                                               ),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -4382,12 +4383,12 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                         width: 32,
                                         height: 32,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFEAF4E8),
+                                          color: AppColors.brandTint,
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Icon(
                                           Icons.access_time_outlined,
-                                          color: Color(0xFF0E6805),
+                                          color: AppColors.brand,
                                           size: 18,
                                         ),
                                       ),
@@ -4400,7 +4401,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                               'Estimate Duration',
                                               style: TextStyle(
                                                 fontSize: 10,
-                                                color: Color(0xFF5B6B5E),
+                                                color: AppColors.inkSoft,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                               maxLines: 1,
@@ -4412,7 +4413,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                               style: const TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
-                                                color: Color(0xFF152018),
+                                                color: AppColors.ink,
                                               ),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -4431,12 +4432,12 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                         width: 32,
                                         height: 32,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFEAF4E8),
+                                          color: AppColors.brandTint,
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Icon(
                                           Icons.chat_bubble_outline,
-                                          color: Color(0xFF0E6805),
+                                          color: AppColors.brand,
                                           size: 16,
                                         ),
                                       ),
@@ -4449,7 +4450,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                               'Comment',
                                               style: TextStyle(
                                                 fontSize: 10,
-                                                color: Color(0xFF5B6B5E),
+                                                color: AppColors.inkSoft,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                               maxLines: 1,
@@ -4461,7 +4462,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                                               style: const TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
-                                                color: Color(0xFF152018),
+                                                color: AppColors.ink,
                                               ),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -4490,7 +4491,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
           // ── Fixed bottom CTA ───────────────────────────────────────────────
           if (labourId == null || labourId!.isEmpty) ...[
             Container(
-              color: const Color(0xFFFAFBF7),
+              color: AppColors.surface,
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               child: SizedBox(
                 width: double.infinity,
@@ -4519,7 +4520,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Constants.AppColors.brand,
+                    backgroundColor: Constants.AppColors.button,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -4531,7 +4532,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
             ),
           ] else ...[
             Container(
-              color: const Color(0xFFFAFBF7),
+              color: AppColors.surface,
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               child: SizedBox(
                 width: double.infinity,
@@ -4549,8 +4550,8 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[400],
-                    disabledBackgroundColor: Colors.grey[400],
+                    backgroundColor: AppColors.inkSoft,
+                    disabledBackgroundColor: AppColors.inkSoft,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -4578,7 +4579,7 @@ class CowAvatar extends StatelessWidget {
       width: size,
       height: size,
       decoration: const BoxDecoration(
-        color: Color(0xFFEAF4E8),
+        color: AppColors.brandTint,
         shape: BoxShape.circle,
       ),
       child: CustomPaint(
@@ -4593,14 +4594,14 @@ class CowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF0E6805)
+      ..color = AppColors.brand
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
     final fillPaint = Paint()
-      ..color = const Color(0xFF0E6805)
+      ..color = AppColors.brand
       ..style = PaintingStyle.fill;
 
     final double w = size.width;
@@ -4665,7 +4666,7 @@ class CowPainter extends CustomPainter {
       text: TextSpan(
         text: 'IWM',
         style: TextStyle(
-          color: const Color(0xFF0E6805),
+          color: AppColors.brand,
           fontSize: 8.5 * scale,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.8,
@@ -4683,3 +4684,4 @@ class CowPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+

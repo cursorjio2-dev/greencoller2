@@ -400,7 +400,7 @@
 // //                 'Confirm Completion Successful!', 'सफल समापन की पुष्टि!'),
 // //             toastLength: Toast.LENGTH_SHORT,
 // //             gravity: ToastGravity.BOTTOM,
-// //             backgroundColor: Colors.green.shade700,
+// //             backgroundColor: AppColors.brand,
 // //             textColor: Colors.white,
 // //             fontSize: 16.0,
 // //           );
@@ -930,7 +930,7 @@
 // //                                             Radius.circular(Constants.AppRadii.sm)),
 // //                                       ),
 // //                                       backgroundColor:
-// //                                           Constants.AppColors.brand,
+// //                                           Constants.AppColors.button,
 // //                                       foregroundColor: Constants.AppColors.card,
 // //                                       elevation: 0,
 // //                                     ),
@@ -949,7 +949,7 @@
 // //                                             Radius.circular(Constants.AppRadii.sm)),
 // //                                       ),
 // //                                       backgroundColor:
-// //                                           Constants.AppColors.brand,
+// //                                           Constants.AppColors.button,
 // //                                       foregroundColor: Constants.AppColors.card,
 // //                                       elevation: 0,
 // //                                     ),
@@ -976,7 +976,7 @@
 // //                                             Radius.circular(Constants.AppRadii.sm)),
 // //                                       ),
 // //                                       backgroundColor:
-// //                                           Constants.AppColors.brand,
+// //                                           Constants.AppColors.button,
 // //                                       foregroundColor: Constants.AppColors.card,
 // //                                       elevation: 0,
 // //                                     ),
@@ -1013,7 +1013,7 @@
 // //                               borderRadius:
 // //                                   BorderRadius.all(Radius.circular(Constants.AppRadii.sm)),
 // //                             ),
-// //                             backgroundColor: Constants.AppColors.brand,
+// //                             backgroundColor: Constants.AppColors.button,
 // //                             foregroundColor: Constants.AppColors.card,
 // //                             elevation: 0,
 // //                           ),
@@ -1037,7 +1037,7 @@
 // //                                 borderRadius:
 // //                                     BorderRadius.all(Radius.circular(Constants.AppRadii.sm)),
 // //                               ),
-// //                               backgroundColor: Constants.AppColors.brand,
+// //                               backgroundColor: Constants.AppColors.button,
 // //                               foregroundColor: Constants.AppColors.card,
 // //                               elevation: 0,
 // //                             ),
@@ -1062,7 +1062,7 @@
 // //                                 borderRadius:
 // //                                     BorderRadius.all(Radius.circular(Constants.AppRadii.sm)),
 // //                               ),
-// //                               backgroundColor: Constants.AppColors.brand,
+// //                               backgroundColor: Constants.AppColors.button,
 // //                               foregroundColor: Constants.AppColors.card,
 // //                               elevation: 0,
 // //                             ),
@@ -1086,7 +1086,7 @@
 // //                                   borderRadius:
 // //                                       BorderRadius.all(Radius.circular(Constants.AppRadii.sm)),
 // //                                 ),
-// //                                 backgroundColor: Constants.AppColors.brand,
+// //                                 backgroundColor: Constants.AppColors.button,
 // //                                 foregroundColor: Constants.AppColors.card,
 // //                                 elevation: 0,
 // //                               ),
@@ -1107,7 +1107,7 @@
 // //                                   borderRadius:
 // //                                       BorderRadius.all(Radius.circular(Constants.AppRadii.sm)),
 // //                                 ),
-// //                                 backgroundColor: Constants.AppColors.brand,
+// //                                 backgroundColor: Constants.AppColors.button,
 // //                                 foregroundColor: Constants.AppColors.card,
 // //                                 elevation: 0,
 // //                               ),
@@ -1133,7 +1133,7 @@
 // //                                   borderRadius:
 // //                                       BorderRadius.all(Radius.circular(Constants.AppRadii.sm)),
 // //                                 ),
-// //                                 backgroundColor: Constants.AppColors.brand,
+// //                                 backgroundColor: Constants.AppColors.button,
 // //                                 foregroundColor: Constants.AppColors.card,
 // //                                 elevation: 0,
 // //                               ),
@@ -1157,9 +1157,9 @@
 // //                                   borderRadius:
 // //                                       BorderRadius.all(Radius.circular(Constants.AppRadii.sm)),
 // //                                 ),
-// //                                 backgroundColor: Constants.AppColors.brand,
+// //                                 backgroundColor: Constants.AppColors.button,
 // //                                 foregroundColor: Constants.AppColors.card,
-// //                                 disabledBackgroundColor: Constants.AppColors.brand,
+// //                                 disabledBackgroundColor: Constants.AppColors.button,
 // //                                 elevation: 0,
 // //                               ),
 // //                               child: Text(
@@ -1177,9 +1177,9 @@
 // //                                   borderRadius:
 // //                                       BorderRadius.all(Radius.circular(Constants.AppRadii.sm)),
 // //                                 ),
-// //                                 backgroundColor: Constants.AppColors.brand,
+// //                                 backgroundColor: Constants.AppColors.button,
 // //                                 foregroundColor: Constants.AppColors.card,
-// //                                 disabledBackgroundColor: Constants.AppColors.brand,
+// //                                 disabledBackgroundColor: Constants.AppColors.button,
 // //                                 elevation: 0,
 // //                               ),
 // //                               child: Text(
@@ -1199,7 +1199,7 @@
 // //                                 borderRadius:
 // //                                     BorderRadius.all(Radius.circular(Constants.AppRadii.sm)),
 // //                               ),
-// //                               backgroundColor: Constants.AppColors.brand,
+// //                               backgroundColor: Constants.AppColors.button,
 // //                               foregroundColor: Constants.AppColors.card,
 // //                               disabledBackgroundColor: Colors.red,
 // //                               elevation: 0,
@@ -1572,7 +1572,7 @@
 //                 'Confirm Completion Successful!', 'सफल समापन की पुष्टि!'),
 //             toastLength: Toast.LENGTH_SHORT,
 //             gravity: ToastGravity.BOTTOM,
-//             backgroundColor: Colors.green.shade700,
+//             backgroundColor: AppColors.brand,
 //             textColor: Colors.white,
 //             fontSize: 16.0,
 //           );
@@ -1955,7 +1955,7 @@
 //                                 style: const TextStyle(
 //                                   fontSize: 14,
 //                                   fontWeight: FontWeight.w600,
-//                                   color: Color(0xFF1A1A2E),
+//                                   color: AppColors.ink,
 //                                 ),
 //                               ),
 //                             ],
@@ -1997,7 +1997,7 @@
 //                           style: const TextStyle(
 //                             fontSize: 16,
 //                             fontWeight: FontWeight.w700,
-//                             color: Color(0xFF1B2B1B),
+//                             color: AppColors.ink,
 //                           ),
 //                         ),
 //                       ],
@@ -2037,17 +2037,17 @@
 //                               return Container(
 //                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
 //                                 decoration: BoxDecoration(
-//                                   color: isEven ? Colors.white : const Color(0xFFF9FBF9),
+//                                   color: isEven ? Colors.white : AppColors.surface,
 //                                   border: Border(
-//                                     bottom: BorderSide(color: Colors.grey[100]!, width: 1),
+//                                     bottom: BorderSide(color: AppColors.surface2!, width: 1),
 //                                   ),
 //                                 ),
 //                                 child: Row(
 //                                   children: [
-//                                     Expanded(flex: 2, child: Text(translateText(m['description'] ?? 'N/A'), style: const TextStyle(fontSize: 13, color: Color(0xFF1B2B1B)))),
-//                                     Expanded(flex: 1, child: Text(m['amount']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Color(0xFF1B2B1B)))),
-//                                     Expanded(flex: 1, child: Text(m['proposalamount']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Color(0xFF1B2B1B)))),
-//                                     Expanded(flex: 1, child: Text(m['duration']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Color(0xFF1B2B1B)))),
+//                                     Expanded(flex: 2, child: Text(translateText(m['description'] ?? 'N/A'), style: const TextStyle(fontSize: 13, color: AppColors.ink))),
+//                                     Expanded(flex: 1, child: Text(m['amount']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: AppColors.ink))),
+//                                     Expanded(flex: 1, child: Text(m['proposalamount']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: AppColors.ink))),
+//                                     Expanded(flex: 1, child: Text(m['duration']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: AppColors.ink))),
 //                                     Expanded(
 //                                       flex: 1,
 //                                       child: Center(
@@ -2094,7 +2094,7 @@
 //                     style: const TextStyle(
 //                       fontSize: 16,
 //                       fontWeight: FontWeight.w700,
-//                       color: Color(0xFF1B2B1B),
+//                       color: AppColors.ink,
 //                     ),
 //                   ),
 //                   const SizedBox(height: 12),
@@ -2161,7 +2161,7 @@
 //               context,
 //             ),
 //             style: ElevatedButton.styleFrom(
-//               backgroundColor: Constants.AppColors.brand,
+//               backgroundColor: Constants.AppColors.button,
 //               foregroundColor: Colors.white,
 //               shape: RoundedRectangleBorder(
 //                 borderRadius: BorderRadius.circular(10),
@@ -2348,7 +2348,7 @@
 //                 child: ElevatedButton(
 //                   onPressed: _showReviewDialog,
 //                   style: ElevatedButton.styleFrom(
-//                     backgroundColor: Constants.AppColors.brand,
+//                     backgroundColor: Constants.AppColors.button,
 //                     foregroundColor: Colors.white,
 //                     shape: RoundedRectangleBorder(
 //                       borderRadius: BorderRadius.circular(10),
@@ -2449,6 +2449,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:translator/translator.dart';
+import 'package:greencollar/constants.dart';
 import 'package:greencollar/constants.dart' as Constants;
 
 // ─── FarmerMilestoneService (unchanged) ────────────────────────────────
@@ -2721,7 +2722,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                 'Confirm Completion Successful!', 'सफल समापन की पुष्टि!'),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.green.shade700,
+            backgroundColor: AppColors.brand,
             textColor: Colors.white,
             fontSize: 16.0,
           );
@@ -2857,7 +2858,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('User ID not found in secure storage'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.button,
         ),
       );
       return;
@@ -2877,7 +2878,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
           'अज्ञात प्रतिक्रिया'),
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: result['status'] == "1" ? Colors.green : Colors.red,
+      backgroundColor: result['status'] == "1" ? AppColors.brand : Colors.red,
       textColor: Colors.white,
       fontSize: 16.0,
     );
@@ -3115,7 +3116,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: AppColors.ink.withOpacity(0.04),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -3138,7 +3139,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                                 translateText(item['label']),
                                 style: const TextStyle(
                                   fontSize: 11,
-                                  color: Colors.grey,
+                                  color: AppColors.inkSoft,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -3151,7 +3152,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF1A1A2E),
+                                    color: AppColors.ink,
                                   ),
                                 ),
                             ],
@@ -3173,7 +3174,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: AppColors.ink.withOpacity(0.04),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -3193,7 +3194,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1B2B1B),
+                            color: AppColors.ink,
                           ),
                         ),
                       ],
@@ -3233,17 +3234,17 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                               return Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                 decoration: BoxDecoration(
-                                  color: isEven ? Colors.white : const Color(0xFFF9FBF9),
+                                  color: isEven ? Colors.white : AppColors.surface,
                                   border: Border(
-                                    bottom: BorderSide(color: Colors.grey[100]!, width: 1),
+                                    bottom: BorderSide(color: AppColors.surface2!, width: 1),
                                   ),
                                 ),
                                 child: Row(
                                   children: [
-                                    Expanded(flex: 2, child: Text(translateText(m['description'] ?? 'N/A'), style: const TextStyle(fontSize: 13, color: Color(0xFF1B2B1B)))),
-                                    Expanded(flex: 1, child: Text(m['amount']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Color(0xFF1B2B1B)))),
-                                    Expanded(flex: 1, child: Text(m['proposalamount']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Color(0xFF1B2B1B)))),
-                                    Expanded(flex: 1, child: Text(m['duration']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Color(0xFF1B2B1B)))),
+                                    Expanded(flex: 2, child: Text(translateText(m['description'] ?? 'N/A'), style: const TextStyle(fontSize: 13, color: AppColors.ink))),
+                                    Expanded(flex: 1, child: Text(m['amount']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: AppColors.ink))),
+                                    Expanded(flex: 1, child: Text(m['proposalamount']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: AppColors.ink))),
+                                    Expanded(flex: 1, child: Text(m['duration']?.toString() ?? 'N/A', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: AppColors.ink))),
                                     Expanded(
                                       flex: 1,
                                       child: Center(
@@ -3275,7 +3276,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: AppColors.ink.withOpacity(0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -3290,7 +3291,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF1B2B1B),
+                      color: AppColors.ink,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -3327,7 +3328,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: Colors.green,
+          color: AppColors.brand,
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
@@ -3357,7 +3358,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
               context,
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Constants.AppColors.brand,
+              backgroundColor: Constants.AppColors.button,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -3387,7 +3388,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                     widget.application['projectID'].toString(),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: AppColors.button,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -3422,7 +3423,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
             child: ElevatedButton(
               onPressed: null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey,
+                backgroundColor: AppColors.inkSoft,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -3451,7 +3452,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                       widget.application['labourID'].toString(),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: AppColors.brand,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -3494,7 +3495,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.red,
+                          color: AppColors.button,
                         ),
                       ),
                     ),
@@ -3525,7 +3526,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.red,
+                    color: AppColors.button,
                   ),
                 ),
               ),
@@ -3542,7 +3543,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
             child: ElevatedButton(
               onPressed: null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey,
+                backgroundColor: AppColors.inkSoft,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -3572,7 +3573,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                   child: ElevatedButton(
                     onPressed: _showReviewDialog,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Constants.AppColors.brand,
+                      backgroundColor: Constants.AppColors.button,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -3600,7 +3601,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                   child: ElevatedButton(
                     onPressed: null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
+                      backgroundColor: AppColors.inkSoft,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -3632,7 +3633,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
           child: ElevatedButton(
             onPressed: null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.grey,
+              backgroundColor: AppColors.inkSoft,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -3658,3 +3659,4 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
     }
   }
 }
+
