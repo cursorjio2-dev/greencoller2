@@ -9150,7 +9150,9 @@ class _ProjectPageState extends State<ProjectPage> {
                                       ],
                                     ),
                                     const SizedBox(height: 12),
-                                    Row(
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
                                       children: [
                                         _buildPremiumChip(
                                           icon: Icons
@@ -9158,14 +9160,12 @@ class _ProjectPageState extends State<ProjectPage> {
                                           label:
                                           '${project['qty_labours'] ?? '0'} ${translate('Workers', 'मजदूर')}',
                                         ),
-                                        const SizedBox(width: 8),
                                         _buildPremiumChip(
                                           icon:
                                           Icons.currency_rupee,
                                           label:
                                           '$budgetFormatted',
                                         ),
-                                        const SizedBox(width: 8),
                                         _buildPremiumChip(
                                           icon: Icons
                                               .access_time_outlined,
@@ -9179,7 +9179,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                         if (applicants > 0)
                                           Expanded(
                                             child: SizedBox(
-                                              height: 44,
+                                              height: Constants.ResponsiveSize.buttonHeight(context),
                                               child: ElevatedButton(
                                                 onPressed: () {
                                                   Navigator.push(
@@ -9210,7 +9210,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                                         10),
                                                   ),
                                                   padding:
-                                                  EdgeInsets.zero,
+                                                  EdgeInsets.symmetric(horizontal: Constants.ResponsiveSize.paddingHorizontalSmall(context), vertical: 4),
                                                 ),
                                                 child: FittedBox(
                                                   fit: BoxFit
@@ -9220,8 +9220,8 @@ class _ProjectPageState extends State<ProjectPage> {
                                                         context)!
                                                         .viewApplications,
                                                     style:
-                                                    const TextStyle(
-                                                      fontSize: 13,
+                                                    TextStyle(
+                                                      fontSize: Constants.ResponsiveSize.fontSmall(context),
                                                       fontWeight:
                                                       FontWeight
                                                           .bold,
@@ -9237,7 +9237,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                           const SizedBox(width: 8),
                                         Expanded(
                                           child: SizedBox(
-                                            height: 44,
+                                            height: Constants.ResponsiveSize.buttonHeight(context),
                                             child: ElevatedButton(
                                               onPressed: () {
                                                 Navigator.push(
@@ -9268,7 +9268,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                                       10),
                                                 ),
                                                 padding:
-                                                EdgeInsets.zero,
+                                                EdgeInsets.symmetric(horizontal: Constants.ResponsiveSize.paddingHorizontalSmall(context), vertical: 4),
                                               ),
                                               child: FittedBox(
                                                 fit: BoxFit
@@ -9277,8 +9277,8 @@ class _ProjectPageState extends State<ProjectPage> {
                                                   translateText(
                                                       'Details'),
                                                   style:
-                                                  const TextStyle(
-                                                    fontSize: 13,
+                                                  TextStyle(
+                                                    fontSize: Constants.ResponsiveSize.fontSmall(context),
                                                     fontWeight:
                                                     FontWeight
                                                         .bold,
@@ -9991,7 +9991,7 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                         if (status == "0")
                           Expanded(
                             child: SizedBox(
-                              height: 40,
+                              height: Constants.ResponsiveSize.buttonHeightSmall(context),
                               child: ElevatedButton(
                                 onPressed: _isProcessing
                                     ? null
@@ -10007,16 +10007,16 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                                     borderRadius:
                                     BorderRadius.circular(10),
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 4),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Constants.ResponsiveSize.paddingHorizontalSmall(context), vertical: 4),
                                 ),
                                 child: FittedBox(
                                   fit: BoxFit.scaleDown,
                                   child: Text(
                                     translateText('Assign'),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                      fontSize: Constants.ResponsiveSize.fontSmall(context),
                                       color: Colors.white,
                                     ),
                                   ),
@@ -10027,7 +10027,7 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                         else if (status == "1")
                           Expanded(
                             child: SizedBox(
-                              height: 40,
+                              height: Constants.ResponsiveSize.buttonHeightSmall(context),
                               child: ElevatedButton(
                                 onPressed: _isProcessing
                                     ? null
@@ -10042,16 +10042,16 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                                     borderRadius:
                                     BorderRadius.circular(10),
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 4),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Constants.ResponsiveSize.paddingHorizontalSmall(context), vertical: 4),
                                 ),
                                 child: FittedBox(
                                   fit: BoxFit.scaleDown,
                                   child: Text(
                                     translateText('Unassign'),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                      fontSize: Constants.ResponsiveSize.fontSmall(context),
                                       color: Colors.white,
                                     ),
                                   ),
@@ -10062,7 +10062,7 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                         else if (status == "2")
                             Expanded(
                               child: SizedBox(
-                                height: 40,
+                                height: Constants.ResponsiveSize.buttonHeightSmall(context),
                                 child: ElevatedButton(
                                   onPressed: _isProcessing
                                       ? null
@@ -10077,16 +10077,16 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                                       borderRadius:
                                       BorderRadius.circular(10),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: Constants.ResponsiveSize.paddingHorizontalSmall(context), vertical: 4),
                                   ),
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
                                     child: Text(
                                       translateText('Complete'),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 12,
+                                        fontSize: Constants.ResponsiveSize.fontSmall(context),
                                         color: Colors.white,
                                       ),
                                     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:math';
 
 class AppConstants {
 
@@ -123,7 +124,7 @@ class AppTypography {
   static TextStyle get h1 => GoogleFonts.plusJakartaSans(
         fontSize: 22,
         fontWeight: FontWeight.w700,
-        height: 1.15,
+        height: 1.3,
         letterSpacing: -0.01 * 22,
         color: AppColors.ink,
       );
@@ -131,7 +132,7 @@ class AppTypography {
   static TextStyle get h2 => GoogleFonts.plusJakartaSans(
         fontSize: 20,
         fontWeight: FontWeight.w700,
-        height: 1.15,
+        height: 1.3,
         letterSpacing: -0.01 * 20,
         color: AppColors.ink,
       );
@@ -139,7 +140,7 @@ class AppTypography {
   static TextStyle get h3 => GoogleFonts.plusJakartaSans(
         fontSize: 17,
         fontWeight: FontWeight.w700,
-        height: 1.15,
+        height: 1.3,
         letterSpacing: -0.01 * 17,
         color: AppColors.ink,
       );
@@ -174,5 +175,54 @@ class AppTypography {
       );
 }
 
+/// Responsive sizing helper — all sizes scale with screen dimensions.
+class ResponsiveSize {
+  static double screenHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
 
+  static double screenWidth(BuildContext context) =>
+      MediaQuery.of(context).size.width;
 
+  // ── Button Heights ──────────────────────────────────────────────
+  /// Standard button (~48px on a 828px-high screen)
+  static double buttonHeight(BuildContext context) =>
+      screenHeight(context) * 0.058;
+
+  /// Compact button (~40px on a 828px-high screen)
+  static double buttonHeightSmall(BuildContext context) =>
+      screenHeight(context) * 0.048;
+
+  /// Mini button (~33px on a 828px-high screen)
+  static double buttonHeightMini(BuildContext context) =>
+      screenHeight(context) * 0.04;
+
+  // ── Font Sizes ──────────────────────────────────────────────────
+  /// ~18px on a 400px-wide screen
+  static double fontLarge(BuildContext context) =>
+      screenWidth(context) * 0.045;
+
+  /// ~15px on a 400px-wide screen
+  static double fontMedium(BuildContext context) =>
+      screenWidth(context) * 0.038;
+
+  /// ~13px on a 400px-wide screen
+  static double fontSmall(BuildContext context) =>
+      screenWidth(context) * 0.032;
+
+  /// ~11px on a 400px-wide screen
+  static double fontMini(BuildContext context) =>
+      screenWidth(context) * 0.028;
+
+  // ── Padding ─────────────────────────────────────────────────────
+  /// Vertical padding (~12px on 828px screen)
+  static double paddingVertical(BuildContext context) =>
+      screenHeight(context) * 0.015;
+
+  /// Horizontal padding (~16px on 400px screen)
+  static double paddingHorizontal(BuildContext context) =>
+      screenWidth(context) * 0.04;
+
+  /// Small horizontal padding (~8px on 400px screen)
+  static double paddingHorizontalSmall(BuildContext context) =>
+      screenWidth(context) * 0.02;
+}

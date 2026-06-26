@@ -3146,7 +3146,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   // Send OTP button
                   SizedBox(
                     width: double.infinity,
-                    height: 48,
+                    height: Constants.ResponsiveSize.buttonHeight(context),
                     child: ElevatedButton(
                       onPressed: _isButtonDisabled ? null : _sendOtp,
                       style: ElevatedButton.styleFrom(
@@ -3155,6 +3155,10 @@ class _RegistrationFormState extends State<RegistrationForm> {
                           borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                         ),
                         elevation: 0,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Constants.ResponsiveSize.paddingHorizontal(context),
+                          vertical: 4,
+                        ),
                       ),
                       child: _isLoadingOtp
                           ? const SizedBox(
@@ -3169,6 +3173,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         translate('Get OTP', 'OTP प्राप्त करें'),
                         style: Constants.AppTypography.h2.copyWith(
                           color: Constants.AppColors.card,
+                          fontSize: Constants.ResponsiveSize.fontMedium(context),
                         ),
                       ),
                     ),
@@ -3264,7 +3269,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     children: [
                       Expanded(
                         child: SizedBox(
-                          height: 48,
+                          height: Constants.ResponsiveSize.buttonHeight(context),
                           child: ElevatedButton(
                             onPressed: _isButtonDisabled ? null : _verifyOtpAndRegister,
                             style: ElevatedButton.styleFrom(
@@ -3273,6 +3278,10 @@ class _RegistrationFormState extends State<RegistrationForm> {
                                 borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                               ),
                               elevation: 0,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: Constants.ResponsiveSize.paddingHorizontal(context),
+                                vertical: 4,
+                              ),
                             ),
                             child: _isVerifying
                                 ? const SizedBox(
@@ -3287,6 +3296,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                               translate('Verify & Register', 'सत्यापित करें और पंजीकरण करें'),
                               style: Constants.AppTypography.h2.copyWith(
                                 color: Constants.AppColors.card,
+                                fontSize: Constants.ResponsiveSize.fontMedium(context),
                               ),
                             ),
                           ),

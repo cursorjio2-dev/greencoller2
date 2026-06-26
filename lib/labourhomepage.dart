@@ -7978,7 +7978,9 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                       const SizedBox(height: 14),
 
                                       // ── STATS CHIPS ──
-                                      Row(
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
                                         children: [
                                           _buildPremiumChip(
                                             icon: Icons.people_outline,
@@ -7988,7 +7990,6 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                             iconColor: const Color(0xFF865E2A),
                                             labelColor: const Color(0xFF865E2A),
                                           ),
-                                          const SizedBox(width: 8),
                                           _buildPremiumChip(
                                             icon: Icons.currency_rupee,
                                             label:
@@ -7997,7 +7998,6 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                             iconColor: const Color(0xFF865E2A),
                                             labelColor: const Color(0xFF865E2A),
                                           ),
-                                          const SizedBox(width: 8),
                                           _buildPremiumChip(
                                             icon: Icons.access_time_outlined,
                                             label: durationLabel,
@@ -8013,7 +8013,7 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                       // ── FIXED BUTTON ───────────────────
                                       Container(
                                         width: double.infinity,
-                                        height: 48, // increased from 44
+                                        height: Constants.ResponsiveSize.buttonHeight(context),
                                         decoration: BoxDecoration(
                                           color: Constants.AppColors.button,
                                           borderRadius:
@@ -8046,7 +8046,10 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                               borderRadius:
                                               BorderRadius.circular(12),
                                             ),
-                                            padding: EdgeInsets.zero,
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: Constants.ResponsiveSize.paddingHorizontalSmall(context),
+                                              vertical: 4,
+                                            ),
                                             minimumSize: const Size(double.infinity, double.infinity),
                                           ),
                                           child: Row(
@@ -8060,12 +8063,11 @@ class _LabourHomepageContentState extends State<LabourHomepageContent>
                                                       'अभी आवेदन करें')
                                                       : translate('View Details',
                                                       'विवरण देखें'),
-                                                  style: const TextStyle(
-                                                    fontSize: 13,
+                                                  style: TextStyle(
+                                                    fontSize: Constants.ResponsiveSize.fontSmall(context),
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.white,
                                                     letterSpacing: 0.5,
-                                                    height: 1.2,
                                                   ),
                                                   overflow: TextOverflow.ellipsis,
                                                   softWrap: true,

@@ -1407,7 +1407,7 @@ class _UpdateProjectState extends State<UpdateProject> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        height: 48,
+                        height: Constants.ResponsiveSize.buttonHeight(context),
                         width: 200,
                         decoration: BoxDecoration(
                           gradient: Constants.AppColors.buttonGradient,

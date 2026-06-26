@@ -534,8 +534,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Constants.AppColors.button,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 16),
+                            padding: EdgeInsets.symmetric(
+                                vertical: Constants.ResponsiveSize.paddingVertical(context), horizontal: Constants.ResponsiveSize.paddingHorizontal(context)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(Constants.AppRadii.xs),
                             ),
@@ -1108,35 +1108,40 @@ class _LoginScreenState extends State<LoginScreen> {
                               // ─── OTP Section ────────────────────────────
                               if (!_isOtpSent) ...[
                                 // Send OTP button
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 48,
-                                  child: ElevatedButton(
-                                    onPressed: _isButtonDisabled ? null : _sendOtp,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Constants.AppColors.button,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: Constants.ResponsiveSize.buttonHeight(context),
+                                    child: ElevatedButton(
+                                      onPressed: _isButtonDisabled ? null : _sendOtp,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Constants.AppColors.button,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
+                                        ),
+                                        elevation: 0,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: Constants.ResponsiveSize.paddingHorizontal(context),
+                                          vertical: 4,
+                                        ),
                                       ),
-                                      elevation: 0,
-                                    ),
-                                    child: _isLoadingOtp
-                                        ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                      ),
-                                    )
-                                        : Text(
-                                      translate('Send OTP', 'OTP भेजें'),
-                                      style: Constants.AppTypography.h2.copyWith(
-                                        color: Constants.AppColors.card,
+                                      child: _isLoadingOtp
+                                          ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                        ),
+                                      )
+                                          : Text(
+                                        translate('Send OTP', 'OTP भेजें'),
+                                        style: Constants.AppTypography.h2.copyWith(
+                                          color: Constants.AppColors.card,
+                                          fontSize: Constants.ResponsiveSize.fontMedium(context),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
                               ] else ...[
                                 // OTP input
                                 Text(
@@ -1228,7 +1233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   children: [
                                     Expanded(
                                       child: SizedBox(
-                                        height: 48,
+                                        height: Constants.ResponsiveSize.buttonHeight(context),
                                         child: ElevatedButton(
                                           onPressed: _isButtonDisabled ? null : _verifyOtp,
                                           style: ElevatedButton.styleFrom(
@@ -1237,6 +1242,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                               borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                                             ),
                                             elevation: 0,
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: Constants.ResponsiveSize.paddingHorizontal(context),
+                                              vertical: 4,
+                                            ),
                                           ),
                                           child: _isVerifying
                                               ? const SizedBox(
@@ -1251,6 +1260,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             translate('Verify OTP', 'OTP सत्यापित करें'),
                                             style: Constants.AppTypography.h2.copyWith(
                                               color: Constants.AppColors.card,
+                                              fontSize: Constants.ResponsiveSize.fontMedium(context),
                                             ),
                                           ),
                                         ),

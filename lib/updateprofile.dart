@@ -1595,8 +1595,9 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(
                             0xFF0E6805), // Green color for the button
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 2, horizontal: 32),
+                        padding: EdgeInsets.symmetric(
+                            vertical: Constants.ResponsiveSize.paddingVertical(context),
+                            horizontal: Constants.ResponsiveSize.paddingHorizontal(context)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               8), // Reduced curvature for a more rectangular look

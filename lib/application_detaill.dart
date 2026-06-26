@@ -3351,7 +3351,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
       case '0': // Not assigned
         return SizedBox(
           width: double.infinity,
-          height: 44,
+          height: Constants.ResponsiveSize.buttonHeight(context),
           child: ElevatedButton(
             onPressed: () => assignProject(
               widget.application['labourID'].toString(),
@@ -3367,8 +3367,8 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
             ),
             child: Text(
               translateText('Assign Project'),
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: Constants.ResponsiveSize.fontSmall(context),
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -3381,7 +3381,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
           children: [
             Expanded(
               child: SizedBox(
-                height: 44,
+                height: Constants.ResponsiveSize.buttonHeight(context),
                 child: ElevatedButton(
                   onPressed: () => unassignProject(
                     widget.application['labourID'].toString(),
@@ -3399,8 +3399,8 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                     fit: BoxFit.scaleDown,
                     child: Text(
                       translateText('Unassign'),
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: TextStyle(
+                        fontSize: Constants.ResponsiveSize.fontSmall(context),
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -3419,7 +3419,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
         if (cancelConfirm == '1') {
           return SizedBox(
             width: double.infinity,
-            height: 44,
+            height: Constants.ResponsiveSize.buttonHeight(context),
             child: ElevatedButton(
               onPressed: null,
               style: ElevatedButton.styleFrom(
@@ -3445,7 +3445,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
             children: [
               Expanded(
                 child: SizedBox(
-                  height: 44,
+                  height: Constants.ResponsiveSize.buttonHeight(context),
                   child: ElevatedButton(
                     onPressed: () => confirmComplete(
                       widget.application['projectID'].toString(),
@@ -3463,8 +3463,8 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         translateText('Confirm Completion'),
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TextStyle(
+                          fontSize: Constants.ResponsiveSize.fontSmall(context),
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -3476,7 +3476,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
               const SizedBox(width: 8),
               Expanded(
                 child: SizedBox(
-                  height: 44,
+                  height: Constants.ResponsiveSize.buttonHeight(context),
                   child: OutlinedButton(
                     onPressed: () => showCancelDialog(
                       context,
@@ -3492,8 +3492,8 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         translateText('Cancel Work'),
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TextStyle(
+                          fontSize: Constants.ResponsiveSize.fontSmall(context),
                           fontWeight: FontWeight.bold,
                           color: AppColors.button,
                         ),
@@ -3507,7 +3507,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
         } else {
           return SizedBox(
             width: double.infinity,
-            height: 44,
+            height: Constants.ResponsiveSize.buttonHeight(context),
             child: OutlinedButton(
               onPressed: () => showCancelDialog(
                 context,
@@ -3523,8 +3523,8 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   translateText('Cancel Work'),
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: Constants.ResponsiveSize.fontSmall(context),
                     fontWeight: FontWeight.bold,
                     color: AppColors.button,
                   ),
@@ -3539,7 +3539,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
           // Review already given → show "Review Submitted" disabled
           return SizedBox(
             width: double.infinity,
-            height: 44,
+            height: Constants.ResponsiveSize.buttonHeight(context),
             child: ElevatedButton(
               onPressed: null,
               style: ElevatedButton.styleFrom(
@@ -3554,8 +3554,8 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   translateText('Review Submitted'),
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: Constants.ResponsiveSize.fontSmall(context),
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -3569,7 +3569,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
             children: [
               Expanded(
                 child: SizedBox(
-                  height: 44,
+                  height: Constants.ResponsiveSize.buttonHeight(context),
                   child: ElevatedButton(
                     onPressed: _showReviewDialog,
                     style: ElevatedButton.styleFrom(
@@ -3584,8 +3584,8 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         translateText('Review'),
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TextStyle(
+                          fontSize: Constants.ResponsiveSize.fontSmall(context),
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -3597,7 +3597,7 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
               const SizedBox(width: 8),
               Expanded(
                 child: SizedBox(
-                  height: 44,
+                  height: Constants.ResponsiveSize.buttonHeight(context),
                   child: ElevatedButton(
                     onPressed: null,
                     style: ElevatedButton.styleFrom(
@@ -3612,8 +3612,8 @@ class _ApplicationDetailPageState extends State<ApplicationDetailPage> {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         translateText('Completed'),
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TextStyle(
+                          fontSize: Constants.ResponsiveSize.fontSmall(context),
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),

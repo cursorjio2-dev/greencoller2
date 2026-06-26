@@ -7150,8 +7150,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
         child: Text(
           AppLocalizations.of(context)!.workStart,
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: Constants.ResponsiveSize.fontMedium(context),
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -7170,8 +7170,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
         child: Text(
           AppLocalizations.of(context)!.applied,
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: Constants.ResponsiveSize.fontMedium(context),
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -7191,8 +7191,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           ),
           child: Text(
             translateText('Confirm Cancelled'),
-            style: const TextStyle(
-              fontSize: 16,
+            style: TextStyle(
+              fontSize: Constants.ResponsiveSize.fontMedium(context),
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -7211,8 +7211,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           ),
           child: Text(
             translateText('Completion Requested'),
-            style: const TextStyle(
-              fontSize: 16,
+            style: TextStyle(
+              fontSize: Constants.ResponsiveSize.fontMedium(context),
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -7231,8 +7231,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           ),
           child: Text(
             translateText('Complete Work'),
-            style: const TextStyle(
-              fontSize: 16,
+            style: TextStyle(
+              fontSize: Constants.ResponsiveSize.fontMedium(context),
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -7248,7 +7248,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         children: [
           Expanded(
             child: SizedBox(
-              height: 52,
+              height: Constants.ResponsiveSize.buttonHeight(context),
               child: OutlinedButton(
                 onPressed: _showReviewDialog,
                 style: OutlinedButton.styleFrom(
@@ -7260,7 +7260,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 child: Text(
                   translate('Review', "समीक्षा"),
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: Constants.ResponsiveSize.fontMedium(context),
                     fontWeight: FontWeight.bold,
                     color: Constants.AppColors.button,
                   ),
@@ -7271,7 +7271,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
           const SizedBox(width: 12),
           Expanded(
             child: SizedBox(
-              height: 52,
+              height: Constants.ResponsiveSize.buttonHeight(context),
               child: ElevatedButton(
                 onPressed: null,
                 style: ElevatedButton.styleFrom(
@@ -7284,8 +7284,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 ),
                 child: Text(
                   translateText('Completed'),
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: Constants.ResponsiveSize.fontMedium(context),
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -7308,8 +7308,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
         child: Text(
           translateText('Cancelled'),
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: Constants.ResponsiveSize.fontMedium(context),
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -7336,8 +7336,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
         child: Text(
           translateText('Apply Now'),
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: Constants.ResponsiveSize.fontMedium(context),
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -7356,8 +7356,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         ),
         child: Text(
           translateText('Cancelled'),
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: Constants.ResponsiveSize.fontMedium(context),
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -7429,7 +7429,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     VoidCallback? onPressed,
   }) {
     return SizedBox(
-      height: 32,
+      height: Constants.ResponsiveSize.buttonHeightMini(context),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
@@ -7443,8 +7443,8 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         onPressed: onPressed,
         child: Text(
           label,
-          style: const TextStyle(
-            fontSize: 11,
+          style: TextStyle(
+            fontSize: Constants.ResponsiveSize.fontMini(context),
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -7815,13 +7815,14 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                     ),
                                     const SizedBox(height: 4),
                                     // 📊 Total & Completed projects
-                                    Row(
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
                                       children: [
                                         _buildStatChip(
                                           icon: Icons.work_outline,
                                           label: '${translate('Total', 'कुल')}: ${project['total_projects'] ?? 0}',
                                         ),
-                                        const SizedBox(width: 8),
                                         _buildStatChip(
                                           icon: Icons.check_circle_outline,
                                           label: '${translate('Completed', 'पूर्ण')}: ${project['completed_projects'] ?? 0}',
