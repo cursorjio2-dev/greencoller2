@@ -9997,7 +9997,8 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                                     ? null
                                     : () =>
                                     _assignWithConfirmation(
-                                        application['labour_id']
+                                        (application['labour_id'] ??
+                                                application['labourID'])
                                             .toString()),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
@@ -10033,7 +10034,8 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                                     ? null
                                     : () =>
                                     _unassignWithConfirmation(
-                                        application['labour_id']
+                                        (application['labour_id'] ??
+                                                application['labourID'])
                                             .toString()),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,
@@ -10068,7 +10070,8 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                                       ? null
                                       : () => confirmComplete(
                                       widget.projectId,
-                                      application['labour_id']
+                                      (application['labour_id'] ??
+                                              application['labourID'])
                                           .toString()),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Constants.AppColors.buttonBackground,
