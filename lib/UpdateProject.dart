@@ -1418,6 +1418,9 @@ class _UpdateProjectState extends State<UpdateProject> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(Constants.AppRadii.sm),
                             ),
@@ -1427,11 +1430,13 @@ class _UpdateProjectState extends State<UpdateProject> {
                               await submitForm();
                             }
                           },
-                          child: Text(
-                            translate('Update', 'अपडेट'),
-                            style: Constants.AppTypography.subhead.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                          child: Center(
+                            child: Text(
+                              translate('Update', 'अपडेट'),
+                              style: Constants.AppTypography.subhead.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
