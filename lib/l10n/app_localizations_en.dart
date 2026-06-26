@@ -312,7 +312,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get amountColumn => 'Amount';
 
   @override
-  String get yourprojects => 'Your Projects';
+  String get yourprojects => 'My Project';
 
   @override
   String get addProject => 'Post Job';

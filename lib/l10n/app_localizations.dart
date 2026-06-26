@@ -701,7 +701,7 @@ abstract class AppLocalizations {
   /// No description provided for @yourprojects.
   ///
   /// In en, this message translates to:
-  /// **'Your Projects'**
+  /// **'My Project'**
   String get yourprojects;
 
   /// No description provided for @addProject.
