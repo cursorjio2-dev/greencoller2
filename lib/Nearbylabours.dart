@@ -1016,25 +1016,42 @@ class _LabourPageState extends State<LabourPage> {
                                                   ),
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
-                                                const SizedBox(height: 2),
-                                                Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                                  decoration: BoxDecoration(
-                                                    color: labour['type'] == '0'
-                                                        ? AppColors.brandTint
-                                                        : AppColors.brandTint,
-                                                    borderRadius: BorderRadius.circular(4),
-                                                  ),
-                                                  child: Text(
-                                                    labourType,
-                                                    style: Constants.AppTypography.micro.copyWith(
-                                                      color: labour['type'] == '0'
-                                                          ? AppColors.brandDeep
-                                                          : AppColors.brandDeep,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold,
+                                                const SizedBox(height: 4),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                      decoration: BoxDecoration(
+                                                        color: labour['type'] == '0'
+                                                            ? AppColors.brandTint
+                                                            : AppColors.brandTint,
+                                                        borderRadius: BorderRadius.circular(4),
+                                                      ),
+                                                      child: Text(
+                                                        labourType,
+                                                        style: Constants.AppTypography.micro.copyWith(
+                                                          color: labour['type'] == '0'
+                                                              ? AppColors.brandDeep
+                                                              : AppColors.brandDeep,
+                                                          fontSize: 10,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                    if ((double.tryParse(labour['average_rating']?.toString() ?? '0') ?? 0.0) > 0) ...[
+                                                      const SizedBox(width: 8),
+                                                      const Icon(Icons.star, color: Constants.AppColors.star, size: 14),
+                                                      const SizedBox(width: 2),
+                                                      Text(
+                                                        '${(double.tryParse(labour['average_rating']?.toString() ?? '0') ?? 0.0).toStringAsFixed(1)} (${int.tryParse(labour['review_count']?.toString() ?? '0') ?? 0})',
+                                                        style: Constants.AppTypography.micro.copyWith(
+                                                          color: Constants.AppColors.inkSoft,
+                                                          fontSize: 11,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ],
                                                 ),
 
                                                 if (labour['phone_view'] != 1) ...[

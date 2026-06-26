@@ -8362,6 +8362,9 @@ class _CombinedPageState extends State<CombinedPage>
                       }
                       if (skillTags.length > 2) skillTags = skillTags.sublist(0, 2);
 
+                      double avgRating = double.tryParse(labour['average_rating']?.toString() ?? '0') ?? 0.0;
+                      int reviewCount = int.tryParse(labour['review_count']?.toString() ?? '0') ?? 0;
+
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => LabourDetailsPage(labour: labour)));
@@ -8414,8 +8417,21 @@ class _CombinedPageState extends State<CombinedPage>
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(translateText(labour['name'] ?? 'Unknown'), style: const TextStyle(color: kBrandGreen, fontWeight: FontWeight.bold, fontSize: 15), overflow: TextOverflow.ellipsis),
-                                                const SizedBox(height: 2),
-                                                Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: kBrandGreenTint, borderRadius: BorderRadius.circular(4)), child: Text(labourType, style: const TextStyle(fontSize: 10, color: kBrandGreen, fontWeight: FontWeight.bold))),
+                                                const SizedBox(height: 4),
+                                                Row(
+                                                  children: [
+                                                    Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: kBrandGreenTint, borderRadius: BorderRadius.circular(4)), child: Text(labourType, style: const TextStyle(fontSize: 10, color: kBrandGreen, fontWeight: FontWeight.bold))),
+                                                    if (avgRating > 0) ...[
+                                                      const SizedBox(width: 8),
+                                                      const Icon(Icons.star, color: Constants.AppColors.star, size: 14),
+                                                      const SizedBox(width: 2),
+                                                      Text(
+                                                        '${avgRating.toStringAsFixed(1)} ($reviewCount)',
+                                                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: kTextGrey),
+                                                      ),
+                                                    ],
+                                                  ],
+                                                ),
                                               ],
                                             ),
                                           ),
