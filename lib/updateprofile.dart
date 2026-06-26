@@ -1593,8 +1593,7 @@ class _UpdateLabourProfileState extends State<UpdateLabourProfile> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                            0xFF0E6805), // Green color for the button
+                        backgroundColor: Constants.AppColors.buttonBackground,
                         padding: EdgeInsets.symmetric(
                             vertical: Constants.ResponsiveSize.paddingVertical(context),
                             horizontal: Constants.ResponsiveSize.paddingHorizontal(context)),

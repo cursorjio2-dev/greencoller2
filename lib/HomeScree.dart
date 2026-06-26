@@ -7917,7 +7917,7 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           },
-          backgroundColor: kBrandBrown,
+          backgroundColor: Constants.AppColors.buttonBackground,
           foregroundColor: Colors.white,
           elevation: 4,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -9199,7 +9199,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                                 style: ElevatedButton
                                                     .styleFrom(
                                                   backgroundColor:
-                                                  kBrandBrown,
+                                                  Constants.AppColors.buttonBackground,
                                                   foregroundColor:
                                                   Colors.white,
                                                   shape:
@@ -9257,7 +9257,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                               style: ElevatedButton
                                                   .styleFrom(
                                                 backgroundColor:
-                                                kBrandBrown,
+                                                Constants.AppColors.buttonBackground,
                                                 foregroundColor:
                                                 Colors.white,
                                                 shape:
@@ -10001,7 +10001,7 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                                             .toString()),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                  kBrandBrown, // BROWN
+                                  Constants.AppColors.buttonBackground,
                                   foregroundColor: Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
@@ -10071,7 +10071,7 @@ class _ProjectApplicationsPageState extends State<ProjectApplicationsPage> {
                                       application['labour_id']
                                           .toString()),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: kBrandBrown, // BROWN
+                                    backgroundColor: Constants.AppColors.buttonBackground,
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius:

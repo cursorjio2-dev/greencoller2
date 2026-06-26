@@ -751,7 +751,7 @@ class WalletHelper {
               icon: const Icon(Icons.shopping_cart, size: 18),
               label: const Text('Buy Coins'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.amberNotice,
+                backgroundColor: AppColors.buttonBackground,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),

@@ -25,6 +25,9 @@ class AppColors {
   static const Color brandSoft = Color(0xFF9BC79A);
   static const Color brandTint = Color(0xFFEAF4E8);
 
+  static const Color brandPrimary = Color(0xFF0E6805);
+  static const Color buttonBackground = Color(0xD90E6805); // 85% opacity brandPrimary
+
   static const Color surface = Color(0xFFFAFBF7);
   static const Color surface2 = Color(0xFFF1F5EE);
   static const Color card = Color(0xFFFFFFFF);
@@ -36,14 +39,10 @@ class AppColors {
   static const Color amberNotice = Color(0xFFF2B441);
   static const Color star = Color(0xFFFBBF24);
 
-  // Button colors (app icon color)
-  // static const Color button = Color(0xFF865E2A);
-  // static const Color buttonBg = Color(0xFFF5EDE0);
-  // static const Color buttonBorder = Color(0xFFD4B896);
-
-  static const Color button = Color.fromRGBO(203, 157, 35, 1);
-  static const Color buttonBg = Color(0xFFF5EDE0);
-  static const Color buttonBorder = Color(0xFFD4B896);
+  // Button colors (brand primary faded variant)
+  static const Color button = buttonBackground;
+  static const Color buttonBg = Color(0xFFEAF4E8); // brandTint
+  static const Color buttonBorder = Color(0xFF9BC79A); // brandSoft
 
   static const Gradient brandGradient = LinearGradient(
     begin: Alignment(-0.8, -0.6),
@@ -54,7 +53,7 @@ class AppColors {
   static const Gradient buttonGradient = LinearGradient(
     begin: Alignment(-0.8, -0.6),
     end: Alignment(0.8, 0.6),
-    colors: [Color(0xFF865E2A), Color(0xFFA67C4E)],
+    colors: [Color(0xFF0E6805), Color(0xFF18843D)],
   );
 }
 
